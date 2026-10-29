@@ -95,15 +95,15 @@
         @keyframes bar-glow { 0%, 100% { filter: drop-shadow(0 0 2px #C8A44A); } 50% { filter: drop-shadow(0 0 8px #FFD700); } }
         @keyframes walk { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 
-    /* --- RPG МОДАЛЬНОЕ ОКНО --- */
+ /* --- RPG МОДАЛЬНОЕ ОКНО --- */
         .rpg-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
             display: none; justify-content: center; align-items: flex-end; z-index: 1000;
         }
         .rpg-modal {
-            width: 100%; height: 46%; background: #1a1a2e; border-top: 4px solid #C8A44A;
+            width: 100%; height: 48%; background: #1a1a2e; border-top: 4px solid #C8A44A;
             box-shadow: inset 4px 4px 0 #2a2a4e, inset -4px -4px 0 #0a0a1e, 0 -4px 0 #8B6914;
-            display: flex; flex-direction: column; padding: 15px 20px; position: relative;
+            display: flex; flex-direction: column; padding: 18px 25px; position: relative;
             box-sizing: border-box;
             animation: slide-up 0.3s ease-out;
         }
@@ -113,27 +113,29 @@
             display: flex; 
             flex-direction: column; 
             width: 100%;
-            align-items: center; /* Четко по центру */
-            text-align: center;   /* Выравниваем текст по центру */
+            align-items: center; /* Центрируем содержимое */
+            text-align: center;
             justify-content: flex-start;
         }
         
-        /* Сделали шрифты заметно крупнее и читаемее */
-        .rpg-title { color: #C8A44A; font-size: 15px; margin: 0 0 8px 0; line-height: 1.3; text-shadow: 1px 1px 0 #000; }
-        .rpg-artifact { color: #fff; font-size: 11px; margin: 0 0 8px 0; line-height: 1.4; }
-        .rpg-hint { color: #ccc; font-size: 10px; line-height: 1.5; margin: 0 0 10px 0; max-width: 90%; }
-        .rpg-status { font-size: 11px; margin: 0 0 12px 0; line-height: 1.4; font-weight: bold; }
+        /* Увеличили размеры шрифтов еще сильнее для отличной читаемости */
+        .rpg-title { color: #C8A44A; font-size: 16px; margin: 0 0 10px 0; line-height: 1.3; text-shadow: 1px 1px 0 #000; }
+        .rpg-artifact { color: #fff; font-size: 12px; margin: 0 0 10px 0; line-height: 1.4; }
+        .rpg-hint { color: #ccc; font-size: 11px; line-height: 1.5; margin: 0 0 12px 0; max-width: 95%; }
+        .rpg-status { font-size: 12px; margin: 0 0 15px 0; line-height: 1.4; font-weight: bold; }
         
         .rpg-buttons { 
             display: flex; 
-            gap: 12px; 
+            gap: 14px; 
             width: 100%;
-            justify-content: center; /* Кнопки строго по центру */
+            max-width: 320px; /* Аккуратная ширина блока кнопок ближе к центру */
+            margin: 0 auto;
+            justify-content: center; 
             margin-top: auto; 
         }
         .rpg-modal .btn, .rpg-btn { 
-            font-size: 9px !important; 
-            padding: 12px 10px !important; 
+            font-size: 10px !important; /* Крупный текст на кнопках */
+            padding: 14px 10px !important; 
             flex: 1 !important; 
             text-align: center !important; 
             background: #1b4d3e !important; 
