@@ -766,17 +766,7 @@ function openModal(item, isCollected) {
 function closeModal() {
     document.getElementById('modal-overlay').style.display = 'none';
 }
-            grid.appendChild(slot);
-        });
-
-        if (STATE.collectedIds.length === 8) {
-            document.getElementById('btn-scan').style.display = 'none';
-            document.getElementById('btn-elixir').style.display = 'block';
-        } else {
-            document.getElementById('btn-scan').style.display = 'block';
-            document.getElementById('btn-elixir').style.display = 'none';
-        }
-    }
+           
 
     function openScanner() {
         tg.showScanQrPopup({ text: "Наведи камеру на QR-код в баре" }, (scannedText) => {
