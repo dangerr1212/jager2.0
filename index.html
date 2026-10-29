@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jägermeister 8-Bit Quest</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        :root {
+            --green: #00843D;
+            --gold: #C8A44A;
+            --black: #1A1A1A;
+            --white: #F5F5F5;
+            --dim: rgba(26, 26, 26, 0.85);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--black);
+            color: var(--white);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        #app {
+            width: 100vw;
+            height: 100vh;
+            padding-top: env(safe-area-inset-top, 20px);
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: var(--black);
+        }
+
+        .active-screen {
+            display: flex;
+        }
+
+        /* Утилиты и компоненты */
+        .pixel-border {
+            box-shadow: 
+                -4px 0 0 0 var(--green),
+                4px 0 0 0 var(--green),
+                0 -4px 0 0 var(--green),
+                0 4px 0 0 var(--green);
+            margin: 4px;
+            background: var(--black);
+        }
+
+        .pixel-border.gold {
+            box-shadow: 
+                -4px 0 0 0 var(--gold),
+                4px 0 0 0 var(--gold),
+                0 -4px 0 0 var(--gold),
+                0 4px 0 0 var(--gold);
+        }
+
+        .btn {
+            background-color: var(--green);
+            color: var(--white);
+            border: none;
+            padding: 15px;
+            font-family: inherit;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 
+                -4px 0 0 0 var(--white),
+                4px 0 0 0 var(--white),
+                0 -4px 0 0 var(--white),
+                0 4px 0 0 var(--white);
+            margin: 20px auto;
+            display: block;
+            width: 80%;
+            text-transform: uppercase;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .title {
+            text-align: center;
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .logo {
+            width: 120px;
+            margin: 0 auto 20px;
+            image-rendering: pixelated;
+        }
+
+        /* Экран 1 - Выбор персонажа */
+        #screen-character .characters {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .char-card {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .char-card img {
+            width: 80px;
+            height: 80px;
+            image-rendering: pixelated;
+            margin-bottom: 10px;
+        }
+
+        @keyframes blinkGold {
+            0%, 100% { box-shadow: -4px 0 0 0 var(--gold), 4px 0 0 0 var(--gold), 0 -4px 0 0 var(--gold), 0 4px 0 0 var(--gold); }
+            50% { box-shadow: -4px 0 0 0 transparent, 4px 0 0 0 transparent, 0 -4px 0 0 transparent, 0 4px 0 0 transparent; }
+        }
+
+        .char-card.selected {
+            animation: blinkGold 0.3s 2 forwards;
+        }
+
+        /* Экран 2 - Квест */
+        #screen-quest {
+            background-color: #0b0b0b;
+        }
+
+        .star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            opacity: 0.5;
+        }
+
+        #quest-avatar {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            image-rendering: pixelated;
+        }
+
+        #quest-text-container {
+            margin-top: 80px;
+            min-height: 200px;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        #btn-to-map { display: none; }
+
+        /* Экран 3 - Карта */
+        .map-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .map-header img { width: 40px; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #333;
+            margin-bottom: 20px;
+            box-shadow: 0 0 0 2px var(--white);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--green);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .slot {
+            aspect-ratio: 1;
+            background: #222;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 8px;
+            text-align: center;
+            box-shadow: inset 0 0 0 2px #444;
+        }
+
+        .slot.revealed {
+            animation: pixelReveal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            background: var(--black);
+        }
+
+        .slot-icon { font-size: 24px; margin-bottom: 5px; }
+
+        @keyframes pixelReveal {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); box-shadow: 0 0 0 2px var(--gold); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        #btn-elixir {
+            display: none;
+            background-color: var(--gold);
+            color: var(--black);
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Экран 4 - Эликсир */
+        #screen-elixir {
+            justify-content: center;
+            align-items: center;
+        }
+
+        .elixir-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .flying-icon {
+            position: absolute;
+            font-size: 30px;
+            transition: transform 0.6s ease-in, opacity 0.3s;
+            top: 135px;
+            left: 135px;
+        }
+
+        .big-bottle {
+            position: absolute;
+            font-size: 80px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .flash {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Экран 5 - Победа */
+        #screen-victory {
+            text-align: center;
+            position: relative;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            top: -10px;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        .prizes {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .prize-card {
+            flex: 1;
+            padding: 20px 10px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .prize-card.dim { opacity: 0.3; }
+
+        .prize-icon { font-size: 40px; margin-bottom: 10px; }
+        
+        #btn-reset {
+            margin-top: auto;
+            background: transparent;
+            color: #777;
+            box-shadow: none;
+            text-decoration: underline;
+            padding: 10px;
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <!-- ЭКРАН 1: Выбор персонажа -->
+    <div id="screen-character" class="screen active-screen">
+        <img id="main-logo" class="logo" alt="Jägermeister" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/J%C3%A4germeister_Logo.svg/200px-J%C3%A4germeister_Logo.svg.png">
+        <h1 class="title">ВЫБЕРИ ОХОТНИКА</h1>
+        <div class="characters">
+            <div class="char-card pixel-border" data-char="hunter" onclick="selectCharacter('hunter')">
+                <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=Hunter&backgroundColor=00843D" alt="Hunter">
+                <span>HUNTER</span>
+            </div>
+            <div class="char-card pixel-border" data-char="huntie" onclick="selectCharacter('huntie')">
+                <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=Huntie&backgroundColor=C8A44A" alt="Huntie">
+                <span>HUNTIE</span>
+            </div>
+        </div>
+        <button id="btn-start" class="btn" style="display: none;" onclick="navigateTo('screen-quest')">НАЧАТЬ КВЕСТ</button>
+    </div>
+
+    <!-- ЭКРАН 2: Описание квеста -->
+    <div id="screen-quest" class="screen" onclick="skipTyping()">
+        <img id="quest-avatar" src="" alt="Avatar">
+        <div id="quest-text-container">
+            <span id="quest-text"></span><span class="cursor">_</span>
+        </div>
+        <button id="btn-to-map" class="btn" onclick="navigateTo('screen-map'); event.stopPropagation();">В ПУТЬ!</button>
+    </div>
+
+    <!-- ЭКРАН 3: Карта -->
+    <div id="screen-map" class="screen">
+        <div class="map-header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/J%C3%A4germeister_Logo.svg/100px-J%C3%A4germeister_Logo.svg.png" alt="Logo">
+            <span id="progress-text">СОБРАНО: 0 / 8</span>
+        </div>
+        <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
+        <div id="grid" class="grid"></div>
+        <button id="btn-scan" class="btn" onclick="openScanner()">📷 СКАНИРОВАТЬ QR</button>
+        <button id="btn-elixir" class="btn" onclick="startElixirAnimation()">🧪 СОЗДАТЬ ЭЛИКСИР</button>
+    </div>
+
+    <!-- ЭКРАН 4: Эликсир -->
+    <div id="screen-elixir" class="screen">
+        <div id="flash-overlay" class="flash"></div>
+        <div class="elixir-container" id="elixir-container">
+            <div id="big-bottle" class="big-bottle">🍾</div>
+        </div>
+    </div>
+
+    <!-- ЭКРАН 5: Победа -->
+    <div id="screen-victory" class="screen">
+        <h1 class="title">🎉 ПОЗДРАВЛЯЕМ,<br><span id="winner-name"></span></h1>
+        <p style="font-size: 10px; margin-top: 10px;">Ты собрал все ингредиенты и создал легендарный эликсир Jägermeister!</p>
+        
+        <div class="prizes" id="prize-container">
+            <div class="prize-card pixel-border" onclick="selectPrize(this)">
+                <div class="prize-icon">🎽</div>
+                <span>МЕРЧ</span>
+            </div>
+            <div class="prize-card pixel-border gold" onclick="selectPrize(this)">
+                <div class="prize-icon">🍾</div>
+                <span>БУТЫЛКА JÄGER</span>
+            </div>
+        </div>
+        <p id="prize-msg" style="display: none; color: var(--gold); margin-top: 20px; font-size: 10px;"></p>
+        
+        <button id="btn-reset" class="btn" onclick="confirmReset()">СЫГРАТЬ СНОВА</button>
+    </div>
+</div>
+
+<script>
+    // Инициализация Telegram SDK
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+    tg.setHeaderColor('#1A1A1A');
+    tg.setBackgroundColor('#1A1A1A');
+
+    // Конфигурация и Данные
+    const HUNTER_IMG_URL = "https://api.dicebear.com/7.x/pixel-art/svg?seed=Hunter&backgroundColor=00843D";
+    const HUNTIE_IMG_URL = "https://api.dicebear.com/7.x/pixel-art/svg?seed=Huntie&backgroundColor=C8A44A";
+    
+    const INGREDIENTS = [
+        { id: 1, name: "Горечавка",  icon: "🌿", qrCode: "JAGER_1" },
+        { id: 2, name: "Имбирь",     icon: "🫚", qrCode: "JAGER_2" },
+        { id: 3, name: "Корица",     icon: "🌰", qrCode: "JAGER_3" },
+        { id: 4, name: "Мята",       icon: "🍃", qrCode: "JAGER_4" },
+        { id: 5, name: "Анис",       icon: "⭐", qrCode: "JAGER_5" },
+        { id: 6, name: "Шафран",     icon: "🌸", qrCode: "JAGER_6" },
+        { id: 7, name: "Лаванда",    icon: "💜", qrCode: "JAGER_7" },
+        { id: 8, name: "Дубовая кора",icon:"🌳", qrCode: "JAGER_8" }
+    ];
+
+    const STATE = {
+        selectedCharacter: null,
+        collectedIds: [],
+        gameCompleted: false,
+        currentScreen: 'screen-character'
+    };
+
+    // Web Audio API
+    let audioCtx = null;
+    function playBeep(freq, ms) {
+        try {
+            if (!audioCtx) {
+                const AC = window.AudioContext || window.webkitAudioContext;
+                if (!AC) return;
+                audioCtx = new AC();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (ms/1000));
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + (ms/1000));
+        } catch(e) { console.error('Audio play error:', e); }
+    }
+
+    // Хранение состояния
+    const STORAGE_KEY = 'jager_quest_state';
+
+    function saveState() {
+        const data = JSON.stringify(STATE);
+        try {
+            if (tg.CloudStorage) {
+                tg.CloudStorage.setItem(STORAGE_KEY, data, (err) => {
+                    if (err) localStorage.setItem(STORAGE_KEY, data);
+                });
+            } else {
+                localStorage.setItem(STORAGE_KEY, data);
+            }
+        } catch (e) {
+            localStorage.setItem(STORAGE_KEY, data);
+        }
+    }
+
+    function loadState(callback) {
+        const parseState = (dataStr) => {
+            if (dataStr) {
+                try {
+                    const parsed = JSON.parse(dataStr);
+                    Object.assign(STATE, parsed);
+                } catch(e) {}
+            }
+            callback();
+        };
+
+        try {
+            if (tg.CloudStorage) {
+                tg.CloudStorage.getItem(STORAGE_KEY, (err, val) => {
+                    if (err || !val) {
+                        parseState(localStorage.getItem(STORAGE_KEY));
+                    } else {
+                        parseState(val);
+                    }
+                });
+            } else {
+                parseState(localStorage.getItem(STORAGE_KEY));
+            }
+        } catch (e) {
+            parseState(localStorage.getItem(STORAGE_KEY));
+        }
+    }
+
+    // Навигация
+    function navigateTo(screenId) {
+        STATE.currentScreen = screenId;
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+        document.getElementById(screenId).classList.add('active-screen');
+        saveState();
+
+        if (screenId === 'screen-quest') initQuestScreen();
+        if (screenId === 'screen-map') renderMap();
+        if (screenId === 'screen-victory') initVictoryScreen();
+        tg.MainButton.hide(); 
+    }
+
+    // Экран 1
+    function selectCharacter(charId) {
+        playBeep(440, 100);
+        STATE.selectedCharacter = charId;
+        
+        document.querySelectorAll('.char-card').forEach(el => el.classList.remove('selected'));
+        const activeCard = document.querySelector(`.char-card[data-char="${charId}"]`);
+        activeCard.classList.add('selected');
+        
+        setTimeout(() => {
+            document.getElementById('btn-start').style.display = 'block';
+            saveState();
+        }, 600);
+    }
+
+    // Экран 2
+    let typeTimeout;
+    let isTyping = false;
+    const questTextStr = "Среди 56 секретных ингредиентов Jägermeister 8 главных затеряны по барам города. Твоя миссия — обойти бары, сканировать QR-коды и собрать все ингредиенты. Только тогда ты сможешь создать легендарный эликсир!";
+    
+    function initQuestScreen() {
+        const avatarUrl = STATE.selectedCharacter === 'hunter' ? HUNTER_IMG_URL : HUNTIE_IMG_URL;
+        document.getElementById('quest-avatar').src = avatarUrl;
+        
+        const starsContainer = document.getElementById('screen-quest');
+        for(let i=0; i<15; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animation = `pulse ${1 + Math.random()}s infinite alternate`;
+            starsContainer.appendChild(star);
+        }
+
+        const textEl = document.getElementById('quest-text');
+        textEl.innerText = "";
+        document.getElementById('btn-to-map').style.display = "none";
+        
+        let charIdx = 0;
+        isTyping = true;
+
+        function nextChar() {
+            if (!isTyping) return;
+            if (charIdx < questTextStr.length) {
+                textEl.innerText += questTextStr.charAt(charIdx);
+                charIdx++;
+                typeTimeout = setTimeout(nextChar, 35);
+            } else {
+                finishTyping();
+            }
+        }
+        nextChar();
+    }
+
+    function skipTyping() {
+        if(isTyping) finishTyping();
+    }
+
+    function finishTyping() {
+        isTyping = false;
+        clearTimeout(typeTimeout);
+        document.getElementById('quest-text').innerText = questTextStr;
+        setTimeout(() => {
+            document.getElementById('btn-to-map').style.display = 'block';
+        }, 500);
+    }
+
+    // Экран 3
+    function renderMap() {
+        document.getElementById('progress-text').innerText = `СОБРАНО: ${STATE.collectedIds.length} / 8`;
+        document.getElementById('progress-fill').style.width = `${(STATE.collectedIds.length / 8) * 100}%`;
+        
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        
+        INGREDIENTS.forEach(ing => {
+            const slot = document.createElement('div');
+            slot.className = 'slot';
+            slot.id = `slot-${ing.id}`;
+            
+            if (STATE.collectedIds.includes(ing.id)) {
+                slot.classList.add('pixel-border', 'gold');
+                slot.style.background = 'var(--black)';
+                slot.innerHTML = `<div class="slot-icon">${ing.icon}</div><div>${ing.name}</div>`;
+            } else {
+                slot.innerHTML = '<div>???</div>';
+            }
+            grid.appendChild(slot);
+        });
+
+        if (STATE.collectedIds.length === 8) {
+            document.getElementById('btn-scan').style.display = 'none';
+            document.getElementById('btn-elixir').style.display = 'block';
+        } else {
+            document.getElementById('btn-scan').style.display = 'block';
+            document.getElementById('btn-elixir').style.display = 'none';
+        }
+    }
+
+    function openScanner() {
+        tg.showScanQrPopup({ text: "Наведи камеру на QR-код в баре" }, (scannedText) => {
+            handleQrScan(scannedText);
+            return true; 
+        });
+    }
+
+    function handleQrScan(text) {
+        const ing = INGREDIENTS.find(i => i.qrCode === text);
+        if (!ing) {
+            tg.showAlert("❌ Неверный QR-код. Попробуй в другом баре!");
+            return;
+        }
+        if (STATE.collectedIds.includes(ing.id)) {
+            tg.showAlert("✅ Этот ингредиент уже собран!");
+            return;
+        }
+
+        // Новый ингредиент
+        STATE.collectedIds.push(ing.id);
+        saveState();
+        tg.HapticFeedback.notificationOccurred('success');
+        
+        // Мелодия победы
+        setTimeout(() => playBeep(523, 200), 0);
+        setTimeout(() => playBeep(659, 200), 250);
+
+        renderMap(); // Перерисовка с обновленным прогрессом
+        const slot = document.getElementById(`slot-${ing.id}`);
+        slot.classList.add('revealed');
+    }
+
+    // Экран 4
+    function startElixirAnimation() {
+        STATE.gameCompleted = true;
+        saveState();
+        navigateTo('screen-elixir');
+        
+        const container = document.getElementById('elixir-container');
+        const radius = 120;
+        
+        // Создаем иконки по кругу
+        INGREDIENTS.forEach((ing, i) => {
+            const angle = (i / 8) * (2 * Math.PI);
+            const el = document.createElement('div');
+            el.className = 'flying-icon';
+            el.innerText = ing.icon;
+            
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+            el.style.transform = `translate(${x}px, ${y}px)`;
+            
+            container.appendChild(el);
+            
+            // Запуск стягивания к центру
+            setTimeout(() => {
+                el.style.transform = 'translate(0, 0)';
+            }, 100);
+        });
+
+        // Нарастающая мелодия
+        const notes = [261, 329, 392, 523];
+        notes.forEach((freq, idx) => {
+            setTimeout(() => playBeep(freq, 150), 100 + (idx * 200));
+        });
+
+        setTimeout(() => {
+            document.querySelectorAll('.flying-icon').forEach(el => el.style.opacity = '0');
+            const flash = document.getElementById('flash-overlay');
+            flash.style.opacity = '1';
+            
+            setTimeout(() => {
+                flash.style.transition = 'opacity 0.5s';
+                flash.style.opacity = '0';
+                const bottle = document.getElementById('big-bottle');
+                bottle.style.transform = 'translate(-50%, -50%) scale(1)';
+                bottle.style.opacity = '1';
+            }, 200);
+
+            setTimeout(() => {
+                navigateTo('screen-victory');
+            }, 2500);
+
+        }, 800);
+    }
+
+    // Экран 5
+    function initVictoryScreen() {
+        document.getElementById('winner-name').innerText = STATE.selectedCharacter.toUpperCase();
+        
+        const container = document.getElementById('screen-victory');
+        for(let i=0; i<20; i++) {
+            const conf = document.createElement('div');
+            conf.className = 'confetti';
+            conf.style.left = Math.random() * 100 + '%';
+            conf.style.backgroundColor = Math.random() > 0.5 ? 'var(--green)' : 'var(--gold)';
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
+            conf.style.animationDelay = (Math.random() * 2) + 's';
+            container.appendChild(conf);
+        }
+    }
+
+    function selectPrize(element) {
+        document.querySelectorAll('.prize-card').forEach(el => el.classList.add('dim'));
+        element.classList.remove('dim');
+        
+        tg.HapticFeedback.notificationOccurred('success');
+        
+        const msg = document.getElementById('prize-msg');
+        msg.style.display = 'block';
+        msg.innerText = "ОТЛИЧНЫЙ ВЫБОР! 🎯 Покажи этот экран бармену для получения приза.";
+        
+        tg.MainButton.setText('✅ ПОКАЗАТЬ БАРМЕНУ').show();
+        tg.MainButton.onClick(() => {
+            tg.showAlert("Приз выдан! Наслаждайся Jägermeister!");
+            tg.MainButton.hide();
+        });
+    }
+
+    function confirmReset() {
+        tg.showConfirm("Сбросить прогресс и начать заново?", (ok) => {
+            if(ok) resetGame();
+        });
+    }
+
+    function resetGame() {
+        STATE.selectedCharacter = null;
+        STATE.collectedIds = [];
+        STATE.gameCompleted = false;
+        STATE.currentScreen = 'screen-character';
+        
+        if(tg.CloudStorage) tg.CloudStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(STORAGE_KEY);
+        
+        document.querySelectorAll('.char-card').forEach(el => el.classList.remove('selected'));
+        document.getElementById('btn-start').style.display = 'none';
+        document.getElementById('prize-msg').style.display = 'none';
+        document.querySelectorAll('.prize-card').forEach(el => el.classList.remove('dim'));
+        document.getElementById('elixir-container').innerHTML = '<div id="big-bottle" class="big-bottle">🍾</div>';
+        
+        document.querySelectorAll('.confetti').forEach(e => e.remove());
+        
+        navigateTo('screen-character');
+    }
+
+    // Загрузка при старте
+    loadState(() => {
+        if (STATE.currentScreen && document.getElementById(STATE.currentScreen)) {
+            navigateTo(STATE.currentScreen);
+        } else {
+            navigateTo('screen-character');
+        }
+    });
+
+</script>
+</body>
+</html>
