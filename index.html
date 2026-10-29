@@ -7,6 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+        
 /* --- RPG КАРТА ГОРОДА --- */
         .city-map {
             position: relative;
@@ -94,45 +95,58 @@
         @keyframes bar-glow { 0%, 100% { filter: drop-shadow(0 0 2px #C8A44A); } 50% { filter: drop-shadow(0 0 8px #FFD700); } }
         @keyframes walk { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
 
-        /* --- RPG МОДАЛЬНОЕ ОКНО --- */
+       /* --- RPG МОДАЛЬНОЕ ОКНО --- */
         .rpg-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
             display: none; justify-content: center; align-items: flex-end; z-index: 1000;
         }
         .rpg-modal {
-            width: 100%; height: 35%; background: #1a1a2e; border-top: 4px solid #C8A44A;
+            width: 100%; height: 42%; background: #1a1a2e; border-top: 4px solid #C8A44A;
             box-shadow: inset 4px 4px 0 #2a2a4e, inset -4px -4px 0 #0a0a1e, 0 -4px 0 #8B6914;
             display: flex; flex-direction: row; padding: 15px; position: relative;
+            box-sizing: border-box;
             animation: slide-up 0.3s ease-out;
         }
         @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
         .rpg-modal-left { 
-            width: 70px; 
+            width: 45px; 
             display: flex; 
             justify-content: center; 
-            align-items: center; /* Центрируем иконку/вопрос по вертикали */
-            font-size: 40px; 
+            align-items: flex-start; 
+            padding-top: 5px;
+            font-size: 24px; 
         }
         .rpg-modal-right { 
             display: flex; 
             flex-direction: column; 
-            justify-content: center; /* Центрируем весь блок текста по вертикали */
             flex-grow: 1; 
             margin-left: 10px; 
-            gap: 6px; /* Аккуратный одинаковый отступ между строками */
+            justify-content: flex-start;
         }
-        .rpg-title { color: #C8A44A; font-size: 9px; margin: 0; line-height: 1.2; text-shadow: 1px 1px 0 #000; }
-        .rpg-artifact { color: #fff; font-size: 6px; margin: 0; }
-        .rpg-hint { color: #aaa; font-size: 5px; line-height: 1.4; margin: 0; }
-        .rpg-status { font-size: 7px; margin: 0; }
-        .rpg-buttons { display: flex; gap: 8px; margin-top: 5px; }
-        .rpg-title { color: #C8A44A; font-size: 10px; margin-bottom: 8px; line-height: 1.2; text-shadow: 1px 1px 0 #000; }
-        .rpg-artifact { color: #fff; font-size: 7px; margin-bottom: 8px; }
-        .rpg-hint { color: #aaa; font-size: 6px; line-height: 1.5; margin-bottom: 8px; }
-        .rpg-status { font-size: 8px; margin-bottom: 12px; }
-        .rpg-buttons { display: flex; gap: 10px; margin-top: auto; }
-        .rpg-btn { font-size: 6px; padding: 10px; flex: 1; }
-        .rpg-cursor { position: absolute; bottom: 15px; right: 20px; color: #fff; font-size: 10px; animation: question-blink 1s infinite; }
+        .rpg-title { color: #C8A44A; font-size: 10px; margin: 0 0 6px 0; line-height: 1.2; text-shadow: 1px 1px 0 #000; }
+        .rpg-artifact { color: #fff; font-size: 6px; margin: 0 0 6px 0; }
+        .rpg-hint { color: #aaa; font-size: 5px; line-height: 1.4; margin: 0 0 10px 0; }
+        .rpg-status { font-size: 7px; margin: 0 0 10px 0; }
+        
+        .rpg-buttons { 
+            display: flex; 
+            gap: 10px; 
+            width: 100%;
+            margin-top: auto; 
+        }
+        .rpg-modal .btn, .rpg-btn { 
+            font-size: 6px !important; 
+            padding: 12px 6px !important; 
+            flex: 1 !important; 
+            text-align: center !important; 
+            background: #1b4d3e !important; 
+            color: #ffffff !important;
+            border: 2px solid #C8A44A !important;
+            box-shadow: inset 2px 2px 0 #2e8b57, inset -2px -2px 0 #0d231c !important;
+            cursor: pointer;
+            display: block !important;
+        }
         /* Статусы */
         .uncollected .indicator {
             animation: blink 1.5s infinite step-end;
@@ -909,7 +923,7 @@ function openModal(item, isCollected, stepNum) {
         document.getElementById('rpg-status').style.color = "#4CAF50";
         document.getElementById('btn-scan').style.display = 'none';
     } else {
-        document.getElementById('rpg-icon').innerText = '❓';
+        document.getElementById('rpg-icon').innerText = ''; // УБРАЛИ ВОПРОСИТЕЛЬНЫЙ ЗНАК СЛЕВА
         document.getElementById('rpg-artifact').innerText = 'Артефакт: Неизвестно';
         document.getElementById('rpg-hint').innerText = `Следуй в эту локацию. Подсказка: ${item.hint}`;
         document.getElementById('rpg-status').innerHTML = '❌ НЕ СОБРАН';
