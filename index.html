@@ -338,15 +338,15 @@
 <div id="app">
     <!-- ЭКРАН 1: Выбор персонажа -->
     <div id="screen-character" class="screen active-screen">
-        <img id="main-logo" class="logo" alt="Jägermeister" src="C:\Users\User\jager2.0\assets\logo.png">
+        <img id="main-logo" class="logo" alt="Jägermeister" src="./assets/logo.png">
         <h1 class="title">ВЫБЕРИ ОХОТНИКА</h1>
         <div class="characters">
             <div class="char-card pixel-border" data-char="hunter" onclick="selectCharacter('hunter')">
-                <img src="C:\Users\User\jager2.0\assets\hunter.png" alt="Hunter">
+                <img src="./assets/hunter.png" alt="Hunter">
                 <span>HUNTER</span>
             </div>
             <div class="char-card pixel-border" data-char="huntie" onclick="selectCharacter('huntie')">
-                <img src="C:\Users\User\jager2.0\assets\hanti.png" alt="Huntie">
+                <img src="./assets/hanti.png" alt="Huntie">
                 <span>HUNTIE</span>
             </div>
         </div>
@@ -414,9 +414,8 @@
     tg.setBackgroundColor('#1A1A1A');
 
     // Конфигурация и Данные
-    const HUNTER_IMG_URL = "https://api.dicebear.com/7.x/pixel-art/svg?seed=Hunter&backgroundColor=00843D";
-    const HUNTIE_IMG_URL = "https://api.dicebear.com/7.x/pixel-art/svg?seed=Huntie&backgroundColor=C8A44A";
-    
+    const HUNTER_IMG_URL = "./assets/hunter.png";
+    const HUNTIE_IMG_URL = "./assets/hanti.png";
     const INGREDIENTS = [
         { id: 1, name: "Горечавка",  icon: "🌿", qrCode: "JAGER_1" },
         { id: 2, name: "Имбирь",     icon: "🫚", qrCode: "JAGER_2" },
