@@ -77,12 +77,13 @@
 
         /* Пиксельный персонаж */
         .player-sprite {
-            position: absolute; width: 16px; height: 16px; z-index: 10; background: transparent;
-            box-shadow: 
-                4px 2px 0 #000, 6px 2px 0 #000, 2px 4px 0 #000, 4px 4px 0 #2E8B57, 
-                6px 4px 0 #2E8B57, 8px 4px 0 #000, 2px 6px 0 #000, 4px 6px 0 #2E8B57, 
-                6px 6px 0 #2E8B57, 8px 6px 0 #000, 4px 8px 0 #000, 6px 8px 0 #000, 
-                4px 10px 0 #8B4513, 6px 10px 0 #8B4513;
+            position: absolute; 
+            width: 32px;  /* Сделали нормальный размер */
+            height: 32px; 
+            z-index: 10; 
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
             transition: top 0.5s, left 0.5s;
             animation: walk 0.4s steps(2) infinite;
         }
@@ -104,8 +105,21 @@
             animation: slide-up 0.3s ease-out;
         }
         @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .rpg-modal-left { width: 50px; display: flex; justify-content: center; align-items: center; font-size: 35px; }
-        .rpg-modal-right { display: flex; flex-direction: column; flex-grow: 1; margin-left: 10px; }
+        .rpg-modal-left { 
+            width: 70px; /* Сделали чуть шире для большой иконки */
+            display: flex; 
+            justify-content: center; 
+            align-items: flex-start; /* Подняли иконку на уровень текста */
+            padding-top: 10px; /* Небольшой отступ сверху */
+            font-size: 45px; /* Сделали иконку/знак вопроса еще больше! */
+        }
+        .rpg-modal-right { 
+            display: flex; 
+            flex-direction: column; 
+            flex-grow: 1; 
+            margin-left: 10px; 
+            justify-content: flex-start; /* Текст выравнивается по верхнему краю */
+        }
         .rpg-title { color: #C8A44A; font-size: 10px; margin-bottom: 8px; line-height: 1.2; text-shadow: 1px 1px 0 #000; }
         .rpg-artifact { color: #fff; font-size: 7px; margin-bottom: 8px; }
         .rpg-hint { color: #aaa; font-size: 6px; line-height: 1.5; margin-bottom: 8px; }
@@ -820,14 +834,20 @@ function renderMap() {
 
     // Ставим персонажа
     const player = document.getElementById('player-sprite');
+    
+    // Подтягиваем картинку выбранного персонажа
+    const avatarUrl = STATE.character === 'huntie' ? './assets/hanti.png' : './assets/hunter.png';
+    player.style.backgroundImage = `url('${avatarUrl}')`;
+
+    // Сдвинули координаты (отступы +18px и 0px), чтобы он стоял рядом со зданием и не перекрывал цифру
     if (lastCollectedX !== null) {
         player.style.display = 'block';
-        player.style.left = `calc(${lastCollectedX}% + 12px)`;
-        player.style.top = `calc(${lastCollectedY}% + 12px)`;
+        player.style.left = `calc(${lastCollectedX}% + 18px)`;
+        player.style.top = `calc(${lastCollectedY}% + 0px)`;
     } else if (INGREDIENTS.length > 0) {
         player.style.display = 'block';
-        player.style.left = `calc(${INGREDIENTS[0].x}% + 12px)`;
-        player.style.top = `calc(${INGREDIENTS[0].y}% + 12px)`;
+        player.style.left = `calc(${INGREDIENTS[0].x}% + 18px)`;
+        player.style.top = `calc(${INGREDIENTS[0].y}% + 0px)`;
     }
 
     if (STATE.collectedIds.length === 8) {
@@ -835,8 +855,6 @@ function renderMap() {
     } else {
         document.getElementById('btn-elixir').style.display = 'none';
     }
-}
-
 function openModal(item, isCollected, stepNum) {
     document.getElementById('rpg-title').innerText = item.bar;
     
