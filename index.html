@@ -76,18 +76,19 @@
         .collected .bar-number { background: #C8A44A; color: #000; }
 
         /* Пиксельный персонаж */
+        /* Пиксельный персонаж без белого фона */
         .player-sprite {
             position: absolute; 
-            width: 32px;  /* Сделали нормальный размер */
+            width: 32px;  
             height: 32px; 
             z-index: 10; 
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
+            mix-blend-mode: screen; /* Магическим образом убирает черный или белый фон картинки */
             transition: top 0.5s, left 0.5s;
             animation: walk 0.4s steps(2) infinite;
         }
-
         /* Анимации */
         @keyframes question-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         @keyframes bar-glow { 0%, 100% { filter: drop-shadow(0 0 2px #C8A44A); } 50% { filter: drop-shadow(0 0 8px #FFD700); } }
@@ -106,20 +107,25 @@
         }
         @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .rpg-modal-left { 
-            width: 70px; /* Сделали чуть шире для большой иконки */
+            width: 70px; 
             display: flex; 
             justify-content: center; 
-            align-items: flex-start; /* Подняли иконку на уровень текста */
-            padding-top: 10px; /* Небольшой отступ сверху */
-            font-size: 45px; /* Сделали иконку/знак вопроса еще больше! */
+            align-items: center; /* Центрируем иконку/вопрос по вертикали */
+            font-size: 40px; 
         }
         .rpg-modal-right { 
             display: flex; 
             flex-direction: column; 
+            justify-content: center; /* Центрируем весь блок текста по вертикали */
             flex-grow: 1; 
             margin-left: 10px; 
-            justify-content: flex-start; /* Текст выравнивается по верхнему краю */
+            gap: 6px; /* Аккуратный одинаковый отступ между строками */
         }
+        .rpg-title { color: #C8A44A; font-size: 9px; margin: 0; line-height: 1.2; text-shadow: 1px 1px 0 #000; }
+        .rpg-artifact { color: #fff; font-size: 6px; margin: 0; }
+        .rpg-hint { color: #aaa; font-size: 5px; line-height: 1.4; margin: 0; }
+        .rpg-status { font-size: 7px; margin: 0; }
+        .rpg-buttons { display: flex; gap: 8px; margin-top: 5px; }
         .rpg-title { color: #C8A44A; font-size: 10px; margin-bottom: 8px; line-height: 1.2; text-shadow: 1px 1px 0 #000; }
         .rpg-artifact { color: #fff; font-size: 7px; margin-bottom: 8px; }
         .rpg-hint { color: #aaa; font-size: 6px; line-height: 1.5; margin-bottom: 8px; }
