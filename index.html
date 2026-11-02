@@ -700,7 +700,7 @@
         
         <button id="btn-elixir" class="btn" style="display: none; margin-top: 15px;" onclick="startElixirAnimation()">🧪 СОЗДАТЬ ЭЛИКСИР</button>
     </div>
-   
+
     <!-- ЭКРАН 4: Эликсир -->
     <div id="screen-elixir" class="screen">
         <div id="flash-overlay" class="flash"></div>
@@ -1121,7 +1121,7 @@
             overlay.appendChild(marker);
         });
 
-        // 6. Позиция Персонажа (Исправленные отступы)
+        // 6. Позиция Персонажа
         const hero = document.getElementById('map-hero');
         const avatarUrl = STATE.selectedCharacter === 'huntie' ? './assets/hanti.png' : './assets/hunter.png';
         hero.style.backgroundImage = `url('${avatarUrl}')`;
@@ -1135,37 +1135,33 @@
             document.getElementById('btn-elixir').style.display = 'none';
         }
     }
-    function openModal(item, isCollected, stepNum) {
-        const titleEl = document.getElementById('rpg-title');
-        if (!titleEl) return; // Защита, если модалка не найдена в HTML
 
-        titleEl.innerText = item.bar;
+    function openModal(item, isCollected, stepNum) {
+        document.getElementById('rpg-title').innerText = item.bar;
         
-        document.getElementById('rpg-artifact').innerText = isCollected ? `Артефакт: ${item.name} ${item.icon}` : 'Артефакт: Неизвестно';
-        document.getElementById('rpg-hint').innerText = isCollected ? item.hint : `Следуй в эту локацию. Подсказка: ${item.hint}`;
-        
-        const statusEl = document.getElementById('rpg-status');
         if (isCollected) {
-            statusEl.innerHTML = '✅ СОБРАН';
-            statusEl.style.color = "#4CAF50";
+            document.getElementById('rpg-artifact').innerText = `Артефакт: ${item.name} ${item.icon}`;
+            document.getElementById('rpg-hint').innerText = item.hint;
+            document.getElementById('rpg-status').innerHTML = '✅ СОБРАН';
+            document.getElementById('rpg-status').style.color = "#4CAF50";
             document.getElementById('btn-scan').style.display = 'none';
         } else {
-            statusEl.innerHTML = '❌ НЕ СОБРАН';
-            statusEl.style.color = "#ff4444";
+            document.getElementById('rpg-artifact').innerText = 'Артефакт: Неизвестно';
+            document.getElementById('rpg-hint').innerText = `Следуй в эту локацию. Подсказка: ${item.hint}`;
+            document.getElementById('rpg-status').innerHTML = '❌ НЕ СОБРАН';
+            document.getElementById('rpg-status').style.color = "#ff4444";
             document.getElementById('btn-scan').style.display = 'block';
         }
         
-        document.getElementById('iso-modal-overlay').style.display = 'flex';
-        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+        document.getElementById('rpg-modal-overlay').style.display = 'flex';
+        if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         }
     }
 
     function closeModal() {
-        document.getElementById('iso-modal-overlay').style.display = 'none';
+        document.getElementById('rpg-modal-overlay').style.display = 'none';
     }
-
-  
 
     function openScanner() {
         tg.showScanQrPopup({ text: "Наведи камеру на QR-код в баре" }, (scannedText) => {
@@ -1346,25 +1342,7 @@
         }
         tg.showAlert("Чит активирован: Собраны все ингредиенты!");
     }
-<!-- ИЗОМЕТРИЧЕСКОЕ МОДАЛЬНОЕ ОКНО -->
-    <div id="iso-modal-overlay" class="iso-modal-overlay" onclick="closeModal()">
-        <div class="iso-modal" onclick="event.stopPropagation()">
-            <div class="iso-modal-content">
-                <div class="iso-modal-left" id="iso-icon-container"></div>
-                <div class="iso-modal-right">
-                    <div class="rpg-title" id="rpg-title">BAR NAME</div>
-                    <div class="rpg-artifact" id="rpg-artifact">Артефакт: Неизвестно</div>
-                    <div class="rpg-hint" id="rpg-hint">Сходи в этот бар, чтобы узнать тайну.</div>
-                    <div class="rpg-status" id="rpg-status">❌ НЕ СОБРАН</div>
-                </div>
-            </div>
-            <div class="rpg-buttons">
-                <button class="btn rpg-btn" id="btn-scan" onclick="openScanner()">СКАНИРОВАТЬ QR</button>
-                <button class="btn rpg-btn" onclick="closeModal()">✕ ЗАКРЫТЬ</button>
-            </div>
-            <div class="iso-cursor">▼</div>
-        </div>
-    </div>
+
 </script>
 </body>
 </html>
