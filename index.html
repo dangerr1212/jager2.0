@@ -507,81 +507,134 @@
 
         #btn-to-map { display: none; }
 
-       /* --- ЭКРАН 3: КАРТА (CANVAS PIXEL ART) --- */
-        #screen-map { align-items: center; padding: 20px 0; background-color: var(--black); }
-        
-        #map-sky {
-            width: 340px; height: 40px; background: #050f05;
-            position: relative; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 10px; margin-bottom: 15px; overflow: hidden;
-            border: 2px solid #1a3a1a;
-        }
-        .sky-stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-        .sky-star { position: absolute; width: 2px; height: 2px; background: #fff; animation: twinkle 1.5s infinite alternate; }
-        .sky-logo { width: 24px; height: 24px; image-rendering: pixelated; position: relative; z-index: 2; }
-        .sky-progress { font: 8px 'Press Start 2P'; color: #C8A44A; position: relative; z-index: 2; }
-        
-        #map-canvas-wrapper {
-            width: 340px; height: 340px; position: relative; margin: 0 auto;
-            border: 3px solid #C8A44A;
-            box-shadow: 0 0 0 1px #8B6914, 0 0 0 5px #050f05, inset 0 0 40px rgba(0,0,0,0.6);
-        }
-        
-        .map-corner { position: absolute; width: 8px; height: 8px; background: #C8A44A; box-shadow: 4px 0 0 #C8A44A, 0 4px 0 #C8A44A; z-index: 30; }
-        .corner-tl { top: -2px; left: -2px; }
-        .corner-tr { top: -2px; right: -2px; transform: scaleX(-1); }
-        .corner-bl { bottom: -2px; left: -2px; transform: scaleY(-1); }
-        .corner-br { bottom: -2px; right: -2px; transform: scale(-1); }
-        
-        #map-canvas { position: absolute; top: 0; left: 0; width: 340px; height: 340px; image-rendering: pixelated; }
-        #map-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
-        
-        .bar-marker { position: absolute; display: flex; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer; transform: translate(-50%, -100%); }
-        .bar-marker-status { font: 8px 'Press Start 2P'; margin-bottom: 25px; text-shadow: 1px 1px 0 #000; }
-        .bar-marker.uncollected .bar-marker-status { color: #ff4444; animation: blinkStatus 0.8s steps(1) infinite; }
-        .bar-marker.collected .bar-marker-status { color: #C8A44A; animation: glowStatus 1.5s ease-in-out infinite; }
-        
-        .bar-marker-num { position: absolute; bottom: 10px; right: -15px; font: 7px 'Press Start 2P'; background: #00843D; border: 1px solid #C8A44A; padding: 2px 4px; color: #fff; }
-        .bar-marker-name { position: absolute; bottom: -8px; font: 5px 'Press Start 2P'; color: #C8A44A; text-shadow: 1px 1px 0 #000; background: rgba(0,0,0,0.75); padding: 1px 3px; white-space: nowrap; }
-        
-        #map-hero {
-            position: absolute; width: 28px; height: 36px; image-rendering: pixelated; z-index: 20;
-            background-size: contain; background-repeat: no-repeat; background-position: center; mix-blend-mode: screen;
-            animation: heroWalk 0.5s steps(2) infinite; transition: left 1s ease, top 1s ease;
-        }
-        #map-hero::after {
-            content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
-            width: 18px; height: 5px; background: rgba(0,0,0,0.4); border-radius: 50%; z-index: -1;
-        }
-        @keyframes heroWalk { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-        @keyframes blinkStatus { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes glowStatus { 0%,100% { text-shadow: 0 0 4px #C8A44A; } 50% { text-shadow: 0 0 12px #C8A44A; } }
+       // БЛОК 1 — вставить в <style> вместо старого CSS карты
+/* --- ЭКРАН 3: КАРТА --- */
+#screen-map { 
+    align-items: center; 
+    padding: 10px 0; 
+    background-color: #050f05; 
+}
 
-        .prizes {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
+#map-sky {
+    width: 340px; height: 44px; 
+    background: linear-gradient(180deg, #020802 0%, #050f05 100%);
+    position: relative; display: flex; 
+    justify-content: space-between; align-items: center;
+    padding: 0 10px; margin-bottom: 8px;
+    border: 2px solid #C8A44A;
+    border-bottom: none;
+    box-sizing: border-box;
+}
+.sky-stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+.sky-star { 
+    position: absolute; width: 2px; height: 2px; 
+    background: #fff; animation: twinkle 1.5s infinite alternate; 
+}
+.sky-logo { width: 28px; height: 28px; image-rendering: pixelated; position: relative; z-index: 2; }
+.sky-progress { font: 8px 'Press Start 2P'; color: #C8A44A; position: relative; z-index: 2; }
 
-        .prize-card {
-            flex: 1;
-            padding: 20px 10px;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
-        .prize-card.dim { opacity: 0.3; }
+#map-canvas-wrapper {
+    width: 340px; height: 340px; 
+    position: relative; margin: 0 auto;
+    border: 3px solid #C8A44A;
+    box-shadow: 
+        0 0 0 1px #8B6914, 
+        0 0 0 5px #050f05, 
+        inset 0 0 40px rgba(0,0,0,0.7);
+}
 
-        .prize-icon { font-size: 40px; margin-bottom: 10px; }
-        
-        #btn-reset {
-            margin-top: auto;
-            background: transparent;
-            color: #777;
-            box-shadow: none;
-            text-decoration: underline;
-            padding: 10px;
-            font-size: 10px;
-        }
+.map-corner { 
+    position: absolute; width: 10px; height: 10px; 
+    background: #C8A44A; 
+    box-shadow: 4px 0 0 #C8A44A, 0 4px 0 #C8A44A; 
+    z-index: 30; 
+}
+.corner-tl { top: -2px; left: -2px; }
+.corner-tr { top: -2px; right: -2px; transform: scaleX(-1); }
+.corner-bl { bottom: -2px; left: -2px; transform: scaleY(-1); }
+.corner-br { bottom: -2px; right: -2px; transform: scale(-1); }
+
+#map-canvas { 
+    position: absolute; top: 0; left: 0; 
+    width: 340px; height: 340px; 
+    image-rendering: pixelated; 
+}
+#map-overlay { 
+    position: absolute; top: 0; left: 0; 
+    width: 100%; height: 100%; 
+    pointer-events: none; z-index: 10; 
+}
+
+/* Маркеры баров */
+.bar-marker { 
+    position: absolute; 
+    display: flex; flex-direction: column; align-items: center; 
+    pointer-events: auto; cursor: pointer; 
+    transform: translate(-50%, -100%); 
+}
+.bar-marker-status { 
+    font: 9px 'Press Start 2P'; 
+    margin-bottom: 28px; 
+    text-shadow: 1px 1px 0 #000; 
+    line-height: 1;
+}
+.bar-marker.uncollected .bar-marker-status { 
+    color: #ff4444; 
+    animation: blinkStatus 0.8s steps(1) infinite; 
+}
+.bar-marker.collected .bar-marker-status { 
+    color: #C8A44A; 
+    animation: glowStatus 1.5s ease-in-out infinite; 
+}
+.bar-marker-num { 
+    position: absolute; 
+    bottom: 8px; right: -16px; 
+    font: 6px 'Press Start 2P'; 
+    background: #00843D; 
+    border: 1px solid #C8A44A; 
+    padding: 2px 4px; color: #fff; 
+}
+.bar-marker-name { 
+    position: absolute; bottom: -10px; 
+    font: 5px 'Press Start 2P'; 
+    color: #C8A44A; 
+    text-shadow: 1px 1px 0 #000; 
+    background: rgba(0,0,0,0.85); 
+    padding: 2px 4px; 
+    white-space: nowrap; 
+}
+
+/* Персонаж на карте */
+#map-hero {
+    position: absolute; width: 28px; height: 36px; 
+    image-rendering: pixelated; z-index: 20;
+    background-size: contain; background-repeat: no-repeat; 
+    background-position: center; mix-blend-mode: screen;
+    animation: heroWalk 0.5s steps(2) infinite; 
+    transition: left 1s ease, top 1s ease;
+}
+#map-hero::after {
+    content: ''; position: absolute; 
+    bottom: -4px; left: 50%; transform: translateX(-50%);
+    width: 18px; height: 5px; 
+    background: rgba(0,0,0,0.4); 
+    border-radius: 50%; z-index: -1;
+}
+
+@keyframes heroWalk { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes blinkStatus { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes glowStatus { 0%,100% { text-shadow: 0 0 4px #C8A44A; } 50% { text-shadow: 0 0 14px #C8A44A, 0 0 4px #fff; } }
+
+/* Кнопки ниже карты */
+.prizes { display: flex; gap: 15px; margin-top: 30px; }
+.prize-card { flex: 1; padding: 20px 10px; cursor: pointer; transition: opacity 0.3s; }
+.prize-card.dim { opacity: 0.3; }
+.prize-icon { font-size: 40px; margin-bottom: 10px; }
+#btn-reset {
+    margin-top: auto; background: transparent; color: #777;
+    box-shadow: none; text-decoration: underline; 
+    padding: 10px; font-size: 10px;
+}
     </style>
 </head>
 <body>
@@ -919,44 +972,72 @@
         }, 500);
     }
 
-    // --- CANVAS ВЕКТОРНАЯ И PIXEL ART КАРТА ---
-    const MAP_GRID = [
-        [ 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [ 2, 2, 2, 1, 1, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [ 2, 2, 1, 1, 0, 0, 6, 6, 0, 0, 5, 5, 0, 0, 0, 0, 0],
-        [ 2, 2, 1, 0, 0, 6, 6, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0],
-        [ 2, 1, 1, 0, 6, 6, 0, 0, 0, 5, 0, 0, 0, 0, 1, 1, 0],
-        [ 2, 2, 1, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
-        [ 2, 2, 6, 6, 0, 0, 4, 4, 4, 0, 0, 0, 1, 1, 0, 0, 0],
-        [ 2, 6, 6, 0, 0, 0, 4, 4, 0, 0, 0, 1, 1, 0, 0, 0, 0],
-        [ 2, 6, 0, 0, 0, 0, 4, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-        [ 6, 6, 0, 0, 5, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
-        [ 6, 0, 0, 5, 5, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0],
-        [ 0, 0, 0, 5, 0, 0, 0, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0],
-        [ 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0, 0],
-        [ 0, 0, 2, 2, 0, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
-        [ 0, 2, 2, 2, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
-        [ 2, 2, 2, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
-        [ 2, 2, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    ];
+  
+// Карта 17×17: 0=трава A, 1=трава B, 2=лес тёмный, 3=дорога,
+// 4=вода, 5=камень, 6=тропа золотая, 7=земля городская
+const MAP_GRID = [
+//   0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
+    [ 2, 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 0
+    [ 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 1
+    [ 2, 2, 2, 1, 1, 6, 6, 6, 0, 0, 0, 5, 5, 0, 0, 0, 0], // 2
+    [ 2, 2, 1, 1, 6, 6, 0, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0], // 3
+    [ 2, 2, 1, 6, 6, 0, 0, 0, 7, 7, 0, 0, 0, 0, 1, 1, 0], // 4
+    [ 2, 2, 6, 6, 0, 0, 0, 7, 7, 7, 0, 0, 0, 1, 1, 0, 0], // 5
+    [ 2, 6, 6, 0, 0, 4, 4, 7, 4, 4, 0, 0, 1, 1, 0, 0, 0], // 6
+    [ 2, 6, 0, 0, 0, 4, 4, 4, 4, 0, 0, 1, 1, 0, 0, 0, 0], // 7
+    [ 6, 6, 0, 0, 0, 0, 4, 4, 0, 0, 1, 1, 0, 0, 0, 0, 0], // 8
+    [ 6, 0, 0, 5, 5, 0, 6, 6, 0, 1, 1, 0, 0, 0, 0, 1, 0], // 9
+    [ 0, 0, 5, 5, 0, 0, 6, 6, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 10
+    [ 0, 0, 5, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0], // 11
+    [ 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 1, 1, 0, 0, 0], // 12
+    [ 0, 0, 2, 2, 0, 0, 0, 0, 0, 6, 6, 1, 1, 0, 0, 0, 0], // 13
+    [ 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 0], // 14
+    [ 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0], // 15
+    [ 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0], // 16
+];
 
-    function drawTile(ctx, col, row, type) {
-        const x = col * 20; const y = row * 20;
-        const tiles = {
-            'grass':  ['#1a4a1a','#163d16','#1f5a1f','#1a4a1a'],
-            'grass2': ['#163d16','#1a4a1a','#163d16','#1f5a1f'],
-            'forest': ['#0d2a0d','#0a200a','#0f300f','#0d2a0d'],
-            'road':   ['#8B6914','#C8A44A','#8B6914','#7a5a10'],
-            'water':  ['#0a2030','#0d2a40','#0a2030','#082028'],
-            'stone':  ['#3a3a3a','#444444','#333333','#3a3a3a'],
-            'path':   ['#6b4f1a','#C8A44A','#7a5a1a','#6b4f1a'],
-        };
-        const colors = tiles[type] || tiles['grass'];
-        ctx.fillStyle = colors[0]; ctx.fillRect(x,    y,    10, 10);
-        ctx.fillStyle = colors[1]; ctx.fillRect(x+10, y,    10, 10);
-        ctx.fillStyle = colors[2]; ctx.fillRect(x,    y+10, 10, 10);
-        ctx.fillStyle = colors[3]; ctx.fillRect(x+10, y+10, 10, 10);
+    
+function drawTile(ctx, col, row, type) {
+    const x = col * 20;
+    const y = row * 20;
+    const tiles = {
+        'grass':  ['#1c4d1c','#174017','#225222','#1c4d1c'],
+        'grass2': ['#174017','#1c4d1c','#174017','#225222'],
+        'forest': ['#0a1f0a','#071507','#0d280d','#0a1f0a'],
+        'road':   ['#8B6914','#C8A44A','#8B6914','#7a5a10'],
+        'water':  ['#0a2030','#0d2a40','#082838','#0a2030'],
+        'stone':  ['#3a3a3a','#484848','#2e2e2e','#3a3a3a'],
+        'path':   ['#7a5a1a','#C8A44A','#8B6620','#7a5a1a'],
+        'city':   ['#2a2218','#2e261c','#26200f','#2a2218'],
+    };
+    // 7 = city
+    const typeNames = ['grass','grass2','forest','road','water','stone','path','city'];
+    const colors = tiles[typeNames[type]] || tiles[type] || tiles['grass'];
+    
+    ctx.fillStyle = colors[0]; ctx.fillRect(x,    y,    10, 10);
+    ctx.fillStyle = colors[1]; ctx.fillRect(x+10, y,    10, 10);
+    ctx.fillStyle = colors[2]; ctx.fillRect(x,    y+10, 10, 10);
+    ctx.fillStyle = colors[3]; ctx.fillRect(x+10, y+10, 10, 10);
+    
+    // Детали текстуры
+    if (type === 2 || type === 'forest') { // forest — редкие светлые точки
+        if ((col + row) % 3 === 0) {
+            ctx.fillStyle = 'rgba(0,60,0,0.4)';
+            ctx.fillRect(x+4, y+4, 2, 2);
+        }
     }
+    if (type === 7 || type === 'city') { // city — мощёный камень
+        ctx.fillStyle = 'rgba(0,0,0,0.3)';
+        if (col % 2 === 0) ctx.fillRect(x, y+10, 20, 1);
+        else               ctx.fillRect(x+10, y, 1, 20);
+    }
+    if (type === 4 || type === 'water') { // water — блик
+        if ((col + row) % 4 === 0) {
+            ctx.fillStyle = 'rgba(100,200,255,0.15)';
+            ctx.fillRect(x+6, y+8, 8, 2);
+        }
+    }
+}
 
     function drawTree(ctx, x, y, size=1) {
         const s = size * 4; 
@@ -1063,17 +1144,19 @@
         ];
         treePositions.forEach(p => drawTree(ctx, p.col*20 + 2, p.row*20 + 2, 0.8));
 
-        // 4. Отрисовка зданий Баров
-        const BARS_ON_MAP = [
-            { id:1, x:120, y:20,  type:'A', drawFn: drawTavernA },
-            { id:2, x:240, y:60,  type:'B', drawFn: drawStoneBarB },
-            { id:3, x:100, y:130, type:'C', drawFn: drawTowerC },
-            { id:4, x:240, y:180, type:'D', drawFn: drawInnD },
-            { id:5, x:80,  y:240, type:'A', drawFn: drawTavernA },
-            { id:6, x:220, y:250, type:'B', drawFn: drawStoneBarB },
-            { id:7, x:90,  y:290, type:'C', drawFn: drawTowerC },
-            { id:8, x:210, y:295, type:'D', drawFn: drawInnD },
-        ];
+       
+// Координаты подобраны под новую карту:
+// левый лес → правый город → снова лево
+const BARS_ON_MAP = [
+    { id:1, x:90,  y:30,  drawFn: drawTavernA   }, // лесная таверна
+    { id:2, x:230, y:55,  drawFn: drawStoneBarB }, // каменный паб
+    { id:3, x:70,  y:120, drawFn: drawTowerC    }, // башня
+    { id:4, x:235, y:160, drawFn: drawInnD      }, // большой трактир
+    { id:5, x:60,  y:215, drawFn: drawTavernA   }, // таверна у воды
+    { id:6, x:210, y:235, drawFn: drawStoneBarB }, // паб в квартале
+    { id:7, x:80,  y:285, drawFn: drawTowerC    }, // башня на юге
+    { id:8, x:215, y:290, drawFn: drawInnD      }, // финальный трактир
+];
 
         BARS_ON_MAP.forEach(bar => {
             const isCollected = STATE.collectedIds.includes(bar.id);
