@@ -700,26 +700,7 @@
         
         <button id="btn-elixir" class="btn" style="display: none; margin-top: 15px;" onclick="startElixirAnimation()">🧪 СОЗДАТЬ ЭЛИКСИР</button>
     </div>
-    <!-- ИЗОМЕТРИЧЕСКОЕ МОДАЛЬНОЕ ОКНО -->
-    <div id="iso-modal-overlay" class="iso-modal-overlay" onclick="closeModal()">
-        <div class="iso-modal" onclick="event.stopPropagation()">
-            <div class="iso-modal-content">
-                <div class="iso-modal-left" id="iso-icon-container"></div>
-                <div class="iso-modal-right">
-                    <div class="rpg-title" id="rpg-title">BAR NAME</div>
-                    <div class="rpg-artifact" id="rpg-artifact">Артефакт: Неизвестно</div>
-                    <div class="rpg-hint" id="rpg-hint">Сходи в этот бар, чтобы узнать тайну.</div>
-                    <div class="rpg-status" id="rpg-status">❌ НЕ СОБРАН</div>
-                </div>
-            </div>
-            <div class="rpg-buttons">
-                <button class="btn rpg-btn" id="btn-scan" onclick="openScanner()">СКАНИРОВАТЬ QR</button>
-                <button class="btn rpg-btn" onclick="closeModal()">✕ ЗАКРЫТЬ</button>
-            </div>
-            <div class="iso-cursor">▼</div>
-        </div>
-    </div>
-
+   
     <!-- ЭКРАН 4: Эликсир -->
     <div id="screen-elixir" class="screen">
         <div id="flash-overlay" class="flash"></div>
@@ -1365,7 +1346,25 @@
         }
         tg.showAlert("Чит активирован: Собраны все ингредиенты!");
     }
-
+<!-- ИЗОМЕТРИЧЕСКОЕ МОДАЛЬНОЕ ОКНО -->
+    <div id="iso-modal-overlay" class="iso-modal-overlay" onclick="closeModal()">
+        <div class="iso-modal" onclick="event.stopPropagation()">
+            <div class="iso-modal-content">
+                <div class="iso-modal-left" id="iso-icon-container"></div>
+                <div class="iso-modal-right">
+                    <div class="rpg-title" id="rpg-title">BAR NAME</div>
+                    <div class="rpg-artifact" id="rpg-artifact">Артефакт: Неизвестно</div>
+                    <div class="rpg-hint" id="rpg-hint">Сходи в этот бар, чтобы узнать тайну.</div>
+                    <div class="rpg-status" id="rpg-status">❌ НЕ СОБРАН</div>
+                </div>
+            </div>
+            <div class="rpg-buttons">
+                <button class="btn rpg-btn" id="btn-scan" onclick="openScanner()">СКАНИРОВАТЬ QR</button>
+                <button class="btn rpg-btn" onclick="closeModal()">✕ ЗАКРЫТЬ</button>
+            </div>
+            <div class="iso-cursor">▼</div>
+        </div>
+    </div>
 </script>
 </body>
 </html>
