@@ -181,7 +181,11 @@
         @keyframes blinkStatus { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
         @keyframes glowStatus { 0%,100% { text-shadow: 0 0 4px #C8A44A; } 50% { text-shadow: 0 0 14px #C8A44A, 0 0 4px #fff; } }
 
-       /* Экраны 4 и 5 */
+       /* --- Экраны 4 и 5 --- */
+        #screen-map {
+            /* (ваши старые стили карты, если они тут были) */
+        }
+        
         #screen-elixir { 
             align-items: center; 
             background: radial-gradient(ellipse at 50% 60%, #0a1f0a 0%, #050805 100%);
@@ -191,7 +195,7 @@
             font-size: 80px; 
             transform: scale(0); opacity: 0; 
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            text-align:center;
+            text-align: center;
             filter: drop-shadow(0 0 20px #C8A44A);
         }
         .flash { 
@@ -199,11 +203,24 @@
             background: white; opacity: 0; pointer-events: none; z-index: 100; 
         }
 
-        /* Летящий ингредиент */
-       .flying-icon {
+        /* --- Увеличенный котёл (без пульсации) --- */
+        #cauldron-wrap {
+            position: relative; 
+            width: 220px; 
+            margin: 30px auto 0 auto; 
+            text-align: center;
+        }
+        #cauldron-img {
+            width: 210px; 
+            height: auto; 
+            image-rendering: pixelated;
+        }
+
+        /* --- Летящий ингредиент (увеличенный размер) --- */
+        .flying-icon {
             position: absolute;
-            width: 48px;
-            height: 48px;
+            width: 72px;  
+            height: 72px; 
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
             filter: drop-shadow(0 0 8px #C8A44A);
             z-index: 5;
@@ -220,15 +237,14 @@
             display: none;
         }
         .flying-icon .icon-fallback {
-            font-size: 32px;
-            line-height: 48px;
+            font-size: 48px; 
+            line-height: 72px;
             text-align: center;
             display: none;
         }
         .flying-icon img.error + .icon-fallback {
             display: block;
         }
-
 
         /* Пар */
         .steam {
@@ -279,7 +295,6 @@
             0%,100% { text-shadow: 0 0 10px #C8A44A; }
             50%      { text-shadow: 0 0 25px #C8A44A, 0 0 50px #FFD700; }
         }
-
         /* --- RPG МОДАЛЬНОЕ ОКНО --- */
         .rpg-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
@@ -848,17 +863,14 @@
                 el.appendChild(fallback);
                 field.appendChild(el);
 
-                // Через 300ms — полететь в центр котла
+                // Через 600ms — медленнее полететь в центр увеличенного котла
                 setTimeout(() => {
-                    // Котёл находится примерно по центру экрана
-                    // field начинается после title (~60px сверху экрана)
-                    // котёл на ~200px ниже field
-                    el.style.left      = '126px';
-                    el.style.top       = '155px';
+                    // Новые координаты центра увеличенного котла
+                    el.style.left      = '100px'; 
+                    el.style.top       = '145px'; 
                     el.style.opacity   = '0';
-                    el.style.width     = '12px';
-                    el.style.height    = '12px';
-
+                    el.style.width     = '16px';
+                    el.style.height    = '16px';
 
                     // Звук попадания
                     playBeep(300 + i * 40, 80);
@@ -872,10 +884,7 @@
                             liquid.style.transition = 'background 0.3s';
                         }, 150);
                     }
-                }, 300);
-
-            }, 600 + i * 420);
-        });
+                }, 600); // Увеличено до 600ms для более плавного полёта
 
         // Шаг 4: финальная вспышка и бутылка
         setTimeout(() => {
