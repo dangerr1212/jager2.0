@@ -181,16 +181,82 @@
         @keyframes blinkStatus { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
         @keyframes glowStatus { 0%,100% { text-shadow: 0 0 4px #C8A44A; } 50% { text-shadow: 0 0 14px #C8A44A, 0 0 4px #fff; } }
 
-        /* Экраны 4 и 5 */
-        .elixir-container { position: relative; width: 300px; height: 300px; }
-        .big-bottle { position: absolute; font-size: 80px; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.3s; }
-        .flash { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: white; opacity: 0; pointer-events: none; z-index: 10; }
-        
-        .prizes { display: flex; gap: 15px; margin-top: 30px; }
-        .prize-card { flex: 1; padding: 20px 10px; cursor: pointer; transition: opacity 0.3s; }
-        .prize-card.dim { opacity: 0.3; }
-        .prize-icon { font-size: 40px; margin-bottom: 10px; }
-        #btn-reset { margin-top: auto; background: transparent; color: #777; box-shadow: none; text-decoration: underline; padding: 10px; font-size: 10px; }
+       /* Экраны 4 и 5 */
+        #screen-elixir { 
+            align-items: center; 
+            background: radial-gradient(ellipse at 50% 60%, #0a1f0a 0%, #050805 100%);
+            overflow: hidden;
+        }
+        .big-bottle { 
+            font-size: 80px; 
+            transform: scale(0); opacity: 0; 
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align:center;
+            filter: drop-shadow(0 0 20px #C8A44A);
+        }
+        .flash { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: white; opacity: 0; pointer-events: none; z-index: 100; 
+        }
+
+        /* Летящий ингредиент */
+        .flying-icon {
+            position: absolute;
+            font-size: 28px;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 0 6px #C8A44A);
+            z-index: 5;
+        }
+
+        /* Пар */
+        .steam {
+            width: 8px; height: 30px;
+            background: linear-gradient(180deg, transparent, rgba(150,255,150,0.6), transparent);
+            border-radius: 50%;
+            animation: steamRise 1.2s ease-in-out infinite;
+        }
+        @keyframes steamRise {
+            0%   { transform: translateY(0) scaleX(1); opacity: 0.8; }
+            50%  { transform: translateY(-20px) scaleX(1.5); opacity: 0.4; }
+            100% { transform: translateY(-40px) scaleX(0.5); opacity: 0; }
+        }
+
+        /* Жидкость */
+        @keyframes liquidBubble {
+            0%,100% { transform: scaleY(1); background: #00843D; }
+            50%      { transform: scaleY(1.05); background: #00a84d; }
+        }
+
+        /* Пузыри */
+        .bubble {
+            position: absolute; bottom: 0;
+            width: 8px; height: 8px;
+            background: rgba(0,255,100,0.5);
+            border-radius: 50%;
+            animation: bubbleRise 1s ease-in infinite;
+        }
+        @keyframes bubbleRise {
+            0%   { transform: translateY(0); opacity: 0.8; }
+            100% { transform: translateY(-40px); opacity: 0; }
+        }
+
+        /* Огонь */
+        .flame {
+            width: 12px;
+            background: linear-gradient(180deg, #FFD700, #FF6600, #FF0000);
+            border-radius: 50% 50% 20% 20%;
+            animation: flicker 0.3s ease-in-out infinite alternate;
+        }
+        @keyframes flicker {
+            0%   { transform: scaleX(0.8) scaleY(1); }
+            100% { transform: scaleX(1.2) scaleY(0.9); }
+        }
+
+        /* Финальный текст */
+        @keyframes glowText {
+            0%,100% { text-shadow: 0 0 10px #C8A44A; }
+            50%      { text-shadow: 0 0 25px #C8A44A, 0 0 50px #FFD700; }
+        }
 
         /* --- RPG МОДАЛЬНОЕ ОКНО --- */
         .rpg-modal-overlay {
@@ -313,12 +379,114 @@
         />
     </div>
 
-    <!-- ЭКРАН 4 -->
+     <!-- ЭКРАН 4 -->
     <div id="screen-elixir" class="screen">
         <div id="flash-overlay" class="flash"></div>
-        <div class="elixir-container" id="elixir-container">
-            <div id="big-bottle" class="big-bottle">🍾</div>
+        
+        <!-- Заголовок -->
+        <div id="elixir-title" style="
+            text-align:center; color:#C8A44A; 
+            font:11px 'Press Start 2P'; 
+            margin-top: 30px; margin-bottom: 20px;
+            text-shadow: 0 0 10px #C8A44A;
+            display:none;
+        ">ВАРИМ ЭЛИКСИР...</div>
+
+        <!-- Ингредиенты летят сюда -->
+        <div id="ingredients-field" style="
+            position:relative; width:300px; height:160px;
+            margin: 0 auto;
+        "></div>
+
+        <!-- Котёл CSS pixel art -->
+        <div id="cauldron-wrap" style="
+            position:relative; width:200px; 
+            margin: 0 auto; display:none;
+        ">
+            <!-- Пар над котлом -->
+            <div id="steam-wrap" style="
+                display:flex; justify-content:center; gap:16px;
+                height:40px; align-items:flex-end;
+            ">
+                <div class="steam" style="animation-delay:0s"></div>
+                <div class="steam" style="animation-delay:0.4s"></div>
+                <div class="steam" style="animation-delay:0.8s"></div>
+            </div>
+
+            <!-- Котёл через CSS -->
+            <div id="cauldron" style="
+                width:120px; height:90px;
+                background:#2a2a2a;
+                border-radius:0 0 60px 60px;
+                margin:0 auto;
+                position:relative;
+                box-shadow:
+                    -4px 0 0 #1a1a1a,
+                    4px 0 0 #1a1a1a,
+                    0 4px 0 #1a1a1a,
+                    inset 0 -10px 0 #1a1a1a,
+                    0 0 20px rgba(0,200,0,0.3);
+            ">
+                <!-- Жидкость внутри -->
+                <div id="cauldron-liquid" style="
+                    position:absolute; bottom:8px; left:10px; right:10px;
+                    height:40px;
+                    background: #00843D;
+                    border-radius:0 0 50px 50px;
+                    animation: liquidBubble 0.8s ease-in-out infinite;
+                    overflow:hidden;
+                ">
+                    <!-- Пузыри -->
+                    <div class="bubble" style="left:20%; animation-delay:0s"></div>
+                    <div class="bubble" style="left:50%; animation-delay:0.3s"></div>
+                    <div class="bubble" style="left:75%; animation-delay:0.6s"></div>
+                </div>
+            </div>
+
+            <!-- Ручки котла -->
+            <div style="
+                position:absolute; top:20px; left:-14px;
+                width:16px; height:28px;
+                border:6px solid #3a3a3a;
+                border-radius:50%;
+                border-right:none;
+            "></div>
+            <div style="
+                position:absolute; top:20px; right:-14px;
+                width:16px; height:28px;
+                border:6px solid #3a3a3a;
+                border-radius:50%;
+                border-left:none;
+            "></div>
+
+            <!-- Ножки котла -->
+            <div style="display:flex; justify-content:space-around; width:100px; margin: 0 auto;">
+                <div style="width:8px;height:16px;background:#1a1a1a;"></div>
+                <div style="width:8px;height:16px;background:#1a1a1a;"></div>
+                <div style="width:8px;height:16px;background:#1a1a1a;"></div>
+            </div>
+
+            <!-- Огонь под котлом -->
+            <div style="display:flex; justify-content:center; gap:4px; margin-top:2px;">
+                <div class="flame" style="animation-delay:0s; height:20px;"></div>
+                <div class="flame" style="animation-delay:0.2s; height:28px;"></div>
+                <div class="flame" style="animation-delay:0.1s; height:22px;"></div>
+                <div class="flame" style="animation-delay:0.3s; height:18px;"></div>
+                <div class="flame" style="animation-delay:0.15s; height:24px;"></div>
+            </div>
         </div>
+
+        <!-- Финальная бутылка -->
+        <div id="big-bottle" class="big-bottle">🍾</div>
+        
+        <!-- Финальный текст -->
+        <div id="elixir-done-text" style="
+            display:none; text-align:center; 
+            color:#C8A44A; font:10px 'Press Start 2P';
+            margin-top:20px; line-height:1.8;
+            text-shadow: 0 0 10px #C8A44A;
+            animation: glowText 1.5s ease-in-out infinite;
+        ">ЭЛИКСИР СОЗДАН!<br>✨ JÄGERMEISTER ✨</div>
     </div>
 
     <!-- ЭКРАН 5 -->
@@ -651,20 +819,124 @@
     }
 
     function startElixirAnimation() {
-        STATE.gameCompleted = true; saveState(); navigateTo('screen-elixir');
-        const container = document.getElementById('elixir-container'); const radius = 120;
+        STATE.gameCompleted = true;
+        saveState();
+        navigateTo('screen-elixir');
+
+        const field    = document.getElementById('ingredients-field');
+        const cauldron = document.getElementById('cauldron-wrap');
+        const title    = document.getElementById('elixir-title');
+        const bottle   = document.getElementById('big-bottle');
+        const doneText = document.getElementById('elixir-done-text');
+
+        // Сброс
+        field.innerHTML = '';
+        bottle.style.transform = 'scale(0)';
+        bottle.style.opacity   = '0';
+        doneText.style.display = 'none';
+        cauldron.style.display = 'none';
+        title.style.display    = 'none';
+
+        // Шаг 1: показать заголовок
+        setTimeout(() => { title.style.display = 'block'; }, 200);
+
+        // Шаг 2: показать котёл
+        setTimeout(() => { cauldron.style.display = 'block'; }, 500);
+
+        // Шаг 3: расставить ингредиенты по полю и запустить полёт в котёл
+        const positions = [
+            {x: 10,  y: 10},  {x: 120, y: 5},   {x: 230, y: 10},
+            {x: 20,  y: 80},  {x: 260, y: 75},
+            {x: 50,  y: 130}, {x: 150, y: 120},  {x: 240, y: 130},
+        ];
+
         INGREDIENTS.forEach((ing, i) => {
-            const angle = (i / 8) * (2 * Math.PI); const el = document.createElement('div'); el.className = 'flying-icon'; el.innerText = ing.icon;
-            el.style.transform = `translate(${Math.cos(angle) * radius}px, ${Math.sin(angle) * radius}px)`; container.appendChild(el);
-            setTimeout(() => { el.style.transform = 'translate(0, 0)'; }, 100);
+            setTimeout(() => {
+                // Создать иконку
+                const el = document.createElement('div');
+                el.className = 'flying-icon';
+                el.innerText = ing.icon;
+                el.style.left = positions[i].x + 'px';
+                el.style.top  = positions[i].y + 'px';
+                field.appendChild(el);
+
+                // Через 300ms — полететь в центр котла
+                setTimeout(() => {
+                    // Котёл находится примерно по центру экрана
+                    // field начинается после title (~60px сверху экрана)
+                    // котёл на ~200px ниже field
+                    el.style.left     = '130px';
+                    el.style.top      = '160px';
+                    el.style.opacity  = '0';
+                    el.style.fontSize = '10px';
+
+                    // Звук попадания
+                    playBeep(300 + i * 40, 80);
+
+                    // Вспышка цвета в котле при попадании
+                    const liquid = document.getElementById('cauldron-liquid');
+                    if (liquid) {
+                        liquid.style.background = '#C8A44A';
+                        setTimeout(() => {
+                            liquid.style.background = '#00843D';
+                            liquid.style.transition = 'background 0.3s';
+                        }, 150);
+                    }
+                }, 300);
+
+            }, 600 + i * 250);
         });
-        [261, 329, 392, 523].forEach((freq, idx) => { setTimeout(() => playBeep(freq, 150), 100 + (idx * 200)); });
+
+        // Шаг 4: финальная вспышка и бутылка
         setTimeout(() => {
-            document.querySelectorAll('.flying-icon').forEach(el => el.style.opacity = '0');
-            const flash = document.getElementById('flash-overlay'); flash.style.opacity = '1';
-            setTimeout(() => { flash.style.transition = 'opacity 0.5s'; flash.style.opacity = '0'; const bottle = document.getElementById('big-bottle'); bottle.style.transform = 'translate(-50%, -50%) scale(1)'; bottle.style.opacity = '1'; }, 200);
-            setTimeout(() => { navigateTo('screen-victory'); }, 2500);
-        }, 800);
+            // Нарастающая победная мелодия
+            [261, 329, 392, 523, 659].forEach((freq, idx) => {
+                setTimeout(() => playBeep(freq, 180), idx * 180);
+            });
+
+            // Котёл вспыхивает
+            const liquid = document.getElementById('cauldron-liquid');
+            if (liquid) {
+                liquid.style.background = '#FFD700';
+                liquid.style.boxShadow  = '0 0 30px #FFD700';
+            }
+
+            // Белая вспышка
+            const flash = document.getElementById('flash-overlay');
+            flash.style.opacity = '1';
+            flash.style.transition = 'none';
+
+            setTimeout(() => {
+                flash.style.transition = 'opacity 0.6s';
+                flash.style.opacity    = '0';
+
+                // Скрыть котёл и поле
+                cauldron.style.display = 'none';
+                field.style.display    = 'none';
+                title.innerText = '✨ ГОТОВО! ✨';
+
+                // Показать бутылку
+                bottle.style.transform = 'scale(1)';
+                bottle.style.opacity   = '1';
+
+                // Показать текст
+                setTimeout(() => {
+                    doneText.style.display = 'block';
+                }, 400);
+
+                // Вибрация
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+
+            }, 300);
+
+        }, 600 + INGREDIENTS.length * 250 + 800);
+
+        // Шаг 5: переход на победный экран
+        setTimeout(() => {
+            navigateTo('screen-victory');
+        }, 600 + INGREDIENTS.length * 250 + 800 + 2800);
     }
 
     function initVictoryScreen() {
