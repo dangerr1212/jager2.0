@@ -300,6 +300,17 @@
             <div id="map-hero" style="display: none;"></div>
         </div>
         <button id="btn-elixir" class="btn" style="display: none; margin-top: 15px;" onclick="startElixirAnimation()">🧪 СОЗДАТЬ ЭЛИКСИР</button>
+    <!-- ВОТ СЮДА ВСТАВЛЯЕМ ЛОГОТИП -->
+        <img 
+            src="./assets/logo-bottom.png" 
+            alt="Jägermeister"
+            style="
+                display: block;
+                width: 200px;
+                margin: 12px auto 0;
+                image-rendering: pixelated;
+            "
+        />
     </div>
 
     <!-- ЭКРАН 4 -->
@@ -600,7 +611,11 @@
         const hero = document.getElementById('map-hero');
         hero.style.backgroundImage = `url('${STATE.selectedCharacter === 'huntie' ? './assets/hanti.png' : './assets/hunter.png'}')`;
         hero.style.display = 'block'; hero.style.left = `${lastCollectedX - 14}px`; hero.style.top = `${lastCollectedY - 18}px`;
-        document.getElementById('btn-elixir').style.display = STATE.collectedIds.length === 8 ? 'block' : 'none';
+        if (STATE.collectedIds.length === 8) {
+            document.getElementById('btn-elixir').style.display = 'block';
+        } else {
+            document.getElementById('btn-elixir').style.display = 'none';
+        }
     }
 
     function openModal(item, isCollected, stepNum) {
