@@ -6,711 +6,161 @@
     <title>Jägermeister 8-Bit Quest</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-        
-        /* --- ФОН ЭКРАНА ВЫБОРА (JÄGERMEISTER 8-BIT) --- */
-        #screen-character {
-            background: linear-gradient(
-                180deg,
-                #000d00 0%,      /* небо — почти чёрное */
-                #001a00 40%,     /* переход к лесу */
-                #002200 70%,     /* тёмный лес */
-                #001500 100%     /* земля */
-            );
-            position: relative;
-        }
+      @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-        /* Чтобы контент (лого, карточки, кнопки) был поверх фона и кликабельным */
-        #screen-character > *:not(.jager-bg-layer) {
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Контейнер для слоев фона */
-        .jager-bg-layer {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        /* Луна */
-        .moon {
-            position: absolute; 
-            top: 8%; 
-            right: 20%;
-            width: 28px; 
-            height: 28px;
-            background: #C8A44A;
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(200, 164, 74, 0.8), 0 0 30px rgba(200, 164, 74, 0.4);
-        }
-
-        /* Звёзды */
-        .jager-star {
-            width: 2px; 
-            height: 2px;
-            background: #ffffff;
-            position: absolute;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 1; }
-            50%      { opacity: 0.2; }
-        }
-
-        /* Деревья */
-        .trees-wrapper {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 100%;
-        }
-
-        .tree {
-            position: absolute;
-            bottom: 0;
-            width: 20px;
-        }
-
-        /* Ствол */
-        .tree::after {
-            content: '';
-            display: block;
-            width: 6px;
-            height: 16px;
-            background: #3d1f00;
-            margin: 0 auto;
-        }
-
-        /* Крона */
-        .tree::before {
-            content: '';
-            display: block;
-            width: 4px;
-            height: 4px;
-            background: #1a4a1a;
-            margin: 0 auto;
-            box-shadow:
-                /* ярус 1 (верхушка) */
-                -4px 4px 0 #1a4a1a,
-                0px  4px 0 #2a6a2a,
-                4px  4px 0 #1a4a1a,
-                /* ярус 2 */
-                -8px 8px 0 #1a4a1a,
-                -4px 8px 0 #2a6a2a,
-                0px  8px 0 #2a6a2a,
-                4px  8px 0 #2a6a2a,
-                8px  8px 0 #1a4a1a,
-                /* ярус 3 (широкий) */
-                -12px 12px 0 #1a4a1a,
-                -8px  12px 0 #2a6a2a,
-                -4px  12px 0 #1a5a1a,
-                0px   12px 0 #2a6a2a,
-                4px   12px 0 #1a5a1a,
-                8px   12px 0 #2a6a2a,
-                12px  12px 0 #1a4a1a,
-                /* ярус 4 (основание кроны) */
-                -12px 16px 0 #2a6a2a,
-                -8px  16px 0 #1a5a1a,
-                -4px  16px 0 #2a6a2a,
-                0px   16px 0 #1a5a1a,
-                4px   16px 0 #2a6a2a,
-                8px   16px 0 #1a5a1a,
-                12px  16px 0 #2a6a2a;
-        }
-
-        .tree:nth-child(1) { left: -2px;  height: 120px; transform: scale(1.4); }
-        .tree:nth-child(2) { left: 18px;  height: 90px;  transform: scale(1.0); }
-        .tree:nth-child(3) { left: 5px;   height: 105px; transform: scale(1.2); opacity: 0.7; }
-        .tree:nth-child(4) { right: -2px; height: 115px; transform: scale(1.3); }
-        .tree:nth-child(5) { right: 18px; height: 85px;  transform: scale(0.9); }
-        .tree:nth-child(6) { right: 5px;  height: 100px; transform: scale(1.1); opacity: 0.7; }
-
-        /* Земля */
-        .ground {
-            position: absolute; 
-            bottom: 0;
-            height: 16px; 
-            width: 100%;
-            background: #1a0a00;
-            box-shadow: 0 -2px 0 #2a1500, 0 -4px 0 #1a0a00;
-        }
-
-        /* Туман */
-        .fog {
-            position: absolute; 
-            bottom: 12px;
-            height: 20px; 
-            width: 100%;
-            background: linear-gradient(
-                180deg, 
-                transparent 0%, 
-                rgba(0, 60, 0, 0.3) 50%, 
-                rgba(0, 40, 0, 0.5) 100%
-            );
-        }
-
-        /* --- ЦВЕТА КАРТЫ --- */
-        :root {
-            --jager-black:     #050f05;
-            --jager-forest:    #1a4a1a;
-            --jager-forest2:   #0d2a0d;
-            --jager-gold:      #C8A44A;
-            --jager-gold-dark: #8B6914;
-            --jager-rock:      #3a3a3a;
-            --jager-rock-dark: #1a1a1a;
-            --jager-water:     #0a2030;
-            --jager-water2:    #0d2a40;
-            --jager-green:     #00843D;
-        }
-
-        /* --- RPG КАРТА WORLD MAP --- */
-        .map-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .map-header img { width: 40px; }
-
-        /* Прогресс-бар из 8 блоков */
-        #progress-blocks { display: flex; gap: 4px; width: 100%; justify-content: center; margin-bottom: 20px; }
-        .progress-block { flex: 1; height: 16px; background: #1a1a1a; border: 2px solid #333; }
-        .progress-block.filled { background: var(--jager-green); border-color: var(--jager-gold); animation: fillBlock 0.3s ease-out forwards; }
-        @keyframes fillBlock { from{opacity:0; transform:scaleX(0)} to{opacity:1; transform:scaleX(1)} }
-
-        #map-container {
-            width: 100%; height: 520px; position: relative; overflow: hidden;
-            background: var(--jager-forest);
-            background-image: 
-                radial-gradient(circle, #2a6a2a 1px, transparent 1px),
-                radial-gradient(circle, var(--jager-forest2) 1px, transparent 1px);
-            background-size: 8px 8px, 12px 12px; background-position: 0 0, 4px 4px;
-            border: 3px solid var(--jager-gold);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 0 1px var(--jager-gold-dark), 0 0 0 5px var(--jager-black);
-        }
-
-        /* Виньетка леса */
-        .forest-edge { position: absolute; pointer-events: none; z-index: 2; }
-        .forest-edge.top { top: 0; left: 0; width: 100%; height: 40px; background: linear-gradient(to bottom, var(--jager-black), transparent); }
-        .forest-edge.bottom { bottom: 0; left: 0; width: 100%; height: 40px; background: linear-gradient(to top, var(--jager-black), transparent); }
-        .forest-edge.left { top: 0; left: 0; width: 40px; height: 100%; background: linear-gradient(to right, var(--jager-black), transparent); }
-        .forest-edge.right { top: 0; right: 0; width: 40px; height: 100%; background: linear-gradient(to left, var(--jager-black), transparent); }
-
-        /* Горы */
-        .mountain-cluster { position: absolute; z-index: 3; }
-        .mountain {
-            width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent;
-            border-bottom: 20px solid var(--jager-rock); position: relative; display: inline-block; margin: 0 -5px;
-        }
-        .mountain::before {
-            content: ''; position: absolute; top: 8px; left: -5px;
-            border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 8px solid var(--jager-gold);
-        }
-        .mountain::after {
-            content: ''; position: absolute; top: 0; left: 6px;
-            border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 20px solid var(--jager-rock-dark); opacity: 0.5;
-        }
-        .mountains-tl { top: 5%; left: 2%; } .mountains-tr { top: 8%; right: 3%; }
-        .mountains-bl { bottom: 8%; left: 5%; } .mountains-br { bottom: 5%; right: 2%; }
-
-        /* Пиксельные ели */
-        .tree-pixel { position: absolute; z-index: 3; width: 8px; height: 14px; }
-        .tree-pixel::after { content: ''; display: block; width: 3px; height: 4px; background: #3d1f00; position: absolute; bottom: 0; left: 2.5px; }
-        .tree-pixel::before {
-            content: ''; display: block; width: 0; height: 0; position: absolute; bottom: 4px; left: 4px;
-            box-shadow: 
-                -2px -2px 0 var(--jager-forest), 0 -2px 0 #2a6a2a, 2px -2px 0 var(--jager-forest),
-                -4px 0 0 var(--jager-forest), -2px 0 0 #2a6a2a, 2px 0 0 #2a6a2a, 4px 0 0 var(--jager-forest),
-                -4px 2px 0 #2a6a2a, -2px 2px 0 #1a5a1a, 2px 2px 0 #1a5a1a, 4px 2px 0 #2a6a2a;
-        }
-
-        /* Таверны (Бары) */
-        .bar-pin {
-            position: absolute; width: 40px; height: 44px;
-            transform: translate(-50%, -50%); z-index: 6; cursor: pointer;
-        }
-        .tavern { position: relative; }
-        .tavern-roof {
-            width: 28px; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent;
-            border-bottom: 10px solid #8B0000; margin: 0 auto; position: relative;
-        }
-        .tavern-roof::after {
-            content: ''; position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
-            width: 4px; height: 4px; background: var(--jager-gold);
-        }
-        .tavern-body {
-            width: 24px; height: 18px; background: #5a3a1a; margin: 0 auto; position: relative;
-            box-shadow: inset -3px 0 0 #3a2010, inset 0 -2px 0 #3a2010;
-        }
-        .tavern-body::before {
-            content: ''; position: absolute; box-shadow: 4px 4px 0 0 #FFD700, 14px 4px 0 0 #FFD700;
-            width: 4px; height: 4px; background: #FFD700; top: 0; left: 0;
-        }
-        .tavern-body::after {
-            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 5px; height: 8px; background: #2a1500; border-top: 2px solid #8B4513;
-        }
-        .tavern-sign {
-            width: 20px; height: 6px; background: var(--jager-gold); margin: -1px auto 0;
-            border: 1px solid var(--jager-gold-dark); font-size: 4px; text-align: center; color: #000; line-height: 6px;
-        }
-        .bar-name {
-            font: 5px 'Press Start 2P'; color: var(--jager-gold); text-shadow: 1px 1px 0 #000;
-            text-align: center; margin-top: 2px; white-space: nowrap; background: rgba(0,0,0,0.7); padding: 1px 3px;
-        }
-        .bar-marker {
-            position: absolute; bottom: -2px; right: -4px; width: 12px; height: 12px; background: var(--jager-green);
-            border: 1px solid var(--jager-gold); font: 6px 'Press Start 2P'; color: #fff; text-align: center; line-height: 12px;
-        }
-
-        .bar-pin.uncollected .tavern { filter: grayscale(80%) brightness(0.6); }
-        .bar-status { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-        .bar-pin.uncollected .bar-status::after {
-            content: '?'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-            font: 8px 'Press Start 2P'; color: #ff4444; text-shadow: 1px 1px 0 #000;
-            animation: blinkStatus 0.8s steps(1) infinite;
-        }
-        .bar-pin.collected .tavern { filter: none; }
-        .bar-pin.collected .bar-status::after {
-            content: '✓'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-            font: 8px 'Press Start 2P'; color: var(--jager-gold);
-            animation: glowStatus 1.5s ease-in-out infinite;
-        }
-
-        @keyframes blinkStatus { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes glowStatus {
-            0%,100% { text-shadow: 0 0 4px var(--jager-gold); }
-            50% { text-shadow: 0 0 12px var(--jager-gold), 0 0 20px var(--jager-gold); }
-        }
-
-        /* Персонаж на карте */
-        .map-character {
-            position: absolute; z-index: 10; width: 24px; height: 32px;
-            image-rendering: pixelated; background-size: contain; background-repeat: no-repeat; background-position: center;
-            mix-blend-mode: screen; animation: mapWalk 0.5s steps(2) infinite;
-            transition: left 1s ease, top 1s ease;
-            transform: translate(-50%, -100%);
-        }
-        .map-character::after {
-            content: ''; width: 16px; height: 4px; background: rgba(0,0,0,0.4); border-radius: 50%;
-            position: absolute; bottom: -2px; left: 4px; z-index: -1;
-        }
-        @keyframes mapWalk {
-            0%,100% { transform: translate(-50%, -100%) translateY(0); }
-            50% { transform: translate(-50%, -100%) translateY(-4px); }
-        }
-
-        /* Туман войны */
-        .fog-of-war {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(5,15,5,0.4) 70%, rgba(5,15,5,0.8) 100%);
-            pointer-events: none; z-index: 8;
-        }
-        @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
-        .rpg-modal-right { 
-            display: flex; 
-            flex-direction: column; 
-            width: 100%;
-            align-items: center; 
-            text-align: center;
-            justify-content: flex-start;
-        }
-        
-        .rpg-title { color: #C8A44A; font-size: 16px; margin: 0 0 10px 0; line-height: 1.3; text-shadow: 1px 1px 0 #000; }
-        .rpg-artifact { color: #fff; font-size: 12px; margin: 0 0 10px 0; line-height: 1.4; }
-        .rpg-hint { color: #ccc; font-size: 11px; line-height: 1.5; margin: 0 0 12px 0; max-width: 95%; }
-        .rpg-status { font-size: 12px; margin: 0 0 15px 0; line-height: 1.4; font-weight: bold; }
-        
-        .rpg-buttons { 
-            display: flex; 
-            gap: 14px; 
-            width: 100%;
-            max-width: 320px; 
-            margin: 0 auto;
-            justify-content: center; 
-            margin-top: auto; 
-        }
-        .rpg-modal .btn, .rpg-btn { 
-            font-size: 10px !important; 
-            padding: 14px 10px !important; 
-            flex: 1 !important; 
-            text-align: center !important; 
-            background: #1b4d3e !important; 
-            color: #ffffff !important;
-            border: 2px solid #C8A44A !important;
-            box-shadow: inset 2px 2px 0 #2e8b57, inset -2px -2px 0 #0d231c !important;
-            cursor: pointer;
-            display: block !important;
-        }
-
-        /* Статусы */
-        .uncollected .indicator {
-            animation: blink 1.5s infinite step-end;
-        }
-        .uncollected .indicator::before { content: '❓'; }
-
-        .collected .building-icon {
-            filter: grayscale(0%) sepia(100%) hue-rotate(5deg) saturate(300%); 
-            animation: collected-glow 2s infinite;
-            border-radius: 50%;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        @keyframes collected-glow {
-            0%, 100% { box-shadow: 0 0 5px #C8A44A; background-color: rgba(200, 164, 74, 0.2); }
-            50% { box-shadow: 0 0 15px #FFD700; background-color: rgba(255, 215, 0, 0.4); }
-        }
-
+        /* --- БАЗОВЫЕ ПЕРЕМЕННЫЕ И ЦВЕТА --- */
         :root {
             --green: #00843D;
             --gold: #C8A44A;
             --black: #1A1A1A;
             --white: #F5F5F5;
             --dim: rgba(26, 26, 26, 0.85);
+
+            /* Цвета изометрической карты */
+            --jager-black:     #050f05;
+            --jager-forest:    #1a4a1a;
+            --jager-forest2:   #0d2a0d;
+            --jager-gold-dark: #8B6914;
+            --jager-rock:      #3a3a3a;
+            --jager-rock-dark: #1a1a1a;
+            --jager-water:     #0a2030;
+            --jager-water2:    #0d2a40;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--black); color: var(--white); font-family: 'Press Start 2P', cursive; font-size: 12px; overflow: hidden; line-height: 1.5; }
+        #app { width: 100vw; height: 100vh; padding-top: env(safe-area-inset-top, 20px); padding-bottom: env(safe-area-inset-bottom, 20px); display: flex; flex-direction: column; position: relative; }
+        .screen { display: none; flex-direction: column; width: 100%; height: 100%; padding: 20px; position: absolute; top: 0; left: 0; background-color: var(--black); }
+        .active-screen { display: flex; }
 
-        body {
-            background-color: var(--black);
-            color: var(--white);
-            font-family: 'Press Start 2P', cursive;
-            font-size: 12px;
-            overflow: hidden;
-            line-height: 1.5;
-        }
+        /* --- УТИЛИТЫ И КОМПОНЕНТЫ --- */
+        .pixel-border { box-shadow: -4px 0 0 0 var(--green), 4px 0 0 0 var(--green), 0 -4px 0 0 var(--green), 0 4px 0 0 var(--green); margin: 4px; background: var(--black); }
+        .pixel-border.gold { box-shadow: -4px 0 0 0 var(--gold), 4px 0 0 0 var(--gold), 0 -4px 0 0 var(--gold), 0 4px 0 0 var(--gold); }
+        .btn { background-color: var(--green); color: var(--white); border: none; padding: 15px; font-family: inherit; font-size: 14px; text-align: center; cursor: pointer; box-shadow: -4px 0 0 0 var(--white), 4px 0 0 0 var(--white), 0 -4px 0 0 var(--white), 0 4px 0 0 var(--white); margin: 20px auto; display: block; width: 80%; text-transform: uppercase; }
+        .btn:active { transform: scale(0.95); }
+        .title { text-align: center; color: var(--gold); margin-bottom: 20px; font-size: 16px; }
+        .logo { width: 120px; margin: 0 auto 20px; image-rendering: pixelated; }
+        #bottom-logo { width: 80%; max-width: 220px; margin: 40px auto 20px auto; display: block; }
 
-        #app {
-            width: 100vw;
-            height: 100vh;
-            padding-top: env(safe-area-inset-top, 20px);
-            padding-bottom: env(safe-area-inset-bottom, 20px);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
+        /* --- ЭКРАН 1: ВЫБОР ПЕРСОНАЖА --- */
+        #screen-character { background: linear-gradient(180deg, #000d00 0%, #001a00 40%, #002200 70%, #001500 100%); position: relative; }
+        #screen-character > *:not(.jager-bg-layer) { position: relative; z-index: 10; }
+        .jager-bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; }
+        .moon { position: absolute; top: 8%; right: 20%; width: 28px; height: 28px; background: #C8A44A; border-radius: 50%; box-shadow: 0 0 15px rgba(200, 164, 74, 0.8), 0 0 30px rgba(200, 164, 74, 0.4); }
+        .jager-star { width: 2px; height: 2px; background: #ffffff; position: absolute; }
+        @keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+        .trees-wrapper { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; }
+        .tree { position: absolute; bottom: 0; width: 20px; }
+        .tree::after { content: ''; display: block; width: 6px; height: 16px; background: #3d1f00; margin: 0 auto; }
+        .tree::before { content: ''; display: block; width: 4px; height: 4px; background: #1a4a1a; margin: 0 auto; box-shadow: -4px 4px 0 #1a4a1a, 0px 4px 0 #2a6a2a, 4px 4px 0 #1a4a1a, -8px 8px 0 #1a4a1a, -4px 8px 0 #2a6a2a, 0px 8px 0 #2a6a2a, 4px 8px 0 #2a6a2a, 8px 8px 0 #1a4a1a, -12px 12px 0 #1a4a1a, -8px 12px 0 #2a6a2a, -4px 12px 0 #1a5a1a, 0px 12px 0 #2a6a2a, 4px 12px 0 #1a5a1a, 8px 12px 0 #2a6a2a, 12px 12px 0 #1a4a1a, -12px 16px 0 #2a6a2a, -8px 16px 0 #1a5a1a, -4px 16px 0 #2a6a2a, 0px 16px 0 #1a5a1a, 4px 16px 0 #2a6a2a, 8px 16px 0 #1a5a1a, 12px 16px 0 #2a6a2a; }
+        .tree:nth-child(1) { left: -2px; height: 120px; transform: scale(1.4); }
+        .tree:nth-child(2) { left: 18px; height: 90px; transform: scale(1.0); }
+        .tree:nth-child(3) { left: 5px; height: 105px; transform: scale(1.2); opacity: 0.7; }
+        .tree:nth-child(4) { right: -2px; height: 115px; transform: scale(1.3); }
+        .tree:nth-child(5) { right: 18px; height: 85px; transform: scale(0.9); }
+        .tree:nth-child(6) { right: 5px; height: 100px; transform: scale(1.1); opacity: 0.7; }
+        .ground { position: absolute; bottom: 0; height: 16px; width: 100%; background: #1a0a00; box-shadow: 0 -2px 0 #2a1500, 0 -4px 0 #1a0a00; }
+        .fog { position: absolute; bottom: 12px; height: 20px; width: 100%; background: linear-gradient(180deg, transparent 0%, rgba(0, 60, 0, 0.3) 50%, rgba(0, 40, 0, 0.5) 100%); }
 
-        .screen {
-            display: none;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-            padding: 20px;
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: var(--black);
-        }
+        #screen-character .characters { display: flex; justify-content: space-between; gap: 15px; margin-top: 30px; }
+        .char-card { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; cursor: pointer; transition: transform 0.2s; background: radial-gradient(ellipse at 50% 40%, #1a3a1a 0%, #050f05 100%) !important; }
+        .char-card img { width: 80px; height: 80px; image-rendering: pixelated; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8)); }
+        @keyframes blinkGold { 0%, 100% { box-shadow: -4px 0 0 0 var(--gold), 4px 0 0 0 var(--gold), 0 -4px 0 0 var(--gold), 0 4px 0 0 var(--gold); } 50% { box-shadow: -4px 0 0 0 transparent, 4px 0 0 0 transparent, 0 -4px 0 0 transparent, 0 4px 0 0 transparent; } }
+        .char-card.selected { animation: blinkGold 0.3s 2 forwards; }
 
-        .active-screen {
-            display: flex;
-        }
-
-        /* Утилиты и компоненты */
-        .pixel-border {
-            box-shadow: 
-                -4px 0 0 0 var(--green),
-                4px 0 0 0 var(--green),
-                0 -4px 0 0 var(--green),
-                0 4px 0 0 var(--green);
-            margin: 4px;
-            background: var(--black);
-        }
-
-        .pixel-border.gold {
-            box-shadow: 
-                -4px 0 0 0 var(--gold),
-                4px 0 0 0 var(--gold),
-                0 -4px 0 0 var(--gold),
-                0 4px 0 0 var(--gold);
-        }
-
-        .btn {
-            background-color: var(--green);
-            color: var(--white);
-            border: none;
-            padding: 15px;
-            font-family: inherit;
-            font-size: 14px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 
-                -4px 0 0 0 var(--white),
-                4px 0 0 0 var(--white),
-                0 -4px 0 0 var(--white),
-                0 4px 0 0 var(--white);
-            margin: 20px auto;
-            display: block;
-            width: 80%;
-            text-transform: uppercase;
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        .title {
-            text-align: center;
-            color: var(--gold);
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-
-        .logo {
-            width: 120px;
-            margin: 0 auto 20px;
-            image-rendering: pixelated;
-        }
-
-        #bottom-logo {
-            width: 80%;
-            max-width: 220px;
-            margin: 40px auto 20px auto;
-            display: block;
-        }
-
-        #screen-character .characters {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .char-card {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            background: radial-gradient(ellipse at 50% 40%, #1a3a1a 0%, #050f05 100%) !important;
-        }
-
-      .char-card img {
-            width: 80px;
-            height: 80px;
-            image-rendering: pixelated;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
-        }
-
-        @keyframes blinkGold {
-            0%, 100% { box-shadow: -4px 0 0 0 var(--gold), 4px 0 0 0 var(--gold), 0 -4px 0 0 var(--gold), 0 4px 0 0 var(--gold); }
-            50% { box-shadow: -4px 0 0 0 transparent, 4px 0 0 0 transparent, 0 -4px 0 0 transparent, 0 4px 0 0 transparent; }
-        }
-
-        .char-card.selected {
-            animation: blinkGold 0.3s 2 forwards;
-        }
-
-        /* Экран 2 - Квест */
-        #screen-quest {
-            background-color: #0b0b0b;
-        }
-
-        .star {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: white;
-            opacity: 0.5;
-        }
-
-       /* Анимация ходьбы для экрана квеста */
-        @keyframes walkForwardBack {
-            0%   { transform: translateX(0px) scaleX(1); }
-            25%  { transform: translateX(12px) scaleX(1); }
-            50%  { transform: translateX(12px) scaleX(-1); }
-            75%  { transform: translateX(0px) scaleX(-1); }
-            100% { transform: translateX(0px) scaleX(1); }
-        }
-
-        #quest-avatar {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 80px;  /* Было 48px */
-            height: 80px; /* Было 48px */
-            image-rendering: pixelated;
-            animation: walkForwardBack 2.4s steps(4) infinite;
-        }
-
-        /* Стиль для нижнего логотипа на экране квеста */
-        .logo-bottom-quest {
-            display: block;
-            width: 180px;
-            margin: 16px auto 0;
-            image-rendering: pixelated;
-        }
-
-        #quest-text-container {
-            margin-top: 80px;
-            min-height: 200px;
-            line-height: 1.8;
-            font-size: 14px;
-        }
-
+        /* --- ЭКРАН 2: КВЕСТ --- */
+        #screen-quest { background-color: #0b0b0b; }
+        .star { position: absolute; width: 4px; height: 4px; background: white; opacity: 0.5; }
+        @keyframes walkForwardBack { 0% { transform: translateX(0px) scaleX(1); } 25% { transform: translateX(12px) scaleX(1); } 50% { transform: translateX(12px) scaleX(-1); } 75% { transform: translateX(0px) scaleX(-1); } 100% { transform: translateX(0px) scaleX(1); } }
+        #quest-avatar { position: absolute; top: 20px; right: 20px; width: 80px; height: 80px; image-rendering: pixelated; animation: walkForwardBack 2.4s steps(4) infinite; }
+        #quest-text-container { margin-top: 80px; min-height: 200px; line-height: 1.8; font-size: 14px; }
         #btn-to-map { display: none; }
+        .logo-bottom-quest { display: block; width: 180px; margin: 16px auto 0; image-rendering: pixelated; }
 
-        /* Экран 3 - Карта */
-        .map-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
+        /* --- ЭКРАН 3: ИЗОМЕТРИЧЕСКАЯ КАРТА --- */
+        .map-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
         .map-header img { width: 40px; }
+        #progress-blocks { display: flex; gap: 4px; width: 100%; justify-content: center; margin-bottom: 20px; }
+        .progress-block { flex: 1; height: 16px; background: #1a1a1a; border: 2px solid #333; }
+        .progress-block.filled { background: var(--green); border-color: var(--gold); animation: fillBlock 0.3s ease-out forwards; }
+        @keyframes fillBlock { from{opacity:0; transform:scaleX(0)} to{opacity:1; transform:scaleX(1)} }
+
+        .map-container { width: 100%; height: 520px; position: relative; overflow: hidden; background: var(--jager-forest); border: 4px solid var(--gold); box-shadow: inset 0 0 30px rgba(0,0,0,0.6), 0 0 0 2px var(--jager-gold-dark), 0 0 0 6px var(--jager-black), 4px 4px 0 6px #000; }
+        .map-decor { position: absolute; color: var(--gold); font-size: 12px; z-index: 10; }
+        .map-decor.top-left { top: 4px; left: 4px; }
+        .map-decor.bottom-right { bottom: 4px; right: 4px; }
+
+        #iso-terrain, #iso-river { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .iso-tile { width: 64px; height: 32px; position: absolute; transform: rotate(0deg); clip-path: polygon(50% 0%, 100% 25%, 50% 50%, 0% 25%); }
+        .tile-grass { background: var(--jager-forest); }
+        .tile-grass2 { background: var(--jager-forest2); }
+        .tile-water { background: var(--jager-water); }
+        .tile-water::after { content: ''; position: absolute; width: 60%; height: 1px; top: 40%; left: 20%; background: rgba(100,180,255,0.3); animation: waterShimmer 2s ease-in-out infinite; }
+        @keyframes waterShimmer { 0%,100% { opacity: 0.3; transform: translateX(0); } 50% { opacity: 0.8; transform: translateX(4px); } }
+
+        #iso-trees { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+        .iso-tree { position: absolute; width: 24px; height: 34px; transform: translate(-50%, -100%); }
+        .iso-tree::before { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 20px; height: 8px; background: rgba(0,0,0,0.4); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+        .iso-tree-trunk { width: 4px; height: 10px; background: #3d1f00; margin: 0 auto; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); }
+        .iso-tree-top { width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-bottom: 24px solid var(--jager-forest); position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); filter: drop-shadow(-2px 2px 0 var(--jager-forest2)); }
+        .iso-tree-top::before { content: ''; position: absolute; top: 8px; left: -8px; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 16px solid #2a6a2a; }
+        .iso-tree-top::after { content: ''; position: absolute; top: 14px; left: -5px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 10px solid #3a8a3a; }
+
+        .bar-pin { position: absolute; width: 48px; height: 60px; transform: translate(-50%, -50%); z-index: 6; cursor: pointer; }
+        .iso-building { position: absolute; width: 48px; height: 60px; }
+        .iso-building::before { content: ''; position: absolute; bottom: -8px; left: -4px; width: 56px; height: 14px; background: rgba(0,0,0,0.35); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+        .iso-roof { position: absolute; top: 0; left: 0; width: 48px; height: 20px; background: #8B0000; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); background-image: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0,0,0,0.2) 6px, rgba(0,0,0,0.2) 7px); }
+        .iso-roof::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--gold); box-shadow: 0 4px 0 var(--gold), 0 8px 0 var(--gold); }
+        .iso-front { position: absolute; bottom: 0; left: 0; width: 24px; height: 36px; background: #5a3a1a; transform: skewY(26.57deg); transform-origin: left bottom; background-image: linear-gradient(transparent 25%, #FFD700 25%, #FFD700 45%, transparent 45%), linear-gradient(transparent 25%, #FFD700 25%, #FFD700 45%, transparent 45%); background-size: 8px 100%, 8px 100%; background-position: 4px 0, 14px 0; background-repeat: no-repeat; }
+        .iso-side { position: absolute; bottom: 0; right: 0; width: 24px; height: 36px; background: #3a2010; transform: skewY(-26.57deg); transform-origin: right bottom; }
+        .iso-sign { position: absolute; top: 22px; left: 4px; background: var(--gold); color: #000; font: 4px 'Press Start 2P'; padding: 1px 2px; z-index: 2; white-space: nowrap; box-shadow: 1px 1px 0 var(--jager-gold-dark); }
         
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: #333;
-            margin-bottom: 20px;
-            box-shadow: 0 0 0 2px var(--white);
-        }
+        .bar-status { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font: 8px 'Press Start 2P'; z-index: 10; }
+        .bar-pin.uncollected .bar-status::after { content: '?'; color: #ff4444; text-shadow: 1px 1px 0 #000; animation: blink 0.8s steps(1) infinite; }
+        .bar-pin.collected .iso-building { filter: drop-shadow(0 0 6px var(--gold)); animation: collectedGlow 2s ease-in-out infinite; }
+        .bar-pin.collected .bar-status::after { content: '✓'; color: var(--gold); }
+        @keyframes collectedGlow { 0%,100% { filter: drop-shadow(0 0 4px var(--gold)); } 50% { filter: drop-shadow(0 0 12px var(--gold)); } }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
 
-        .progress-fill {
-            height: 100%;
-            background: var(--green);
-            width: 0%;
-            transition: width 0.3s;
-        }
+        .bar-number { position: absolute; bottom: -4px; right: -4px; width: 14px; height: 14px; background: var(--green); border: 1px solid var(--gold); color: #fff; font: 6px 'Press Start 2P'; text-align: center; line-height: 14px; z-index: 10; }
+        .bar-name { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font: 5px 'Press Start 2P'; color: var(--gold); white-space: nowrap; text-shadow: 1px 1px 0 #000; background: rgba(0,0,0,0.75); padding: 1px 3px; z-index: 11; }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 30px;
-        }
+        .map-hero { position: absolute; z-index: 20; width: 28px; height: 36px; image-rendering: pixelated; background-size: contain; background-repeat: no-repeat; background-position: center; mix-blend-mode: screen; animation: isoWalk 0.6s steps(4) infinite; transition: left 1.2s cubic-bezier(0.4,0,0.2,1), top 1.2s cubic-bezier(0.4,0,0.2,1); transform: translate(-50%, -100%); }
+        .map-hero::after { content: ''; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%); width: 18px; height: 6px; background: rgba(0,0,0,0.4); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); z-index: -1; }
+        @keyframes isoWalk { 0%,100% { transform: translate(-50%, -100%) translateY(0) scaleX(1); } 25% { transform: translate(-50%, -100%) translateY(-3px) scaleX(1); } 50% { transform: translate(-50%, -100%) translateY(0) scaleX(1); } 75% { transform: translate(-50%, -100%) translateY(-3px) scaleX(1); } }
 
-        .slot {
-            aspect-ratio: 1;
-            background: #222;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 8px;
-            text-align: center;
-            box-shadow: inset 0 0 0 2px #444;
-        }
+        /* --- ИЗОМЕТРИЧЕСКОЕ МОДАЛЬНОЕ ОКНО --- */
+        .iso-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); display: none; justify-content: flex-start; align-items: flex-end; z-index: 1000; }
+        .iso-modal { width: 100%; height: 38%; background: #0d1a0d; border-top: 3px solid var(--gold); box-shadow: 0 -4px 0 var(--jager-gold-dark), 0 -6px 0 var(--jager-black); display: flex; flex-direction: column; padding: 15px; position: relative; box-sizing: border-box; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .iso-modal-content { display: flex; flex-direction: row; width: 100%; margin-bottom: 10px; }
+        .iso-modal-left { width: 50px; display: flex; justify-content: center; align-items: center; position: relative; }
+        .iso-modal-left .iso-building { position: relative; width: 40px; height: 50px; transform: scale(0.8); left: auto; top: auto; bottom: auto; right: auto; margin-top: 10px; }
+        .iso-modal-right { display: flex; flex-direction: column; flex-grow: 1; margin-left: 15px; justify-content: flex-start; text-align: left; }
+        .rpg-title { color: var(--gold); font-size: 14px; margin: 0 0 8px 0; line-height: 1.2; text-shadow: 1px 1px 0 #000; }
+        .rpg-artifact { color: #fff; font-size: 10px; margin: 0 0 8px 0; line-height: 1.4; }
+        .rpg-hint { color: #ccc; font-size: 9px; line-height: 1.5; margin: 0 0 10px 0; }
+        .rpg-status { font-size: 10px; margin: 0; line-height: 1.4; font-weight: bold; }
+        .rpg-buttons { display: flex; gap: 10px; width: 100%; justify-content: center; margin-top: auto; }
+        .rpg-modal .btn, .rpg-btn { font-size: 8px !important; padding: 12px 10px !important; flex: 1 !important; text-align: center !important; background: var(--green) !important; color: #ffffff !important; border: 2px solid var(--gold) !important; box-shadow: inset 2px 2px 0 #2e8b57, inset -2px -2px 0 #0d231c !important; cursor: pointer; display: block !important; }
+        .iso-cursor { position: absolute; bottom: 10px; right: 15px; color: #fff; font-size: 10px; animation: blink 1s infinite; }
 
-        .slot.revealed {
-            animation: pixelReveal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            background: var(--black);
-        }
-
-        .slot-icon { font-size: 24px; margin-bottom: 5px; }
-
-        @keyframes pixelReveal {
-            from { opacity: 0; transform: scale(0.5); }
-            to { opacity: 1; transform: scale(1); box-shadow: 0 0 0 2px var(--gold); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        #btn-elixir {
-            display: none;
-            background-color: var(--gold);
-            color: var(--black);
-            animation: pulse 1.5s infinite;
-        }
-
-        /* Экран 4 - Эликсир */
-        #screen-elixir {
-            justify-content: center;
-            align-items: center;
-        }
-
-        .elixir-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
-        }
-
-        .flying-icon {
-            position: absolute;
-            font-size: 30px;
-            transition: transform 0.6s ease-in, opacity 0.3s;
-            top: 135px;
-            left: 135px;
-        }
-
-        .big-bottle {
-            position: absolute;
-            font-size: 80px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
-        .flash {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: white;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        /* Экран 5 - Победа */
-        #screen-victory {
-            text-align: center;
-            position: relative;
-        }
-
-        .confetti {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            top: -10px;
-            animation: fall linear forwards;
-        }
-
-        @keyframes fall {
-            to { transform: translateY(100vh) rotate(360deg); }
-        }
-
-        .prizes {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .prize-card {
-            flex: 1;
-            padding: 20px 10px;
-            cursor: pointer;
-            transition: opacity 0.3s;
-        }
+        /* --- ЭКРАН 4 И 5: ЭЛИКСИР И ПОБЕДА --- */
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        #btn-elixir { display: none; background-color: var(--gold); color: var(--black); animation: pulse 1.5s infinite; }
+        #screen-elixir { justify-content: center; align-items: center; }
+        .elixir-container { position: relative; width: 300px; height: 300px; }
+        .flying-icon { position: absolute; font-size: 30px; transition: transform 0.6s ease-in, opacity 0.3s; top: 135px; left: 135px; }
+        .big-bottle { position: absolute; font-size: 80px; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.3s; }
+        .flash { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: white; opacity: 0; pointer-events: none; z-index: 10; }
+        #screen-victory { text-align: center; position: relative; }
+        .confetti { position: absolute; width: 8px; height: 8px; top: -10px; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(360deg); } }
+        .prizes { display: flex; gap: 15px; margin-top: 30px; }
+        .prize-card { flex: 1; padding: 20px 10px; cursor: pointer; transition: opacity 0.3s; }
         .prize-card.dim { opacity: 0.3; }
-
         .prize-icon { font-size: 40px; margin-bottom: 10px; }
-        
-        #btn-reset {
-            margin-top: auto;
-            background: transparent;
-            color: #777;
-            box-shadow: none;
-            text-decoration: underline;
-            padding: 10px;
-            font-size: 10px;
-        }
+        #btn-reset { margin-top: auto; background: transparent; color: #777; box-shadow: none; text-decoration: underline; padding: 10px; font-size: 10px; }
     </style>
 </head>
 <body>
@@ -794,7 +244,7 @@
         <img src="./assets/logo-bottom.png" class="logo-bottom-quest" alt="Jägermeister">
     </div>
 
-   <!-- ЭКРАН 3: Карта (WORLD MAP REDESIGN) -->
+   <!-- ЭКРАН 3: Карта (ISOMETRIC REDESIGN) -->
     <div id="screen-map" class="screen">
         <div class="map-header">
             <img src="./assets/logo-round.png" alt="Logo">
@@ -804,82 +254,56 @@
         <!-- Новый прогресс-бар -->
         <div id="progress-blocks"></div>
         
-        <div id="map-container">
-            <!-- Тёмный лес по краям -->
-            <div class="forest-edge top"></div>
-            <div class="forest-edge bottom"></div>
-            <div class="forest-edge left"></div>
-            <div class="forest-edge right"></div>
-            
-            <!-- Горы по углам -->
-            <div class="mountain-cluster mountains-tl">
-                <div class="mountain"></div><div class="mountain"></div><div class="mountain"></div>
-            </div>
-            <div class="mountain-cluster mountains-tr">
-                <div class="mountain"></div><div class="mountain"></div><div class="mountain"></div><div class="mountain"></div>
-            </div>
-            <div class="mountain-cluster mountains-bl">
-                <div class="mountain"></div><div class="mountain"></div><div class="mountain"></div>
-            </div>
-            <div class="mountain-cluster mountains-br">
-                <div class="mountain"></div><div class="mountain"></div>
-            </div>
+        <div id="map-container" class="map-container">
+            <!-- Угловые декоры через CSS -->
+            <div class="map-decor top-left">⬥</div>
+            <div class="map-decor bottom-right">⬥</div>
 
-            <!-- Река -->
-            <svg class="map-river" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none">
-                <path d="M 180,0 C 160,80 200,120 170,180 C 140,240 190,300 160,400 C 145,460 170,520 160,520"
-                      stroke="var(--jager-water)" stroke-width="14" fill="none" stroke-linecap="round"/>
-                <path d="M 180,0 C 160,80 200,120 170,180 C 140,240 190,300 160,400 C 145,460 170,520 160,520"
-                      stroke="var(--jager-water2)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="4 8" />
+            <!-- СЛОЙ 1: Базовый terrain генерируется через JS -->
+            <div id="iso-terrain"></div>
+
+            <!-- СЛОЙ 5: Река -->
+            <div id="iso-river"></div>
+
+            <!-- СЛОЙ 6: Дороги -->
+            <svg class="map-roads" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:4">
+                <path id="road-shadow" stroke="#3a2000" stroke-width="10" fill="none" stroke-linejoin="round"/>
+                <path id="road-main" stroke="#C8A44A" stroke-width="7" fill="none" stroke-linejoin="round" stroke-dasharray="8 2"/>
+                <path id="road-lines" stroke="#8B6914" stroke-width="1" fill="none" stroke-dasharray="2 8"/>
             </svg>
 
-            <!-- Дороги (отрисовываются через JS) -->
-            <svg class="map-roads" preserveAspectRatio="none" viewBox="0 0 100 100" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:4">
-                <polyline id="road-shadow" stroke="var(--jager-gold-dark)" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-                <polyline id="road-main" stroke="var(--jager-gold)" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 1"/>
-                <polyline id="road-highlight" stroke="#e8c46a" stroke-width="0.5" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 1"/>
-            </svg>
-
-            <!-- Пиксельные ели (декор) -->
-            <div class="tree-pixel" style="left: 10%; top: 20%"></div>
-            <div class="tree-pixel" style="left: 12%; top: 23%"></div>
-            <div class="tree-pixel" style="left: 80%; top: 10%"></div>
-            <div class="tree-pixel" style="left: 85%; top: 12%"></div>
-            <div class="tree-pixel" style="left: 30%; top: 80%"></div>
-            <div class="tree-pixel" style="left: 33%; top: 85%"></div>
-            <div class="tree-pixel" style="left: 70%; top: 60%"></div>
-            <div class="tree-pixel" style="left: 75%; top: 63%"></div>
-            <div class="tree-pixel" style="left: 45%; top: 15%"></div>
-            <div class="tree-pixel" style="left: 48%; top: 18%"></div>
-            <div class="tree-pixel" style="left: 18%; top: 90%"></div>
-            <div class="tree-pixel" style="left: 85%; top: 90%"></div>
+            <!-- СЛОЙ 4: Деревья -->
+            <div id="iso-trees"></div>
 
             <!-- Маркеры баров (рендерит JS) -->
             <div id="map-markers"></div>
 
-            <!-- Туман войны -->
-            <div class="fog-of-war"></div>
-
             <!-- Персонаж на карте -->
-            <div id="player-sprite" class="map-character" style="display: none;"></div>
+            <div id="player-sprite" class="map-hero" style="display: none;"></div>
         </div>
         
         <button id="btn-elixir" class="btn" style="display: none; margin-top: 15px;" onclick="startElixirAnimation()">🧪 СОЗДАТЬ ЭЛИКСИР</button>
     </div>
 
-    <!-- НОВОЕ RPG МОДАЛЬНОЕ ОКНО БАРА -->
-    <div id="rpg-modal-overlay" class="rpg-modal-overlay" onclick="closeModal()">
-        <div class="rpg-modal" onclick="event.stopPropagation()">
-            <div class="rpg-modal-right">
-                <div class="rpg-title" id="rpg-title">BAR NAME</div>
-                <div class="rpg-artifact" id="rpg-artifact">Артефакт: Неизвестно</div>
-                <div class="rpg-hint" id="rpg-hint">Сходи в этот бар, чтобы узнать тайну.</div>
-                <div class="rpg-status" id="rpg-status">❌ НЕ СОБРАН</div>
-                <div class="rpg-buttons">
-                    <button class="btn rpg-btn" id="btn-scan" onclick="openScanner()">СКАНИРОВАТЬ QR</button>
-                    <button class="btn rpg-btn" onclick="closeModal()">ЗАКРЫТЬ</button>
+    <!-- ИЗОМЕТРИЧЕСКОЕ МОДАЛЬНОЕ ОКНО -->
+    <div id="iso-modal-overlay" class="iso-modal-overlay" onclick="closeModal()">
+        <div class="iso-modal" onclick="event.stopPropagation()">
+            <div class="iso-modal-content">
+                <div class="iso-modal-left" id="iso-icon-container">
+                    <!-- Здесь будет мини-здание бара -->
+                </div>
+                <div class="iso-modal-right">
+                    <div class="rpg-title" id="rpg-title">BAR NAME</div>
+                    <div class="rpg-artifact" id="rpg-artifact">Артефакт: Неизвестно</div>
+                    <div class="rpg-hint" id="rpg-hint">Сходи в этот бар, чтобы узнать тайну.</div>
+                    <div class="rpg-status" id="rpg-status">❌ НЕ СОБРАН</div>
                 </div>
             </div>
+            <div class="rpg-buttons">
+                <button class="btn rpg-btn" id="btn-scan" onclick="openScanner()">СКАНИРОВАТЬ QR</button>
+                <button class="btn rpg-btn" onclick="closeModal()">✕ ЗАКРЫТЬ</button>
+            </div>
+            <div class="iso-cursor">▼</div>
         </div>
     </div>
 
@@ -1101,22 +525,21 @@
         }, 500);
     }
 
-   // Экран 3 - Новая функция рендера карты
+   // --- ИЗОМЕТРИЧЕСКАЯ ЛОГИКА КАРТЫ ---
     const BAR_POSITIONS = [
-        { id:1, left:15, top:10 },
-        { id:2, left:62, top:15 },
-        { id:3, left:22, top:28 },
-        { id:4, left:65, top:35 },
-        { id:5, left:12, top:50 },
-        { id:6, left:58, top:55 },
-        { id:7, left:20, top:70 },
-        { id:8, left:60, top:75 },
+        { id:1, left:8,  top:8  },
+        { id:2, left:55, top:14 },
+        { id:3, left:12, top:28 },
+        { id:4, left:58, top:34 },
+        { id:5, left:8,  top:50 },
+        { id:6, left:55, top:56 },
+        { id:7, left:12, top:70 },
+        { id:8, left:55, top:76 },
     ];
 
     function renderMap() {
         document.getElementById('progress-text').innerText = `СОБРАНО: ${STATE.collectedIds.length} / 8`;
         
-        // 1. Отрисовка новых блоков прогресса
         const progressContainer = document.getElementById('progress-blocks');
         progressContainer.innerHTML = '';
         for (let i = 0; i < 8; i++) {
@@ -1125,7 +548,53 @@
             progressContainer.appendChild(block);
         }
 
-        // 2. Генерация таверн (баров)
+        // 1. Рендер изо-сетки земли (8x10)
+        const terrainContainer = document.getElementById('iso-terrain');
+        const riverContainer = document.getElementById('iso-river');
+        const treesContainer = document.getElementById('iso-trees');
+        
+        if (terrainContainer.innerHTML === '') {
+            const tileW = 64; const tileH = 32;
+            const offsetX = 180; // центрирование сетки
+            const offsetY = 20;
+
+            for (let row = 0; row < 10; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const isoX = offsetX + (col - row) * (tileW / 2);
+                    const isoY = offsetY + (col + row) * (tileH / 2);
+                    
+                    const tile = document.createElement('div');
+                    tile.style.left = `${isoX}px`;
+                    tile.style.top = `${isoY}px`;
+                    
+                    if (col === 4) {
+                        tile.className = 'iso-tile tile-water';
+                        riverContainer.appendChild(tile);
+                    } else {
+                        tile.className = `iso-tile ${(row + col) % 2 === 0 ? 'tile-grass' : 'tile-grass2'}`;
+                        terrainContainer.appendChild(tile);
+                    }
+                }
+            }
+
+            // Добавляем деревья
+            const treePositions = [
+                {x: 20, y: 100}, {x: 40, y: 120}, {x: 10, y: 150},
+                {x: 300, y: 80}, {x: 330, y: 110}, {x: 290, y: 140},
+                {x: 30, y: 350}, {x: 60, y: 380}, {x: 20, y: 420},
+                {x: 310, y: 360}, {x: 340, y: 390}, {x: 320, y: 430}
+            ];
+            treePositions.forEach(pos => {
+                const tree = document.createElement('div');
+                tree.className = 'iso-tree';
+                tree.style.left = `${pos.x}px`;
+                tree.style.top = `${pos.y}px`;
+                tree.innerHTML = '<div class="iso-tree-trunk"></div><div class="iso-tree-top"></div>';
+                treesContainer.appendChild(tree);
+            });
+        }
+
+        // 2. Генерация Изометрических баров
         const markersContainer = document.getElementById('map-markers');
         markersContainer.innerHTML = '';
         
@@ -1137,8 +606,7 @@
             const item = INGREDIENTS.find(ing => ing.id === pos.id);
             const isCollected = STATE.collectedIds.includes(item.id);
 
-            // Собираем строку координат для SVG дорог
-            pointsString += `${pos.left},${pos.top} `;
+            pointsString += `${pos.left}%,${pos.top}% `;
 
             if (isCollected) {
                 lastCollectedLeft = pos.left;
@@ -1152,25 +620,26 @@
             marker.onclick = () => openModal(item, isCollected, index + 1);
 
             marker.innerHTML = `
-              <div class="tavern">
-                <div class="tavern-roof"></div>
-                <div class="tavern-body"></div>
-                <div class="tavern-sign"></div>
+              <div class="iso-building">
+                <div class="iso-front"></div>
+                <div class="iso-side"></div>
+                <div class="iso-roof"></div>
+                <div class="iso-sign">Bar</div>
+                <div class="bar-status"></div>
               </div>
-              <div class="bar-marker">${index + 1}</div>
-              <div class="bar-status"></div>
+              <div class="bar-number">${index + 1}</div>
               <div class="bar-name">${item.bar}</div>
             `;
             markersContainer.appendChild(marker);
         });
 
-        // 3. Обновляем SVG-дороги
+        // 3. SVG-дороги
         const cleanPoints = pointsString.trim();
-        document.getElementById('road-shadow').setAttribute('points', cleanPoints);
-        document.getElementById('road-main').setAttribute('points', cleanPoints);
-        document.getElementById('road-highlight').setAttribute('points', cleanPoints);
+        document.getElementById('road-shadow').setAttribute('d', `M ${cleanPoints.replace(/ /g, ' L ')}`);
+        document.getElementById('road-main').setAttribute('d', `M ${cleanPoints.replace(/ /g, ' L ')}`);
+        document.getElementById('road-lines').setAttribute('d', `M ${cleanPoints.replace(/ /g, ' L ')}`);
 
-        // 4. Позиционирование увеличенного персонажа
+        // 4. Позиционирование изо-персонажа
         const player = document.getElementById('player-sprite');
         const avatarUrl = STATE.selectedCharacter === 'huntie' ? './assets/hanti.png' : './assets/hunter.png';
         player.style.backgroundImage = `url('${avatarUrl}')`;
@@ -1195,6 +664,15 @@
     function openModal(item, isCollected, stepNum) {
         document.getElementById('rpg-title').innerText = item.bar;
         
+        // Рендерим мини-копию здания бара в модалку
+        document.getElementById('iso-icon-container').innerHTML = `
+            <div class="iso-building" style="${isCollected ? 'filter: drop-shadow(0 0 6px var(--jager-gold));' : 'filter: grayscale(80%) brightness(0.6);'}">
+                <div class="iso-front"></div>
+                <div class="iso-side"></div>
+                <div class="iso-roof"></div>
+            </div>
+        `;
+
         if (isCollected) {
             document.getElementById('rpg-artifact').innerText = `Артефакт: ${item.name} ${item.icon}`;
             document.getElementById('rpg-hint').innerText = item.hint;
@@ -1209,15 +687,17 @@
             document.getElementById('btn-scan').style.display = 'block';
         }
         
-        document.getElementById('rpg-modal-overlay').style.display = 'flex';
+        document.getElementById('iso-modal-overlay').style.display = 'flex';
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         }
     }
 
     function closeModal() {
-        document.getElementById('rpg-modal-overlay').style.display = 'none';
+        document.getElementById('iso-modal-overlay').style.display = 'none';
     }
+
+   
 
     function openScanner() {
         tg.showScanQrPopup({ text: "Наведи камеру на QR-код в баре" }, (scannedText) => {
