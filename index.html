@@ -653,7 +653,15 @@
     </style>
 </head>
 <body>
-
+<!-- ПАНЕЛЬ РАЗРАБОТЧИКА (УДАЛИТЬ ИЛИ СКРЫТЬ ПЕРЕД РЕЛИЗОМ!) -->
+    <div id="dev-panel" style="position: fixed; top: 0; left: 0; z-index: 9999; background: rgba(0,0,0,0.8); border: 1px solid #0f0; border-top: none; border-left: none; border-bottom-right-radius: 8px; padding: 5px; gap: 5px; flex-wrap: wrap; display: none !important;">
+        <button onclick="resetGame()" style="font-size: 8px; padding: 5px; background: #ff4444; color: white; border: none; cursor: pointer;">СБРОС</button>
+        <button onclick="navigateTo('screen-character')" style="font-size: 8px; padding: 5px; cursor: pointer;">ГЕРОЙ</button>
+        <button onclick="navigateTo('screen-map')" style="font-size: 8px; padding: 5px; cursor: pointer;">КАРТА</button>
+        <button onclick="navigateTo('screen-victory')" style="font-size: 8px; padding: 5px; cursor: pointer;">ПОБЕДА</button>
+        <button onclick="devAddQR()" style="font-size: 8px; padding: 5px; background: #00843D; color: white; border: none; cursor: pointer;">+1 QR</button>
+        <button onclick="devWin()" style="font-size: 8px; padding: 5px; background: #C8A44A; color: black; border: none; cursor: pointer;">🏆 ВСЕ 8</button>
+    </div>
 <div id="app">
     <!-- ЭКРАН 1: Выбор персонажа -->
     <div id="screen-character" class="screen active-screen">
@@ -797,6 +805,13 @@
     // Инициализация Telegram SDK
     const tg = window.Telegram.WebApp;
     tg.ready();
+    // ТВОЙ TELEGRAM ID (впиши сюда свой номер)
+    const ADMIN_TG_ID = 620058644; 
+
+    // Если приложение открыл админ — показываем панель
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id === ADMIN_TG_ID) {
+        document.getElementById('dev-panel').style.setProperty('display', 'flex', 'important');
+    }
     tg.expand();
     tg.setHeaderColor('#1A1A1A');
     tg.setBackgroundColor('#1A1A1A');
@@ -1224,6 +1239,31 @@
             navigateTo('screen-character');
         }
     });
+    // ==========================================
+    // --- ФУНКЦИИ ДЛЯ ТЕСТИРОВАНИЯ (DEV) ---
+    // ==========================================
+    
+    // Эмулирует сканирование одного (следующего) QR-кода
+    function devAddQR() {
+        const missing = INGREDIENTS.find(i => !STATE.collectedIds.includes(i.id));
+        if (missing) {
+            handleQrScan(missing.qrCode);
+        } else {
+            tg.showAlert("Все 8 ингредиентов уже собраны!");
+        }
+    }
+
+    // Мгновенно собирает все 8 ингредиентов
+    function devWin() {
+        STATE.collectedIds = [1, 2, 3, 4, 5, 6, 7, 8];
+        saveState();
+        if (STATE.currentScreen === 'screen-map') {
+            renderMap();
+        } else {
+            navigateTo('screen-map');
+        }
+        tg.showAlert("Чит активирован: Собраны все ингредиенты!");
+    }
 
 </script>
 </body>
