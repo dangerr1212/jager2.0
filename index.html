@@ -200,13 +200,35 @@
         }
 
         /* Летящий ингредиент */
-        .flying-icon {
+       .flying-icon {
             position: absolute;
-            font-size: 28px;
+            width: 48px;
+            height: 48px;
             transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            filter: drop-shadow(0 0 6px #C8A44A);
+            filter: drop-shadow(0 0 8px #C8A44A);
             z-index: 5;
+            image-rendering: pixelated;
         }
+        .flying-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            image-rendering: pixelated;
+        }
+        /* Fallback если картинка не загрузилась */
+        .flying-icon img.error {
+            display: none;
+        }
+        .flying-icon .icon-fallback {
+            font-size: 32px;
+            line-height: 48px;
+            text-align: center;
+            display: none;
+        }
+        .flying-icon img.error + .icon-fallback {
+            display: block;
+        }
+
 
         /* Пар */
         .steam {
@@ -545,15 +567,15 @@
 
     const HUNTER_IMG_URL = "./assets/hunter.png";
     const HUNTIE_IMG_URL = "./assets/hanti.png";
-    const INGREDIENTS = [
-        { id: 1, name: "Имбирь", icon: "🫚", qrCode: "JAGER_BAR_1", bar: "Bar Name 1", hint: "Острый и жгучий корень", x: 20, y: 12 },
-        { id: 2, name: "Корица", icon: "🌰", qrCode: "JAGER_BAR_2", bar: "Bar Name 2", hint: "Согревающая кора дерева", x: 75, y: 22 },
-        { id: 3, name: "Звёздчатый анис", icon: "⭐", qrCode: "JAGER_BAR_3", bar: "Bar Name 3", hint: "Пряная звезда востока", x: 30, y: 35 },
-        { id: 4, name: "Кардамон", icon: "🌿", qrCode: "JAGER_BAR_4", bar: "Bar Name 4", hint: "Семена тропического рая", x: 80, y: 48 },
-        { id: 5, name: "Апельсиновая цедра", icon: "🍊", qrCode: "JAGER_BAR_5", bar: "Bar Name 5", hint: "Горькая корка померанца", x: 25, y: 60 },
-        { id: 6, name: "Шафран", icon: "🌸", qrCode: "JAGER_BAR_6", bar: "Bar Name 6", hint: "Редчайшая специя мира", x: 70, y: 72 },
-        { id: 7, name: "Можжевельник", icon: "🫐", qrCode: "JAGER_BAR_7", bar: "Bar Name 7", hint: "Лесные синие ягоды", x: 35, y: 85 },
-        { id: 8, name: "Лакрица", icon: "🖤", qrCode: "JAGER_BAR_8", bar: "Bar Name 8", hint: "Сладкий корень солодки", x: 65, y: 92 }
+   const INGREDIENTS = [
+        { id: 1, name: "Имбирь",             icon: "🫚", img: "./assets/ingredients/ginger.png",     qrCode: "JAGER_BAR_1", bar: "Bar Name 1", hint: "Острый и жгучий корень" },
+        { id: 2, name: "Корица",             icon: "🌰", img: "./assets/ingredients/cinnamon.png",   qrCode: "JAGER_BAR_2", bar: "Bar Name 2", hint: "Согревающая кора дерева" },
+        { id: 3, name: "Звёздчатый анис",    icon: "⭐", img: "./assets/ingredients/anise.png",      qrCode: "JAGER_BAR_3", bar: "Bar Name 3", hint: "Пряная звезда востока" },
+        { id: 4, name: "Кардамон",           icon: "🌿", img: "./assets/ingredients/cardamom.png",   qrCode: "JAGER_BAR_4", bar: "Bar Name 4", hint: "Семена тропического рая" },
+        { id: 5, name: "Апельсиновая цедра", icon: "🍊", img: "./assets/ingredients/orange.png",     qrCode: "JAGER_BAR_5", bar: "Bar Name 5", hint: "Горькая корка померанца" },
+        { id: 6, name: "Шафран",             icon: "🌸", img: "./assets/ingredients/saffron.png",    qrCode: "JAGER_BAR_6", bar: "Bar Name 6", hint: "Редчайшая специя мира" },
+        { id: 7, name: "Можжевельник",       icon: "🫐", img: "./assets/ingredients/juniper.png",    qrCode: "JAGER_BAR_7", bar: "Bar Name 7", hint: "Лесные синие ягоды" },
+        { id: 8, name: "Лакрица",            icon: "🖤", img: "./assets/ingredients/licorice.png",   qrCode: "JAGER_BAR_8", bar: "Bar Name 8", hint: "Сладкий корень солодки" },
     ];
 
     const STATE = { selectedCharacter: null, collectedIds: [], gameCompleted: false, currentScreen: 'screen-character' };
@@ -850,14 +872,27 @@
             {x: 50,  y: 130}, {x: 150, y: 120},  {x: 240, y: 130},
         ];
 
-        INGREDIENTS.forEach((ing, i) => {
+         INGREDIENTS.forEach((ing, i) => {
             setTimeout(() => {
-                // Создать иконку
                 const el = document.createElement('div');
                 el.className = 'flying-icon';
-                el.innerText = ing.icon;
                 el.style.left = positions[i].x + 'px';
                 el.style.top  = positions[i].y + 'px';
+
+                // PNG картинка с fallback на эмодзи
+                const imgEl = document.createElement('img');
+                imgEl.src = ing.img;
+                imgEl.alt = ing.name;
+                imgEl.onerror = function() {
+                    this.classList.add('error');
+                };
+
+                const fallback = document.createElement('span');
+                fallback.className = 'icon-fallback';
+                fallback.innerText = ing.icon;
+
+                el.appendChild(imgEl);
+                el.appendChild(fallback);
                 field.appendChild(el);
 
                 // Через 300ms — полететь в центр котла
@@ -865,10 +900,12 @@
                     // Котёл находится примерно по центру экрана
                     // field начинается после title (~60px сверху экрана)
                     // котёл на ~200px ниже field
-                    el.style.left     = '130px';
-                    el.style.top      = '160px';
-                    el.style.opacity  = '0';
-                    el.style.fontSize = '10px';
+                    el.style.left      = '126px';
+                    el.style.top       = '155px';
+                    el.style.opacity   = '0';
+                    el.style.width     = '12px';
+                    el.style.height    = '12px';
+
 
                     // Звук попадания
                     playBeep(300 + i * 40, 80);
