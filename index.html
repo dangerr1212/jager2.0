@@ -61,7 +61,7 @@
         .tree:nth-child(6) { right: 5px; height: 100px; transform: scale(1.1); opacity: 0.7; }
         .ground { position: absolute; bottom: 0; height: 16px; width: 100%; background: #1a0a00; box-shadow: 0 -2px 0 #2a1500, 0 -4px 0 #1a0a00; }
         .fog { position: absolute; bottom: 12px; height: 20px; width: 100%; background: linear-gradient(180deg, transparent 0%, rgba(0, 60, 0, 0.3) 50%, rgba(0, 40, 0, 0.5) 100%); }
-
+        
         #screen-character .characters { display: flex; justify-content: space-between; gap: 15px; margin-top: 30px; }
         .char-card { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; cursor: pointer; transition: transform 0.2s; background: radial-gradient(ellipse at 50% 40%, #1a3a1a 0%, #050f05 100%) !important; }
         .char-card img { width: 80px; height: 80px; image-rendering: pixelated; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8)); }
@@ -106,15 +106,23 @@
         .iso-tree-top::before { content: ''; position: absolute; top: 8px; left: -8px; border-left: 8px solid transparent; border-right: 8px solid transparent; border-bottom: 16px solid #2a6a2a; }
         .iso-tree-top::after { content: ''; position: absolute; top: 14px; left: -5px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 10px solid #3a8a3a; }
 
-        .bar-pin { position: absolute; width: 48px; height: 60px; transform: translate(-50%, -50%); z-index: 6; cursor: pointer; }
-        .iso-building { position: absolute; width: 48px; height: 60px; }
-        .iso-building::before { content: ''; position: absolute; bottom: -8px; left: -4px; width: 56px; height: 14px; background: rgba(0,0,0,0.35); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
-        .iso-roof { position: absolute; top: 0; left: 0; width: 48px; height: 20px; background: #8B0000; clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); background-image: repeating-linear-gradient(90deg, transparent, transparent 6px, rgba(0,0,0,0.2) 6px, rgba(0,0,0,0.2) 7px); }
-        .iso-roof::after { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; background: var(--gold); box-shadow: 0 4px 0 var(--gold), 0 8px 0 var(--gold); }
-        .iso-front { position: absolute; bottom: 0; left: 0; width: 24px; height: 36px; background: #5a3a1a; transform: skewY(26.57deg); transform-origin: left bottom; background-image: linear-gradient(transparent 25%, #FFD700 25%, #FFD700 45%, transparent 45%), linear-gradient(transparent 25%, #FFD700 25%, #FFD700 45%, transparent 45%); background-size: 8px 100%, 8px 100%; background-position: 4px 0, 14px 0; background-repeat: no-repeat; }
-        .iso-side { position: absolute; bottom: 0; right: 0; width: 24px; height: 36px; background: #3a2010; transform: skewY(-26.57deg); transform-origin: right bottom; }
-        .iso-sign { position: absolute; top: 22px; left: 4px; background: var(--gold); color: #000; font: 4px 'Press Start 2P'; padding: 1px 2px; z-index: 2; white-space: nowrap; box-shadow: 1px 1px 0 var(--jager-gold-dark); }
+        /* --- ИЗОМЕТРИЧЕСКИЕ БАРЫ (PIXEL ART REDESIGN) --- */
+        .bar-pin { position: absolute; width: 48px; height: 60px; transform: translate(-50%, -50%); z-index: 6; cursor: pointer; image-rendering: pixelated; }
+        .bar-pin::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 36px; height: 8px; background: rgba(0,0,0,0.5); filter: blur(2px); z-index: -1; }
         
+        .iso-building { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%) scale(1.5); }
+
+        /* ТИП A — ТАВЕРНА (32×40px) */
+        .building-a { width: 4px; height: 4px; position: relative; image-rendering: pixelated; box-shadow: 8px 0px 0 4px #8B0000, 12px 0px 0 4px #8B0000, 16px 0px 0 4px #8B0000, 4px 4px 0 4px #8B0000, 8px 4px 0 4px #A00000, 12px 4px 0 4px #A00000, 16px 4px 0 4px #A00000, 20px 4px 0 4px #8B0000, 0px 8px 0 4px #8B0000, 4px 8px 0 4px #A00000, 8px 8px 0 4px #C00000, 12px 8px 0 4px #C00000, 16px 8px 0 4px #A00000, 20px 8px 0 4px #A00000, 24px 8px 0 4px #8B0000, 12px 0px 0 4px #C8A44A, 0px 12px 0 4px #5a3a1a, 4px 12px 0 4px #6a4a2a, 8px 12px 0 4px #6a4a2a, 12px 12px 0 4px #6a4a2a, 16px 12px 0 4px #6a4a2a, 20px 12px 0 4px #6a4a2a, 24px 12px 0 4px #4a2a0a, 0px 16px 0 4px #5a3a1a, 4px 16px 0 4px #6a4a2a, 8px 16px 0 4px #FFD700, 12px 16px 0 4px #6a4a2a, 16px 16px 0 4px #FFD700, 20px 16px 0 4px #6a4a2a, 24px 16px 0 4px #4a2a0a, 0px 20px 0 4px #5a3a1a, 4px 20px 0 4px #6a4a2a, 8px 20px 0 4px #FFD700, 12px 20px 0 4px #6a4a2a, 16px 20px 0 4px #FFD700, 20px 20px 0 4px #6a4a2a, 24px 20px 0 4px #4a2a0a, 0px 24px 0 4px #5a3a1a, 4px 24px 0 4px #6a4a2a, 8px 24px 0 4px #6a4a2a, 12px 24px 0 4px #3a1a00, 16px 24px 0 4px #3a1a00, 20px 24px 0 4px #6a4a2a, 24px 24px 0 4px #4a2a0a, 0px 28px 0 4px #4a2a0a, 4px 28px 0 4px #4a2a0a, 8px 28px 0 4px #4a2a0a, 12px 28px 0 4px #4a2a0a, 16px 28px 0 4px #4a2a0a, 20px 28px 0 4px #4a2a0a, 24px 28px 0 4px #3a1a00; }
+
+        /* ТИП B — КАМЕННЫЙ ДОМ (28×36px) */
+        .building-b { width: 4px; height: 4px; position: relative; image-rendering: pixelated; box-shadow: 8px 0px 0 4px #1a1a4a, 12px 0px 0 4px #C8A44A, 8px 4px 0 4px #2a2a6a, 4px 4px 0 4px #1a1a4a, 12px 4px 0 4px #2a2a6a, 16px 4px 0 4px #1a1a4a, 0px 8px 0 4px #1a1a4a, 4px 8px 0 4px #2a2a6a, 8px 8px 0 4px #3a3a8a, 12px 8px 0 4px #3a3a8a, 16px 8px 0 4px #2a2a6a, 20px 8px 0 4px #1a1a4a, 0px 12px 0 4px #4a4a4a, 4px 12px 0 4px #5a5a5a, 8px 12px 0 4px #5a5a5a, 12px 12px 0 4px #5a5a5a, 16px 12px 0 4px #5a5a5a, 20px 12px 0 4px #3a3a3a, 0px 16px 0 4px #4a4a4a, 4px 16px 0 4px #FFD700, 8px 16px 0 4px #5a5a5a, 12px 16px 0 4px #5a5a5a, 16px 16px 0 4px #FFD700, 20px 16px 0 4px #3a3a3a, 0px 20px 0 4px #4a4a4a, 4px 20px 0 4px #5a5a5a, 8px 20px 0 4px #5a5a5a, 12px 20px 0 4px #3a1a00, 16px 20px 0 4px #3a1a00, 20px 20px 0 4px #3a3a3a, 0px 14px 0 4px #3a3a3a, 20px 14px 0 4px #2a2a2a; }
+
+        /* ТИП C — БАШНЯ (20×48px) */
+        .building-c { width: 4px; height: 4px; position: relative; image-rendering: pixelated; box-shadow: 8px 0px 0 4px #C8A44A, 4px 4px 0 4px #C8A44A, 8px 4px 0 4px #8B6914, 12px 4px 0 4px #C8A44A, 0px 8px 0 4px #5a3a1a, 4px 8px 0 4px #6a4a2a, 8px 8px 0 4px #6a4a2a, 12px 8px 0 4px #6a4a2a, 16px 8px 0 4px #4a2a0a, 0px 12px 0 4px #5a3a1a, 4px 12px 0 4px #FFD700, 8px 12px 0 4px #6a4a2a, 12px 12px 0 4px #FFD700, 16px 12px 0 4px #4a2a0a, 0px 16px 0 4px #4a4a4a, 4px 16px 0 4px #5a5a5a, 8px 16px 0 4px #5a5a5a, 12px 16px 0 4px #5a5a5a, 16px 16px 0 4px #3a3a3a, 0px 20px 0 4px #4a4a4a, 4px 20px 0 4px #5a5a5a, 8px 20px 0 4px #FFD700, 12px 20px 0 4px #5a5a5a, 16px 20px 0 4px #3a3a3a, 0px 24px 0 4px #4a4a4a, 4px 24px 0 4px #5a5a5a, 8px 24px 0 4px #5a5a5a, 12px 24px 0 4px #5a5a5a, 16px 24px 0 4px #3a3a3a, 0px 28px 0 4px #3a1a00, 4px 28px 0 4px #4a2a0a, 8px 28px 0 4px #3a1a00, 12px 28px 0 4px #4a2a0a, 16px 28px 0 4px #2a0a00; }
+
+        /* --- СТИЛИ СТАТУСОВ ЗДАНИЙ --- */
+        .bar-pin.uncollected .iso-building { filter: grayscale(80%) brightness(0.6); }
         .bar-status { position: absolute; top: -16px; left: 50%; transform: translateX(-50%); font: 8px 'Press Start 2P'; z-index: 10; }
         .bar-pin.uncollected .bar-status::after { content: '?'; color: #ff4444; text-shadow: 1px 1px 0 #000; animation: blink 0.8s steps(1) infinite; }
         .bar-pin.collected .iso-building { filter: drop-shadow(0 0 6px var(--gold)); animation: collectedGlow 2s ease-in-out infinite; }
@@ -125,6 +133,7 @@
         .bar-number { position: absolute; bottom: -4px; right: -4px; width: 14px; height: 14px; background: var(--green); border: 1px solid var(--gold); color: #fff; font: 6px 'Press Start 2P'; text-align: center; line-height: 14px; z-index: 10; }
         .bar-name { position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%); font: 5px 'Press Start 2P'; color: var(--gold); white-space: nowrap; text-shadow: 1px 1px 0 #000; background: rgba(0,0,0,0.75); padding: 1px 3px; z-index: 11; }
 
+        /* Персонаж на изо-карте */
         .map-hero { position: absolute; z-index: 20; width: 28px; height: 36px; image-rendering: pixelated; background-size: contain; background-repeat: no-repeat; background-position: center; mix-blend-mode: screen; animation: isoWalk 0.6s steps(4) infinite; transition: left 1.2s cubic-bezier(0.4,0,0.2,1), top 1.2s cubic-bezier(0.4,0,0.2,1); transform: translate(-50%, -100%); }
         .map-hero::after { content: ''; position: absolute; bottom: -3px; left: 50%; transform: translateX(-50%); width: 18px; height: 6px; background: rgba(0,0,0,0.4); clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); z-index: -1; }
         @keyframes isoWalk { 0%,100% { transform: translate(-50%, -100%) translateY(0) scaleX(1); } 25% { transform: translate(-50%, -100%) translateY(-3px) scaleX(1); } 50% { transform: translate(-50%, -100%) translateY(0) scaleX(1); } 75% { transform: translate(-50%, -100%) translateY(-3px) scaleX(1); } }
@@ -160,8 +169,7 @@
         .prize-card { flex: 1; padding: 20px 10px; cursor: pointer; transition: opacity 0.3s; }
         .prize-card.dim { opacity: 0.3; }
         .prize-icon { font-size: 40px; margin-bottom: 10px; }
-        #btn-reset { margin-top: auto; background: transparent; color: #777; box-shadow: none; text-decoration: underline; padding: 10px; font-size: 10px; }
-    </style>
+        #btn-reset { margin-top: auto; background: transparent; color: #777; box-shadow: none; text-decoration: underline; padding: 10px; font-size: 10px; }</style>
 </head>
 <body>
 <!-- ПАНЕЛЬ РАЗРАБОТЧИКА (УДАЛИТЬ ИЛИ СКРЫТЬ ПЕРЕД РЕЛИЗОМ!) -->
@@ -598,40 +606,19 @@
         const markersContainer = document.getElementById('map-markers');
         markersContainer.innerHTML = '';
         
-        let pointsString = '';
-        let lastCollectedLeft = null;
-        let lastCollectedTop = null;
-
-        BAR_POSITIONS.forEach((pos, index) => {
-            const item = INGREDIENTS.find(ing => ing.id === pos.id);
-            const isCollected = STATE.collectedIds.includes(item.id);
-
-            pointsString += `${pos.left}%,${pos.top}% `;
-
-            if (isCollected) {
-                lastCollectedLeft = pos.left;
-                lastCollectedTop = pos.top;
-            }
-
-            const marker = document.createElement('div');
-            marker.className = `bar-pin ${isCollected ? 'collected' : 'uncollected'}`;
-            marker.style.left = `${pos.left}%`;
-            marker.style.top = `${pos.top}%`;
-            marker.onclick = () => openModal(item, isCollected, index + 1);
+      // Определяем тип здания по ID
+            let buildingType = 'building-a'; // 1, 4, 7
+            if ([2, 5, 8].includes(pos.id)) buildingType = 'building-b';
+            if ([3, 6].includes(pos.id)) buildingType = 'building-c';
 
             marker.innerHTML = `
-              <div class="iso-building">
-                <div class="iso-front"></div>
-                <div class="iso-side"></div>
-                <div class="iso-roof"></div>
-                <div class="iso-sign">Bar</div>
-                <div class="bar-status"></div>
-              </div>
+              <div class="iso-building ${buildingType}"></div>
+              <div class="bar-status"></div>
               <div class="bar-number">${index + 1}</div>
               <div class="bar-name">${item.bar}</div>
             `;
-            markersContainer.appendChild(marker);
-        });
+            markersContainer.appendChild(marker);markersContainer.appendChild(marker);
+        }
 
         // 3. SVG-дороги
         const cleanPoints = pointsString.trim();
@@ -664,33 +651,14 @@
     function openModal(item, isCollected, stepNum) {
         document.getElementById('rpg-title').innerText = item.bar;
         
-        // Рендерим мини-копию здания бара в модалку
-        document.getElementById('iso-icon-container').innerHTML = `
-            <div class="iso-building" style="${isCollected ? 'filter: drop-shadow(0 0 6px var(--jager-gold));' : 'filter: grayscale(80%) brightness(0.6);'}">
-                <div class="iso-front"></div>
-                <div class="iso-side"></div>
-                <div class="iso-roof"></div>
-            </div>
-        `;
+       // Определяем тип здания для модального окна
+        let buildingType = 'building-a';
+        if ([2, 5, 8].includes(item.id)) buildingType = 'building-b';
+        if ([3, 6].includes(item.id)) buildingType = 'building-c';
 
-        if (isCollected) {
-            document.getElementById('rpg-artifact').innerText = `Артефакт: ${item.name} ${item.icon}`;
-            document.getElementById('rpg-hint').innerText = item.hint;
-            document.getElementById('rpg-status').innerHTML = '✅ СОБРАН';
-            document.getElementById('rpg-status').style.color = "#4CAF50";
-            document.getElementById('btn-scan').style.display = 'none';
-        } else {
-            document.getElementById('rpg-artifact').innerText = 'Артефакт: Неизвестно';
-            document.getElementById('rpg-hint').innerText = `Следуй в эту локацию. Подсказка: ${item.hint}`;
-            document.getElementById('rpg-status').innerHTML = '❌ НЕ СОБРАН';
-            document.getElementById('rpg-status').style.color = "#ff4444";
-            document.getElementById('btn-scan').style.display = 'block';
-        }
-        
-        document.getElementById('iso-modal-overlay').style.display = 'flex';
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        }
+        document.getElementById('iso-icon-container').innerHTML = `
+            <div class="iso-building ${buildingType}" style="transform: scale(1.0); bottom: -10px; ${isCollected ? 'filter: drop-shadow(0 0 6px var(--jager-gold));' : 'filter: grayscale(80%) brightness(0.6);'}"></div>
+        `;
     }
 
     function closeModal() {
