@@ -565,16 +565,22 @@
     pointer-events: none; z-index: 10; 
 }
 
+/* БЛОК 3 — вставить в <style> вместо старых стилей маркеров */
 /* Маркеры баров */
 .bar-marker { 
     position: absolute; 
     display: flex; flex-direction: column; align-items: center; 
     pointer-events: auto; cursor: pointer; 
-    transform: translate(-50%, -100%); 
+    justify-content: flex-start;
+    padding-top: 2px;
 }
 .bar-marker-status { 
     font: 9px 'Press Start 2P'; 
-    margin-bottom: 28px; 
+    margin-bottom: 2px;
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
     text-shadow: 1px 1px 0 #000; 
     line-height: 1;
 }
@@ -587,15 +593,19 @@
     animation: glowStatus 1.5s ease-in-out infinite; 
 }
 .bar-marker-num { 
-    position: absolute; 
-    bottom: 8px; right: -16px; 
+    position: absolute;
+    bottom: 2px;
+    right: -4px;
     font: 6px 'Press Start 2P'; 
     background: #00843D; 
     border: 1px solid #C8A44A; 
     padding: 2px 4px; color: #fff; 
 }
 .bar-marker-name { 
-    position: absolute; bottom: -10px; 
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
     font: 5px 'Press Start 2P'; 
     color: #C8A44A; 
     text-shadow: 1px 1px 0 #000; 
@@ -1070,24 +1080,53 @@ function drawTile(ctx, col, row, type) {
         ctx.fillStyle = '#3a8a3a'; ctx.fillRect(x+s, y, s, s);
     }
 
-    function drawPathLine(ctx) {
-        ctx.strokeStyle = '#C8A44A'; ctx.lineWidth = 3; ctx.setLineDash([6, 3]); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-        ctx.strokeStyle = '#5a3a00'; ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.moveTo(140, 40);  
-        ctx.bezierCurveTo(160,80,  240,60,  260,100); 
-        ctx.bezierCurveTo(280,140, 160,140, 120,180); 
-        ctx.bezierCurveTo(80,220,  240,220, 260,260); 
-        ctx.bezierCurveTo(280,300, 160,280, 100,300); 
-        ctx.bezierCurveTo(60,320,  220,310, 240,300); 
-        ctx.bezierCurveTo(260,290, 120,310, 100,310);  
-        ctx.bezierCurveTo(80,315,  200,315, 220,315); 
-        ctx.stroke();
-        
-        ctx.strokeStyle = '#C8A44A'; ctx.lineWidth = 3; ctx.setLineDash([6,3]); ctx.stroke();
-        ctx.setLineDash([]); 
-    }
+    // БЛОК 1 — вставить внутри renderMap() вместо drawPathLine
+function drawPathLine(ctx) {
+    const bars = [
+        {x:105, y:35},   // бар 1
+        {x:248, y:60},   // бар 2
+        {x:80,  y:120},  // бар 3
+        {x:246, y:163},  // бар 4
+        {x:72,  y:215},  // бар 5
+        {x:223, y:235},  // бар 6
+        {x:83,  y:283},  // бар 7
+        {x:223, y:287},  // бар 8
+    ];
 
+    // Тень тропы
+    ctx.beginPath();
+    ctx.strokeStyle = '#5a3a00';
+    ctx.lineWidth = 6;
+    ctx.setLineDash([]);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.moveTo(bars[0].x, bars[0].y);
+    for(let i=1; i<bars.length; i++) {
+        const prev = bars[i-1];
+        const curr = bars[i];
+        // Контрольные точки для плавного зигзага
+        const cpx = (prev.x + curr.x) / 2;
+        const cpy = (prev.y + curr.y) / 2;
+        ctx.quadraticCurveTo(prev.x, cpy, curr.x, curr.y);
+    }
+    ctx.stroke();
+
+    // Основная золотая тропа
+    ctx.beginPath();
+    ctx.strokeStyle = '#C8A44A';
+    ctx.lineWidth = 4;
+    ctx.setLineDash([7, 3]);
+    ctx.moveTo(bars[0].x, bars[0].y);
+    for(let i=1; i<bars.length; i++) {
+        const prev = bars[i-1];
+        const curr = bars[i];
+        const cpx = (prev.x + curr.x) / 2;
+        const cpy = (prev.y + curr.y) / 2;
+        ctx.quadraticCurveTo(prev.x, cpy, curr.x, curr.y);
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+}
     function drawTavernA(ctx, x, y) {
         const p = 3;
         const roof = [[0,0,0,1,1,1,1,1,0,0,0],[0,0,1,1,1,1,1,1,1,0,0],[0,1,1,1,1,2,1,1,1,1,0],[1,1,1,1,1,1,1,1,1,1,1]];
@@ -1188,25 +1227,43 @@ function drawTile(ctx, col, row, type) {
             ctx.fillRect(bar.x, bar.y + 42, 36, 5);
             
             if (isCollected) {
-                ctx.save();
-                ctx.shadowColor = '#C8A44A';
-                ctx.shadowBlur = 12;
-                // Рисуем с масштабом 1.5
-                ctx.save();
-                ctx.translate(bar.x, bar.y);
-                ctx.scale(1.5, 1.5);
-                bar.drawFn(ctx, 0, 0);
-                ctx.restore();
-                ctx.restore();
-            } else {
-                ctx.save();
-                ctx.globalAlpha = 0.7;
-                ctx.translate(bar.x, bar.y);
-                ctx.scale(1.5, 1.5);
-                bar.drawFn(ctx, 0, 0);
-                ctx.restore();
-            }
-        });
+                // БЛОК 4 — вставить внутри renderMap() в отрисовку зданий
+        ctx.save();
+        ctx.translate(bar.x, bar.y);
+        ctx.scale(1.5, 1.5);
+
+        // Подложка под здание — тёмный прямоугольник
+        // чтобы здание не сливалось с травой
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+        ctx.fillRect(-3, -3, 42, 50);
+
+        // Золотая рамка вокруг подложки
+        ctx.strokeStyle = isCollected ? '#C8A44A' : '#555555';
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(-3, -3, 42, 50);
+
+        // Само здание
+        if (isCollected) {
+            ctx.shadowColor = '#C8A44A';
+            ctx.shadowBlur = 8;
+        } else {
+            ctx.globalAlpha = 0.9;
+        }
+        bar.drawFn(ctx, 0, 0);
+
+        ctx.restore();
+
+        // Отдельное свечение для собранных (поверх scale)
+        if (isCollected) {
+            ctx.save();
+            ctx.shadowColor = '#FFD700';
+            ctx.shadowBlur = 16;
+            ctx.strokeStyle = '#C8A44A';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(bar.x - 4, bar.y - 4, 64, 76);
+            ctx.restore();
+        }
+      
 
         // Маркеры (HTML overlay)
         const overlay = document.getElementById('map-overlay');
@@ -1225,10 +1282,16 @@ function drawTile(ctx, col, row, type) {
             }
 
             const marker = document.createElement('div');
+            // БЛОК 2 — вставить внутри renderMap() вместо создания маркера
             marker.className = `bar-marker ${isCollected ? 'collected' : 'uncollected'}`;
-            // D) Сдвинуть маркеры ближе к верху здания (не в центр)
-            marker.style.left = `${bar.x + 20}px`;
-            marker.style.top  = `${bar.y + 10}px`;
+            // Кликабельная зона покрывает всё здание (увеличенное x1.5)
+            // Здание ~33px шириной и ~45px высотой при scale 1.5
+            marker.style.left   = `${bar.x}px`;
+            marker.style.top    = `${bar.y}px`;
+            marker.style.width  = '50px';
+            marker.style.height = '55px';
+            marker.style.transform = 'none';
+            marker.style.cursor = 'pointer';
             
             marker.onclick = () => openModal(item, isCollected, index + 1);
 
