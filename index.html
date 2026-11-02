@@ -843,7 +843,8 @@
         navigateTo('screen-elixir');
 
         const field    = document.getElementById('ingredients-field');
-        const cauldron = document.getElementById('cauldron-wrap');
+       const cauldronWrap = document.getElementById('cauldron-wrap');
+if (cauldronWrap) cauldronWrap.style.display = 'none';
         const title    = document.getElementById('elixir-title');
         const bottle   = document.getElementById('big-bottle');
         const doneText = document.getElementById('elixir-done-text');
