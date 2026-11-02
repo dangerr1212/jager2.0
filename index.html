@@ -353,9 +353,11 @@
 <script>
     const tg = window.Telegram.WebApp;
     tg.ready();
-   const ADMIN_IDS = [620058644, 698649875];
+    // Добавляем ID всех админов в массив через запятую
+    const ADMIN_IDS = [620058644, 698649875]; 
 
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id === ADMIN_TG_ID) {
+    // Проверяем, есть ли текущий пользователь в списке админов
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user && ADMIN_IDS.includes(tg.initDataUnsafe.user.id)) {
         document.getElementById('dev-panel').style.setProperty('display', 'flex', 'important');
     }
     tg.expand();
