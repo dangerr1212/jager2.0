@@ -150,157 +150,104 @@
             );
         }
 
-        /* --- ЦВЕТА КАРТЫ --- */
-        :root {
-            --jager-black:     #050f05;
-            --jager-forest:    #1a4a1a;
-            --jager-forest2:   #0d2a0d;
-            --jager-gold:      #C8A44A;
-            --jager-gold-dark: #8B6914;
-            --jager-rock:      #3a3a3a;
-            --jager-rock-dark: #1a1a1a;
-            --jager-water:     #0a2030;
-            --jager-water2:    #0d2a40;
-            --jager-green:     #00843D;
-        }
-
-        /* --- RPG КАРТА WORLD MAP --- */
-        .map-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .map-header img { width: 40px; }
-
-        /* Прогресс-бар из 8 блоков */
-        #progress-blocks { display: flex; gap: 4px; width: 100%; justify-content: center; margin-bottom: 20px; }
-        .progress-block { flex: 1; height: 16px; background: #1a1a1a; border: 2px solid #333; }
-        .progress-block.filled { background: var(--jager-green); border-color: var(--jager-gold); animation: fillBlock 0.3s ease-out forwards; }
-        @keyframes fillBlock { from{opacity:0; transform:scaleX(0)} to{opacity:1; transform:scaleX(1)} }
-
-        #map-container {
-            width: 100%; height: 520px; position: relative; overflow: hidden;
-            background: var(--jager-forest);
+        /* --- RPG КАРТА ГОРОДА --- */
+        .city-map {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            background-color: #0d1f0d;
             background-image: 
-                radial-gradient(circle, #2a6a2a 1px, transparent 1px),
-                radial-gradient(circle, var(--jager-forest2) 1px, transparent 1px);
-            background-size: 8px 8px, 12px 12px; background-position: 0 0, 4px 4px;
-            border: 3px solid var(--jager-gold);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 0 0 1px var(--jager-gold-dark), 0 0 0 5px var(--jager-black);
+                repeating-linear-gradient(0deg, transparent, transparent 15px, rgba(0,80,0,0.15) 15px, rgba(0,80,0,0.15) 16px),
+                repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(0,80,0,0.15) 15px, rgba(0,80,0,0.15) 16px);
+            margin: 15px 0;
+            overflow: hidden;
+            border: 4px solid #1a3a1a;
         }
 
-        /* Виньетка леса */
-        .forest-edge { position: absolute; pointer-events: none; z-index: 2; }
-        .forest-edge.top { top: 0; left: 0; width: 100%; height: 40px; background: linear-gradient(to bottom, var(--jager-black), transparent); }
-        .forest-edge.bottom { bottom: 0; left: 0; width: 100%; height: 40px; background: linear-gradient(to top, var(--jager-black), transparent); }
-        .forest-edge.left { top: 0; left: 0; width: 40px; height: 100%; background: linear-gradient(to right, var(--jager-black), transparent); }
-        .forest-edge.right { top: 0; right: 0; width: 40px; height: 100%; background: linear-gradient(to left, var(--jager-black), transparent); }
-
-        /* Горы */
-        .mountain-cluster { position: absolute; z-index: 3; }
-        .mountain {
-            width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent;
-            border-bottom: 20px solid var(--jager-rock); position: relative; display: inline-block; margin: 0 -5px;
-        }
-        .mountain::before {
-            content: ''; position: absolute; top: 8px; left: -5px;
-            border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 8px solid var(--jager-gold);
-        }
-        .mountain::after {
-            content: ''; position: absolute; top: 0; left: 6px;
-            border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 20px solid var(--jager-rock-dark); opacity: 0.5;
-        }
-        .mountains-tl { top: 5%; left: 2%; } .mountains-tr { top: 8%; right: 3%; }
-        .mountains-bl { bottom: 8%; left: 5%; } .mountains-br { bottom: 5%; right: 2%; }
-
-        /* Пиксельные ели */
-        .tree-pixel { position: absolute; z-index: 3; width: 8px; height: 14px; }
-        .tree-pixel::after { content: ''; display: block; width: 3px; height: 4px; background: #3d1f00; position: absolute; bottom: 0; left: 2.5px; }
-        .tree-pixel::before {
-            content: ''; display: block; width: 0; height: 0; position: absolute; bottom: 4px; left: 4px;
-            box-shadow: 
-                -2px -2px 0 var(--jager-forest), 0 -2px 0 #2a6a2a, 2px -2px 0 var(--jager-forest),
-                -4px 0 0 var(--jager-forest), -2px 0 0 #2a6a2a, 2px 0 0 #2a6a2a, 4px 0 0 var(--jager-forest),
-                -4px 2px 0 #2a6a2a, -2px 2px 0 #1a5a1a, 2px 2px 0 #1a5a1a, 4px 2px 0 #2a6a2a;
-        }
-
-        /* Таверны (Бары) */
-        .bar-pin {
-            position: absolute; width: 40px; height: 44px;
-            transform: translate(-50%, -50%); z-index: 6; cursor: pointer;
-        }
-        .tavern { position: relative; }
-        .tavern-roof {
-            width: 28px; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent;
-            border-bottom: 10px solid #8B0000; margin: 0 auto; position: relative;
-        }
-        .tavern-roof::after {
-            content: ''; position: absolute; top: -2px; left: 50%; transform: translateX(-50%);
-            width: 4px; height: 4px; background: var(--jager-gold);
-        }
-        .tavern-body {
-            width: 24px; height: 18px; background: #5a3a1a; margin: 0 auto; position: relative;
-            box-shadow: inset -3px 0 0 #3a2010, inset 0 -2px 0 #3a2010;
-        }
-        .tavern-body::before {
-            content: ''; position: absolute; box-shadow: 4px 4px 0 0 #FFD700, 14px 4px 0 0 #FFD700;
-            width: 4px; height: 4px; background: #FFD700; top: 0; left: 0;
-        }
-        .tavern-body::after {
-            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 5px; height: 8px; background: #2a1500; border-top: 2px solid #8B4513;
-        }
-        .tavern-sign {
-            width: 20px; height: 6px; background: var(--jager-gold); margin: -1px auto 0;
-            border: 1px solid var(--jager-gold-dark); font-size: 4px; text-align: center; color: #000; line-height: 6px;
-        }
-        .bar-name {
-            font: 5px 'Press Start 2P'; color: var(--jager-gold); text-shadow: 1px 1px 0 #000;
-            text-align: center; margin-top: 2px; white-space: nowrap; background: rgba(0,0,0,0.7); padding: 1px 3px;
-        }
-        .bar-marker {
-            position: absolute; bottom: -2px; right: -4px; width: 12px; height: 12px; background: var(--jager-green);
-            border: 1px solid var(--jager-gold); font: 6px 'Press Start 2P'; color: #fff; text-align: center; line-height: 12px;
-        }
-
-        .bar-pin.uncollected .tavern { filter: grayscale(80%) brightness(0.6); }
-        .bar-status { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-        .bar-pin.uncollected .bar-status::after {
-            content: '?'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-            font: 8px 'Press Start 2P'; color: #ff4444; text-shadow: 1px 1px 0 #000;
-            animation: blinkStatus 0.8s steps(1) infinite;
-        }
-        .bar-pin.collected .tavern { filter: none; }
-        .bar-pin.collected .bar-status::after {
-            content: '✓'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-            font: 8px 'Press Start 2P'; color: var(--jager-gold);
-            animation: glowStatus 1.5s ease-in-out infinite;
-        }
-
-        @keyframes blinkStatus { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes glowStatus {
-            0%,100% { text-shadow: 0 0 4px var(--jager-gold); }
-            50% { text-shadow: 0 0 12px var(--jager-gold), 0 0 20px var(--jager-gold); }
-        }
-
-        /* Персонаж на карте */
-        .map-character {
-            position: absolute; z-index: 10; width: 24px; height: 32px;
-            image-rendering: pixelated; background-size: contain; background-repeat: no-repeat; background-position: center;
-            mix-blend-mode: screen; animation: mapWalk 0.5s steps(2) infinite;
-            transition: left 1s ease, top 1s ease;
-            transform: translate(-50%, -100%);
-        }
-        .map-character::after {
-            content: ''; width: 16px; height: 4px; background: rgba(0,0,0,0.4); border-radius: 50%;
-            position: absolute; bottom: -2px; left: 4px; z-index: -1;
-        }
-        @keyframes mapWalk {
-            0%,100% { transform: translate(-50%, -100%) translateY(0); }
-            50% { transform: translate(-50%, -100%) translateY(-4px); }
-        }
-
-        /* Туман войны */
-        .fog-of-war {
+        .map-roads {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(ellipse at 50% 50%, transparent 30%, rgba(5,15,5,0.4) 70%, rgba(5,15,5,0.8) 100%);
-            pointer-events: none; z-index: 8;
+            z-index: 1; pointer-events: none;
+        }
+
+        .bar-location {
+            position: absolute; z-index: 2;
+            transform: translate(-50%, -50%);
+            display: flex; flex-direction: column; align-items: center;
+            cursor: pointer;
+        }
+
+        /* Здание через CSS Art */
+        .bar-building {
+            width: 32px; height: 28px; background: #8B4513;
+            position: relative; margin-top: 18px;
+        }
+        .bar-building::before {
+            content: ''; position: absolute; top: -10px; left: -4px;
+            border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 10px solid #C0392B;
+        }
+        .bar-building::after {
+            content: ''; position: absolute; width: 6px; height: 8px; background: transparent; top: 10px; left: 0;
+            box-shadow: 6px 0 0 #FFD700, 20px 0 0 #FFD700;
+        }
+
+        /* Элементы вокруг здания */
+        .bar-sign {
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+            background: #FFD700; color: #000; font-size: 5px; padding: 2px; white-space: nowrap; z-index: 3;
+        }
+        .bar-status-icon {
+            position: absolute; top: -18px; font-size: 12px; width: 22px; height: 22px;
+            display: flex; justify-content: center; align-items: center;
+            border: 2px solid #000; border-radius: 50%; background: #fff; z-index: 4;
+        }
+        .bar-number {
+            position: absolute; bottom: -8px; right: -12px; font-size: 6px; width: 14px; height: 14px;
+            display: flex; justify-content: center; align-items: center;
+            border-radius: 50%; border: 1px solid #000; z-index: 5;
+        }
+
+        /* Состояния зданий */
+        .uncollected .bar-building { filter: grayscale(100%) brightness(0.5); }
+        .uncollected .bar-status-icon {
+            background: #000; color: #ff0000; border-color: #ff0000; border-radius: 0; font-family: sans-serif;
+            animation: question-blink 1s infinite step-end;
+        }
+        .uncollected .bar-number { background: #555; color: #aaa; }
+
+        .collected .bar-building { animation: bar-glow 2s infinite; }
+        .collected .bar-status-icon { background: #C8A44A; color: #000; border-color: #000; }
+        .collected .bar-number { background: #C8A44A; color: #000; }
+
+        /* Пиксельный персонаж */
+        .player-sprite {
+            position: absolute; 
+            width: 32px;  
+            height: 32px; 
+            z-index: 10; 
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            mix-blend-mode: screen; 
+            transition: top 0.5s, left 0.5s;
+            animation: walk 0.4s steps(2) infinite;
+        }
+        
+        /* Анимации */
+        @keyframes question-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes bar-glow { 0%, 100% { filter: drop-shadow(0 0 2px #C8A44A); } 50% { filter: drop-shadow(0 0 8px #FFD700); } }
+        @keyframes walk { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+        /* --- RPG МОДАЛЬНОЕ ОКНО --- */
+        .rpg-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+            display: none; justify-content: center; align-items: flex-end; z-index: 1000;
+        }
+        .rpg-modal {
+            width: 100%; height: 48%; background: #1a1a2e; border-top: 4px solid #C8A44A;
+            box-shadow: inset 4px 4px 0 #2a2a4e, inset -4px -4px 0 #0a0a1e, 0 -4px 0 #8B6914;
+            display: flex; flex-direction: column; padding: 18px 25px; position: relative;
+            box-sizing: border-box;
+            animation: slide-up 0.3s ease-out;
         }
         @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
         
@@ -794,74 +741,28 @@
         <img src="./assets/logo-bottom.png" class="logo-bottom-quest" alt="Jägermeister">
     </div>
 
-   <!-- ЭКРАН 3: Карта (WORLD MAP REDESIGN) -->
+    <!-- ЭКРАН 3: Карта -->
     <div id="screen-map" class="screen">
         <div class="map-header">
             <img src="./assets/logo-round.png" alt="Logo">
             <span id="progress-text">СОБРАНО: 0 / 8</span>
         </div>
         
-        <!-- Новый прогресс-бар -->
-        <div id="progress-blocks"></div>
+        <div class="progress-bar">
+            <div id="progress-fill" class="progress-fill"></div>
+        </div>
         
-        <div id="map-container">
-            <!-- Тёмный лес по краям -->
-            <div class="forest-edge top"></div>
-            <div class="forest-edge bottom"></div>
-            <div class="forest-edge left"></div>
-            <div class="forest-edge right"></div>
-            
-            <!-- Горы по углам -->
-            <div class="mountain-cluster mountains-tl">
-                <div class="mountain"></div><div class="mountain"></div><div class="mountain"></div>
-            </div>
-            <div class="mountain-cluster mountains-tr">
-                <div class="mountain"></div><div class="mountain"></div><div class="mountain"></div><div class="mountain"></div>
-            </div>
-            <div class="mountain-cluster mountains-bl">
-                <div class="mountain"></div><div class="mountain"></div><div class="mountain"></div>
-            </div>
-            <div class="mountain-cluster mountains-br">
-                <div class="mountain"></div><div class="mountain"></div>
-            </div>
-
-            <!-- Река -->
-            <svg class="map-river" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none">
-                <path d="M 180,0 C 160,80 200,120 170,180 C 140,240 190,300 160,400 C 145,460 170,520 160,520"
-                      stroke="var(--jager-water)" stroke-width="14" fill="none" stroke-linecap="round"/>
-                <path d="M 180,0 C 160,80 200,120 170,180 C 140,240 190,300 160,400 C 145,460 170,520 160,520"
-                      stroke="var(--jager-water2)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="4 8" />
+        <!-- НОВАЯ RPG-КАРТА БАРОВ -->
+        <div id="city-map" class="city-map">
+            <!-- Векторные дороги -->
+            <svg class="map-roads" preserveAspectRatio="none" viewBox="0 0 100 100">
+                <path id="svg-path-bg" fill="none" stroke="#3d2b00" stroke-width="2" stroke-dasharray="2 1"></path>
+                <path id="svg-path-fg" fill="none" stroke="#5a3f00" stroke-width="1"></path>
             </svg>
-
-            <!-- Дороги (отрисовываются через JS) -->
-            <svg class="map-roads" preserveAspectRatio="none" viewBox="0 0 100 100" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:4">
-                <polyline id="road-shadow" stroke="var(--jager-gold-dark)" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
-                <polyline id="road-main" stroke="var(--jager-gold)" stroke-width="1.2" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 1"/>
-                <polyline id="road-highlight" stroke="#e8c46a" stroke-width="0.5" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="2 1"/>
-            </svg>
-
-            <!-- Пиксельные ели (декор) -->
-            <div class="tree-pixel" style="left: 10%; top: 20%"></div>
-            <div class="tree-pixel" style="left: 12%; top: 23%"></div>
-            <div class="tree-pixel" style="left: 80%; top: 10%"></div>
-            <div class="tree-pixel" style="left: 85%; top: 12%"></div>
-            <div class="tree-pixel" style="left: 30%; top: 80%"></div>
-            <div class="tree-pixel" style="left: 33%; top: 85%"></div>
-            <div class="tree-pixel" style="left: 70%; top: 60%"></div>
-            <div class="tree-pixel" style="left: 75%; top: 63%"></div>
-            <div class="tree-pixel" style="left: 45%; top: 15%"></div>
-            <div class="tree-pixel" style="left: 48%; top: 18%"></div>
-            <div class="tree-pixel" style="left: 18%; top: 90%"></div>
-            <div class="tree-pixel" style="left: 85%; top: 90%"></div>
-
-            <!-- Маркеры баров (рендерит JS) -->
+            <!-- Контейнер для зданий -->
             <div id="map-markers"></div>
-
-            <!-- Туман войны -->
-            <div class="fog-of-war"></div>
-
-            <!-- Персонаж на карте -->
-            <div id="player-sprite" class="map-character" style="display: none;"></div>
+            <!-- Пиксельный персонаж -->
+            <div id="player-sprite" class="player-sprite" style="display: none;"></div>
         </div>
         
         <button id="btn-elixir" class="btn" style="display: none; margin-top: 15px;" onclick="startElixirAnimation()">🧪 СОЗДАТЬ ЭЛИКСИР</button>
