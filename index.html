@@ -1136,31 +1136,36 @@
         }
     }
     function openModal(item, isCollected, stepNum) {
-        document.getElementById('rpg-title').innerText = item.bar;
+        const titleEl = document.getElementById('rpg-title');
+        if (!titleEl) return; // Защита, если модалка не найдена в HTML
+
+        titleEl.innerText = item.bar;
         
+        document.getElementById('rpg-artifact').innerText = isCollected ? `Артефакт: ${item.name} ${item.icon}` : 'Артефакт: Неизвестно';
+        document.getElementById('rpg-hint').innerText = isCollected ? item.hint : `Следуй в эту локацию. Подсказка: ${item.hint}`;
+        
+        const statusEl = document.getElementById('rpg-status');
         if (isCollected) {
-            document.getElementById('rpg-artifact').innerText = `Артефакт: ${item.name} ${item.icon}`;
-            document.getElementById('rpg-hint').innerText = item.hint;
-            document.getElementById('rpg-status').innerHTML = '✅ СОБРАН';
-            document.getElementById('rpg-status').style.color = "#4CAF50";
+            statusEl.innerHTML = '✅ СОБРАН';
+            statusEl.style.color = "#4CAF50";
             document.getElementById('btn-scan').style.display = 'none';
         } else {
-            document.getElementById('rpg-artifact').innerText = 'Артефакт: Неизвестно';
-            document.getElementById('rpg-hint').innerText = `Следуй в эту локацию. Подсказка: ${item.hint}`;
-            document.getElementById('rpg-status').innerHTML = '❌ НЕ СОБРАН';
-            document.getElementById('rpg-status').style.color = "#ff4444";
+            statusEl.innerHTML = '❌ НЕ СОБРАН';
+            statusEl.style.color = "#ff4444";
             document.getElementById('btn-scan').style.display = 'block';
         }
         
-        document.getElementById('rpg-modal-overlay').style.display = 'flex';
-        if (window.Telegram && window.Telegram.WebApp) {
+        document.getElementById('iso-modal-overlay').style.display = 'flex';
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
             window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
         }
     }
 
     function closeModal() {
-        document.getElementById('rpg-modal-overlay').style.display = 'none';
+        document.getElementById('iso-modal-overlay').style.display = 'none';
     }
+
+  
 
     function openScanner() {
         tg.showScanQrPopup({ text: "Наведи камеру на QR-код в баре" }, (scannedText) => {
