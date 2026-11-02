@@ -8,319 +8,16 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         
-        /* --- ФОН ЭКРАНА ВЫБОРА (JÄGERMEISTER 8-BIT) --- */
-        #screen-character {
-            background: linear-gradient(
-                180deg,
-                #000d00 0%,      /* небо — почти чёрное */
-                #001a00 40%,     /* переход к лесу */
-                #002200 70%,     /* тёмный лес */
-                #001500 100%     /* земля */
-            );
-            position: relative;
-        }
-
-        /* Чтобы контент (лого, карточки, кнопки) был поверх фона и кликабельным */
-        #screen-character > *:not(.jager-bg-layer) {
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Контейнер для слоев фона */
-        .jager-bg-layer {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1;
-            pointer-events: none;
-            overflow: hidden;
-        }
-
-        /* Луна */
-        .moon {
-            position: absolute; 
-            top: 8%; 
-            right: 20%;
-            width: 28px; 
-            height: 28px;
-            background: #C8A44A;
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(200, 164, 74, 0.8), 0 0 30px rgba(200, 164, 74, 0.4);
-        }
-
-        /* Звёзды */
-        .jager-star {
-            width: 2px; 
-            height: 2px;
-            background: #ffffff;
-            position: absolute;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 1; }
-            50%      { opacity: 0.2; }
-        }
-
-        /* Деревья */
-        .trees-wrapper {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%; height: 100%;
-        }
-
-        .tree {
-            position: absolute;
-            bottom: 0;
-            width: 20px;
-        }
-
-        /* Ствол */
-        .tree::after {
-            content: '';
-            display: block;
-            width: 6px;
-            height: 16px;
-            background: #3d1f00;
-            margin: 0 auto;
-        }
-
-        /* Крона */
-        .tree::before {
-            content: '';
-            display: block;
-            width: 4px;
-            height: 4px;
-            background: #1a4a1a;
-            margin: 0 auto;
-            box-shadow:
-                /* ярус 1 (верхушка) */
-                -4px 4px 0 #1a4a1a,
-                0px  4px 0 #2a6a2a,
-                4px  4px 0 #1a4a1a,
-                /* ярус 2 */
-                -8px 8px 0 #1a4a1a,
-                -4px 8px 0 #2a6a2a,
-                0px  8px 0 #2a6a2a,
-                4px  8px 0 #2a6a2a,
-                8px  8px 0 #1a4a1a,
-                /* ярус 3 (широкий) */
-                -12px 12px 0 #1a4a1a,
-                -8px  12px 0 #2a6a2a,
-                -4px  12px 0 #1a5a1a,
-                0px   12px 0 #2a6a2a,
-                4px   12px 0 #1a5a1a,
-                8px   12px 0 #2a6a2a,
-                12px  12px 0 #1a4a1a,
-                /* ярус 4 (основание кроны) */
-                -12px 16px 0 #2a6a2a,
-                -8px  16px 0 #1a5a1a,
-                -4px  16px 0 #2a6a2a,
-                0px   16px 0 #1a5a1a,
-                4px   16px 0 #2a6a2a,
-                8px   16px 0 #1a5a1a,
-                12px  16px 0 #2a6a2a;
-        }
-
-        .tree:nth-child(1) { left: -2px;  height: 120px; transform: scale(1.4); }
-        .tree:nth-child(2) { left: 18px;  height: 90px;  transform: scale(1.0); }
-        .tree:nth-child(3) { left: 5px;   height: 105px; transform: scale(1.2); opacity: 0.7; }
-        .tree:nth-child(4) { right: -2px; height: 115px; transform: scale(1.3); }
-        .tree:nth-child(5) { right: 18px; height: 85px;  transform: scale(0.9); }
-        .tree:nth-child(6) { right: 5px;  height: 100px; transform: scale(1.1); opacity: 0.7; }
-
-        /* Земля */
-        .ground {
-            position: absolute; 
-            bottom: 0;
-            height: 16px; 
-            width: 100%;
-            background: #1a0a00;
-            box-shadow: 0 -2px 0 #2a1500, 0 -4px 0 #1a0a00;
-        }
-
-        /* Туман */
-        .fog {
-            position: absolute; 
-            bottom: 12px;
-            height: 20px; 
-            width: 100%;
-            background: linear-gradient(
-                180deg, 
-                transparent 0%, 
-                rgba(0, 60, 0, 0.3) 50%, 
-                rgba(0, 40, 0, 0.5) 100%
-            );
-        }
-
-        /* --- RPG КАРТА ГОРОДА --- */
-        .city-map {
-            position: relative;
-            width: 100%;
-            height: 380px;
-            background-color: #0d1f0d;
-            background-image: 
-                repeating-linear-gradient(0deg, transparent, transparent 15px, rgba(0,80,0,0.15) 15px, rgba(0,80,0,0.15) 16px),
-                repeating-linear-gradient(90deg, transparent, transparent 15px, rgba(0,80,0,0.15) 15px, rgba(0,80,0,0.15) 16px);
-            margin: 15px 0;
-            overflow: hidden;
-            border: 4px solid #1a3a1a;
-        }
-
-        .map-roads {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 1; pointer-events: none;
-        }
-
-        .bar-location {
-            position: absolute; z-index: 2;
-            transform: translate(-50%, -50%);
-            display: flex; flex-direction: column; align-items: center;
-            cursor: pointer;
-        }
-
-        /* Здание через CSS Art */
-        .bar-building {
-            width: 32px; height: 28px; background: #8B4513;
-            position: relative; margin-top: 18px;
-        }
-        .bar-building::before {
-            content: ''; position: absolute; top: -10px; left: -4px;
-            border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 10px solid #C0392B;
-        }
-        .bar-building::after {
-            content: ''; position: absolute; width: 6px; height: 8px; background: transparent; top: 10px; left: 0;
-            box-shadow: 6px 0 0 #FFD700, 20px 0 0 #FFD700;
-        }
-
-        /* Элементы вокруг здания */
-        .bar-sign {
-            position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-            background: #FFD700; color: #000; font-size: 5px; padding: 2px; white-space: nowrap; z-index: 3;
-        }
-        .bar-status-icon {
-            position: absolute; top: -18px; font-size: 12px; width: 22px; height: 22px;
-            display: flex; justify-content: center; align-items: center;
-            border: 2px solid #000; border-radius: 50%; background: #fff; z-index: 4;
-        }
-        .bar-number {
-            position: absolute; bottom: -8px; right: -12px; font-size: 6px; width: 14px; height: 14px;
-            display: flex; justify-content: center; align-items: center;
-            border-radius: 50%; border: 1px solid #000; z-index: 5;
-        }
-
-        /* Состояния зданий */
-        .uncollected .bar-building { filter: grayscale(100%) brightness(0.5); }
-        .uncollected .bar-status-icon {
-            background: #000; color: #ff0000; border-color: #ff0000; border-radius: 0; font-family: sans-serif;
-            animation: question-blink 1s infinite step-end;
-        }
-        .uncollected .bar-number { background: #555; color: #aaa; }
-
-        .collected .bar-building { animation: bar-glow 2s infinite; }
-        .collected .bar-status-icon { background: #C8A44A; color: #000; border-color: #000; }
-        .collected .bar-number { background: #C8A44A; color: #000; }
-
-        /* Пиксельный персонаж */
-        .player-sprite {
-            position: absolute; 
-            width: 32px;  
-            height: 32px; 
-            z-index: 10; 
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            mix-blend-mode: screen; 
-            transition: top 0.5s, left 0.5s;
-            animation: walk 0.4s steps(2) infinite;
-        }
-        
-        /* Анимации */
-        @keyframes question-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-        @keyframes bar-glow { 0%, 100% { filter: drop-shadow(0 0 2px #C8A44A); } 50% { filter: drop-shadow(0 0 8px #FFD700); } }
-        @keyframes walk { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-
-        /* --- RPG МОДАЛЬНОЕ ОКНО --- */
-        .rpg-modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
-            display: none; justify-content: center; align-items: flex-end; z-index: 1000;
-        }
-        .rpg-modal {
-            width: 100%; height: 48%; background: #1a1a2e; border-top: 4px solid #C8A44A;
-            box-shadow: inset 4px 4px 0 #2a2a4e, inset -4px -4px 0 #0a0a1e, 0 -4px 0 #8B6914;
-            display: flex; flex-direction: column; padding: 18px 25px; position: relative;
-            box-sizing: border-box;
-            animation: slide-up 0.3s ease-out;
-        }
-        @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
-        .rpg-modal-right { 
-            display: flex; 
-            flex-direction: column; 
-            width: 100%;
-            align-items: center; 
-            text-align: center;
-            justify-content: flex-start;
-        }
-        
-        .rpg-title { color: #C8A44A; font-size: 16px; margin: 0 0 10px 0; line-height: 1.3; text-shadow: 1px 1px 0 #000; }
-        .rpg-artifact { color: #fff; font-size: 12px; margin: 0 0 10px 0; line-height: 1.4; }
-        .rpg-hint { color: #ccc; font-size: 11px; line-height: 1.5; margin: 0 0 12px 0; max-width: 95%; }
-        .rpg-status { font-size: 12px; margin: 0 0 15px 0; line-height: 1.4; font-weight: bold; }
-        
-        .rpg-buttons { 
-            display: flex; 
-            gap: 14px; 
-            width: 100%;
-            max-width: 320px; 
-            margin: 0 auto;
-            justify-content: center; 
-            margin-top: auto; 
-        }
-        .rpg-modal .btn, .rpg-btn { 
-            font-size: 10px !important; 
-            padding: 14px 10px !important; 
-            flex: 1 !important; 
-            text-align: center !important; 
-            background: #1b4d3e !important; 
-            color: #ffffff !important;
-            border: 2px solid #C8A44A !important;
-            box-shadow: inset 2px 2px 0 #2e8b57, inset -2px -2px 0 #0d231c !important;
-            cursor: pointer;
-            display: block !important;
-        }
-
-        /* Статусы */
-        .uncollected .indicator {
-            animation: blink 1.5s infinite step-end;
-        }
-        .uncollected .indicator::before { content: '❓'; }
-
-        .collected .building-icon {
-            filter: grayscale(0%) sepia(100%) hue-rotate(5deg) saturate(300%); 
-            animation: collected-glow 2s infinite;
-            border-radius: 50%;
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        @keyframes collected-glow {
-            0%, 100% { box-shadow: 0 0 5px #C8A44A; background-color: rgba(200, 164, 74, 0.2); }
-            50% { box-shadow: 0 0 15px #FFD700; background-color: rgba(255, 215, 0, 0.4); }
-        }
-
         :root {
             --green: #00843D;
             --gold: #C8A44A;
             --black: #1A1A1A;
             --white: #F5F5F5;
-            --dim: rgba(26, 26, 26, 0.85);
         }
 
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
@@ -335,320 +32,188 @@
         }
 
         #app {
-            width: 100vw;
-            height: 100vh;
+            width: 100vw; height: 100vh;
             padding-top: env(safe-area-inset-top, 20px);
             padding-bottom: env(safe-area-inset-bottom, 20px);
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
             position: relative;
         }
 
         .screen {
-            display: none;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
+            display: none; flex-direction: column;
+            width: 100%; height: 100%;
             padding: 20px;
-            position: absolute;
-            top: 0;
-            left: 0;
+            position: absolute; top: 0; left: 0;
             background-color: var(--black);
         }
+        .active-screen { display: flex; }
 
-        .active-screen {
-            display: flex;
-        }
-
-        /* Утилиты и компоненты */
+        /* --- УТИЛИТЫ И КОМПОНЕНТЫ --- */
         .pixel-border {
-            box-shadow: 
-                -4px 0 0 0 var(--green),
-                4px 0 0 0 var(--green),
-                0 -4px 0 0 var(--green),
-                0 4px 0 0 var(--green);
-            margin: 4px;
-            background: var(--black);
+            box-shadow: -4px 0 0 0 var(--green), 4px 0 0 0 var(--green), 0 -4px 0 0 var(--green), 0 4px 0 0 var(--green);
+            margin: 4px; background: var(--black);
         }
-
         .pixel-border.gold {
-            box-shadow: 
-                -4px 0 0 0 var(--gold),
-                4px 0 0 0 var(--gold),
-                0 -4px 0 0 var(--gold),
-                0 4px 0 0 var(--gold);
+            box-shadow: -4px 0 0 0 var(--gold), 4px 0 0 0 var(--gold), 0 -4px 0 0 var(--gold), 0 4px 0 0 var(--gold);
         }
 
         .btn {
-            background-color: var(--green);
-            color: var(--white);
-            border: none;
-            padding: 15px;
-            font-family: inherit;
-            font-size: 14px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 
-                -4px 0 0 0 var(--white),
-                4px 0 0 0 var(--white),
-                0 -4px 0 0 var(--white),
-                0 4px 0 0 var(--white);
-            margin: 20px auto;
-            display: block;
-            width: 80%;
-            text-transform: uppercase;
+            background-color: var(--green); color: var(--white); border: none; padding: 15px;
+            font-family: inherit; font-size: 14px; text-align: center; cursor: pointer;
+            box-shadow: -4px 0 0 0 var(--white), 4px 0 0 0 var(--white), 0 -4px 0 0 var(--white), 0 4px 0 0 var(--white);
+            margin: 20px auto; display: block; width: 80%; text-transform: uppercase;
+        }
+        .btn:active { transform: scale(0.95); }
+
+        .title { text-align: center; color: var(--gold); margin-bottom: 20px; font-size: 16px; }
+        .logo { width: 120px; margin: 0 auto 20px; image-rendering: pixelated; position: relative; z-index: 10; }
+        #bottom-logo { width: 80%; max-width: 220px; margin: 40px auto 20px auto; display: block; position: relative; z-index: 10; }
+
+        /* --- ЭКРАН 1: ФОН ВЫБОРА --- */
+        #screen-character {
+            background: linear-gradient(180deg, #000d00 0%, #001a00 40%, #002200 70%, #001500 100%);
+            position: relative;
         }
 
-        .btn:active {
-            transform: scale(0.95);
-        }
+        /* Слои фона и клики */
+        #screen-character > *:not(.jager-bg-layer) { position: relative; z-index: 100; pointer-events: auto; }
+        .jager-bg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: hidden; }
 
-        .title {
-            text-align: center;
-            color: var(--gold);
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
+        .moon { position: absolute; top: 8%; right: 20%; width: 28px; height: 28px; background: #C8A44A; border-radius: 50%; box-shadow: 0 0 15px rgba(200, 164, 74, 0.8), 0 0 30px rgba(200, 164, 74, 0.4); }
+        .jager-star { width: 2px; height: 2px; background: #ffffff; position: absolute; }
+        @keyframes twinkle { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
 
-        .logo {
-            width: 120px;
-            margin: 0 auto 20px;
-            image-rendering: pixelated;
+        .trees-wrapper { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; }
+        .tree { position: absolute; bottom: 0; width: 20px; }
+        .tree::after { content: ''; display: block; width: 6px; height: 16px; background: #3d1f00; margin: 0 auto; }
+        .tree::before {
+            content: ''; display: block; width: 4px; height: 4px; background: #1a4a1a; margin: 0 auto;
+            box-shadow: -4px 4px 0 #1a4a1a, 0px 4px 0 #2a6a2a, 4px 4px 0 #1a4a1a, -8px 8px 0 #1a4a1a, -4px 8px 0 #2a6a2a, 0px 8px 0 #2a6a2a, 4px 8px 0 #2a6a2a, 8px 8px 0 #1a4a1a, -12px 12px 0 #1a4a1a, -8px 12px 0 #2a6a2a, -4px 12px 0 #1a5a1a, 0px 12px 0 #2a6a2a, 4px 12px 0 #1a5a1a, 8px 12px 0 #2a6a2a, 12px 12px 0 #1a4a1a, -12px 16px 0 #2a6a2a, -8px 16px 0 #1a5a1a, -4px 16px 0 #2a6a2a, 0px 16px 0 #1a5a1a, 4px 16px 0 #2a6a2a, 8px 16px 0 #1a5a1a, 12px 16px 0 #2a6a2a;
         }
+        .tree:nth-child(1) { left: -2px; height: 120px; transform: scale(1.4); }
+        .tree:nth-child(2) { left: 18px; height: 90px; transform: scale(1.0); }
+        .tree:nth-child(3) { left: 5px; height: 105px; transform: scale(1.2); opacity: 0.7; }
+        .tree:nth-child(4) { right: -2px; height: 115px; transform: scale(1.3); }
+        .tree:nth-child(5) { right: 18px; height: 85px; transform: scale(0.9); }
+        .tree:nth-child(6) { right: 5px; height: 100px; transform: scale(1.1); opacity: 0.7; }
 
-        #bottom-logo {
-            width: 80%;
-            max-width: 220px;
-            margin: 40px auto 20px auto;
-            display: block;
-        }
+        .ground { position: absolute; bottom: 0; height: 16px; width: 100%; background: #1a0a00; box-shadow: 0 -2px 0 #2a1500, 0 -4px 0 #1a0a00; }
+        .fog { position: absolute; bottom: 12px; height: 20px; width: 100%; background: linear-gradient(180deg, transparent 0%, rgba(0, 60, 0, 0.3) 50%, rgba(0, 40, 0, 0.5) 100%); }
 
-        #screen-character .characters {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            margin-top: 30px;
-        }
+        .characters { display: flex; justify-content: space-between; gap: 15px; margin-top: 30px; position: relative; z-index: 101; }
+        .char-card { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; cursor: pointer; transition: transform 0.2s; background: radial-gradient(ellipse at 50% 40%, #1a3a1a 0%, #050f05 100%) !important; position: relative; z-index: 101; }
+        .char-card img { width: 80px; height: 80px; image-rendering: pixelated; margin-bottom: 10px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8)); }
+        @keyframes blinkGold { 0%, 100% { box-shadow: -4px 0 0 0 var(--gold), 4px 0 0 0 var(--gold), 0 -4px 0 0 var(--gold), 0 4px 0 0 var(--gold); } 50% { box-shadow: -4px 0 0 0 transparent, 4px 0 0 0 transparent, 0 -4px 0 0 transparent, 0 4px 0 0 transparent; } }
+        .char-card.selected { animation: blinkGold 0.3s 2 forwards; }
 
-        .char-card {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            background: radial-gradient(ellipse at 50% 40%, #1a3a1a 0%, #050f05 100%) !important;
-        }
-
-      .char-card img {
-            width: 80px;
-            height: 80px;
-            image-rendering: pixelated;
-            margin-bottom: 10px;
-            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
-        }
-
-        @keyframes blinkGold {
-            0%, 100% { box-shadow: -4px 0 0 0 var(--gold), 4px 0 0 0 var(--gold), 0 -4px 0 0 var(--gold), 0 4px 0 0 var(--gold); }
-            50% { box-shadow: -4px 0 0 0 transparent, 4px 0 0 0 transparent, 0 -4px 0 0 transparent, 0 4px 0 0 transparent; }
-        }
-
-        .char-card.selected {
-            animation: blinkGold 0.3s 2 forwards;
-        }
-
-        /* Экран 2 - Квест */
-        #screen-quest {
-            background-color: #0b0b0b;
-        }
-
-        .star {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: white;
-            opacity: 0.5;
-        }
-
-       /* Анимация ходьбы для экрана квеста */
-        @keyframes walkForwardBack {
-            0%   { transform: translateX(0px) scaleX(1); }
-            25%  { transform: translateX(12px) scaleX(1); }
-            50%  { transform: translateX(12px) scaleX(-1); }
-            75%  { transform: translateX(0px) scaleX(-1); }
-            100% { transform: translateX(0px) scaleX(1); }
-        }
-
-        #quest-avatar {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 80px;  /* Было 48px */
-            height: 80px; /* Было 48px */
-            image-rendering: pixelated;
-            animation: walkForwardBack 2.4s steps(4) infinite;
-        }
-
-        /* Стиль для нижнего логотипа на экране квеста */
-        .logo-bottom-quest {
-            display: block;
-            width: 180px;
-            margin: 16px auto 0;
-            image-rendering: pixelated;
-        }
-
-        #quest-text-container {
-            margin-top: 80px;
-            min-height: 200px;
-            line-height: 1.8;
-            font-size: 14px;
-        }
-
+        /* --- ЭКРАН 2: Квест --- */
+        #screen-quest { background-color: #0b0b0b; }
+        .star { position: absolute; width: 4px; height: 4px; background: white; opacity: 0.5; }
+        @keyframes walkForwardBack { 0% { transform: translateX(0px) scaleX(1); } 25% { transform: translateX(12px) scaleX(1); } 50% { transform: translateX(12px) scaleX(-1); } 75% { transform: translateX(0px) scaleX(-1); } 100% { transform: translateX(0px) scaleX(1); } }
+        #quest-avatar { position: absolute; top: 20px; right: 20px; width: 80px; height: 80px; image-rendering: pixelated; animation: walkForwardBack 2.4s steps(4) infinite; }
+        .logo-bottom-quest { display: block; width: 180px; margin: 16px auto 0; image-rendering: pixelated; }
+        #quest-text-container { margin-top: 80px; min-height: 200px; line-height: 1.8; font-size: 14px; }
         #btn-to-map { display: none; }
 
-       // БЛОК 1 — вставить в <style> вместо старого CSS карты
-/* --- ЭКРАН 3: КАРТА --- */
-#screen-map { 
-    align-items: center; 
-    padding: 10px 0; 
-    background-color: #050f05; 
-}
+        /* --- ЭКРАН 3: КАРТА (CANVAS PIXEL ART) --- */
+        #screen-map { align-items: center; padding: 10px 0; background-color: #050f05; }
+        
+        #map-sky {
+            width: 340px; height: 44px; 
+            background: linear-gradient(180deg, #020802 0%, #050f05 100%);
+            position: relative; display: flex; 
+            justify-content: space-between; align-items: center;
+            padding: 0 10px; margin-bottom: 8px;
+            border: 2px solid #C8A44A; border-bottom: none; box-sizing: border-box;
+        }
+        .sky-stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .sky-star { position: absolute; width: 2px; height: 2px; background: #fff; animation: twinkle 1.5s infinite alternate; }
+        .sky-logo { width: 28px; height: 28px; image-rendering: pixelated; position: relative; z-index: 2; }
+        .sky-progress { font: 8px 'Press Start 2P'; color: #C8A44A; position: relative; z-index: 2; }
 
-#map-sky {
-    width: 340px; height: 44px; 
-    background: linear-gradient(180deg, #020802 0%, #050f05 100%);
-    position: relative; display: flex; 
-    justify-content: space-between; align-items: center;
-    padding: 0 10px; margin-bottom: 8px;
-    border: 2px solid #C8A44A;
-    border-bottom: none;
-    box-sizing: border-box;
-}
-.sky-stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-.sky-star { 
-    position: absolute; width: 2px; height: 2px; 
-    background: #fff; animation: twinkle 1.5s infinite alternate; 
-}
-.sky-logo { width: 28px; height: 28px; image-rendering: pixelated; position: relative; z-index: 2; }
-.sky-progress { font: 8px 'Press Start 2P'; color: #C8A44A; position: relative; z-index: 2; }
+        #map-canvas-wrapper {
+            width: 340px; height: 340px; position: relative; margin: 0 auto;
+            border: 3px solid #C8A44A;
+            box-shadow: 0 0 0 1px #8B6914, 0 0 0 5px #050f05, inset 0 0 40px rgba(0,0,0,0.7);
+        }
 
-#map-canvas-wrapper {
-    width: 340px; height: 340px; 
-    position: relative; margin: 0 auto;
-    border: 3px solid #C8A44A;
-    box-shadow: 
-        0 0 0 1px #8B6914, 
-        0 0 0 5px #050f05, 
-        inset 0 0 40px rgba(0,0,0,0.7);
-}
+        .map-corner { position: absolute; width: 10px; height: 10px; background: #C8A44A; box-shadow: 4px 0 0 #C8A44A, 0 4px 0 #C8A44A; z-index: 30; }
+        .corner-tl { top: -2px; left: -2px; }
+        .corner-tr { top: -2px; right: -2px; transform: scaleX(-1); }
+        .corner-bl { bottom: -2px; left: -2px; transform: scaleY(-1); }
+        .corner-br { bottom: -2px; right: -2px; transform: scale(-1); }
 
-.map-corner { 
-    position: absolute; width: 10px; height: 10px; 
-    background: #C8A44A; 
-    box-shadow: 4px 0 0 #C8A44A, 0 4px 0 #C8A44A; 
-    z-index: 30; 
-}
-.corner-tl { top: -2px; left: -2px; }
-.corner-tr { top: -2px; right: -2px; transform: scaleX(-1); }
-.corner-bl { bottom: -2px; left: -2px; transform: scaleY(-1); }
-.corner-br { bottom: -2px; right: -2px; transform: scale(-1); }
+        #map-canvas { position: absolute; top: 0; left: 0; width: 340px; height: 340px; image-rendering: pixelated; }
+        #map-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
 
-#map-canvas { 
-    position: absolute; top: 0; left: 0; 
-    width: 340px; height: 340px; 
-    image-rendering: pixelated; 
-}
-#map-overlay { 
-    position: absolute; top: 0; left: 0; 
-    width: 100%; height: 100%; 
-    pointer-events: none; z-index: 10; 
-}
+        /* Маркеры баров */
+        .bar-marker { 
+            position: absolute; display: flex; flex-direction: column; align-items: center; 
+            pointer-events: auto; cursor: pointer; justify-content: flex-start; padding-top: 2px;
+        }
+        .bar-marker-status { 
+            font: 9px 'Press Start 2P'; margin-bottom: 2px; position: absolute;
+            top: -14px; left: 50%; transform: translateX(-50%); text-shadow: 1px 1px 0 #000; line-height: 1;
+        }
+        .bar-marker.uncollected .bar-marker-status { color: #ff4444; animation: blinkStatus 0.8s steps(1) infinite; }
+        .bar-marker.collected .bar-marker-status { color: #C8A44A; animation: glowStatus 1.5s ease-in-out infinite; }
+        .bar-marker-num { 
+            position: absolute; bottom: 2px; right: -4px; font: 6px 'Press Start 2P'; 
+            background: #00843D; border: 1px solid #C8A44A; padding: 2px 4px; color: #fff; 
+        }
+        .bar-marker-name { 
+            position: absolute; bottom: -14px; left: 50%; transform: translateX(-50%); font: 5px 'Press Start 2P'; 
+            color: #C8A44A; text-shadow: 1px 1px 0 #000; background: rgba(0,0,0,0.85); padding: 2px 4px; white-space: nowrap; 
+        }
 
-/* БЛОК 3 — вставить в <style> вместо старых стилей маркеров */
-/* Маркеры баров */
-.bar-marker { 
-    position: absolute; 
-    display: flex; flex-direction: column; align-items: center; 
-    pointer-events: auto; cursor: pointer; 
-    justify-content: flex-start;
-    padding-top: 2px;
-}
-.bar-marker-status { 
-    font: 9px 'Press Start 2P'; 
-    margin-bottom: 2px;
-    position: absolute;
-    top: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    text-shadow: 1px 1px 0 #000; 
-    line-height: 1;
-}
-.bar-marker.uncollected .bar-marker-status { 
-    color: #ff4444; 
-    animation: blinkStatus 0.8s steps(1) infinite; 
-}
-.bar-marker.collected .bar-marker-status { 
-    color: #C8A44A; 
-    animation: glowStatus 1.5s ease-in-out infinite; 
-}
-.bar-marker-num { 
-    position: absolute;
-    bottom: 2px;
-    right: -4px;
-    font: 6px 'Press Start 2P'; 
-    background: #00843D; 
-    border: 1px solid #C8A44A; 
-    padding: 2px 4px; color: #fff; 
-}
-.bar-marker-name { 
-    position: absolute;
-    bottom: -14px;
-    left: 50%;
-    transform: translateX(-50%);
-    font: 5px 'Press Start 2P'; 
-    color: #C8A44A; 
-    text-shadow: 1px 1px 0 #000; 
-    background: rgba(0,0,0,0.85); 
-    padding: 2px 4px; 
-    white-space: nowrap; 
-}
+        /* Персонаж на карте */
+        #map-hero {
+            position: absolute; width: 28px; height: 36px; image-rendering: pixelated; z-index: 20;
+            background-size: contain; background-repeat: no-repeat; background-position: center; mix-blend-mode: screen;
+            animation: heroWalk 0.5s steps(2) infinite; transition: left 1s ease, top 1s ease;
+        }
+        #map-hero::after {
+            content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+            width: 18px; height: 5px; background: rgba(0,0,0,0.4); border-radius: 50%; z-index: -1;
+        }
 
-/* Персонаж на карте */
-#map-hero {
-    position: absolute; width: 28px; height: 36px; 
-    image-rendering: pixelated; z-index: 20;
-    background-size: contain; background-repeat: no-repeat; 
-    background-position: center; mix-blend-mode: screen;
-    animation: heroWalk 0.5s steps(2) infinite; 
-    transition: left 1s ease, top 1s ease;
-}
-#map-hero::after {
-    content: ''; position: absolute; 
-    bottom: -4px; left: 50%; transform: translateX(-50%);
-    width: 18px; height: 5px; 
-    background: rgba(0,0,0,0.4); 
-    border-radius: 50%; z-index: -1;
-}
+        @keyframes heroWalk { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes blinkStatus { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes glowStatus { 0%,100% { text-shadow: 0 0 4px #C8A44A; } 50% { text-shadow: 0 0 14px #C8A44A, 0 0 4px #fff; } }
 
-@keyframes heroWalk { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
-@keyframes blinkStatus { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
-@keyframes glowStatus { 0%,100% { text-shadow: 0 0 4px #C8A44A; } 50% { text-shadow: 0 0 14px #C8A44A, 0 0 4px #fff; } }
+        /* Экраны 4 и 5 */
+        .elixir-container { position: relative; width: 300px; height: 300px; }
+        .big-bottle { position: absolute; font-size: 80px; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); opacity: 0; transition: all 0.3s; }
+        .flash { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: white; opacity: 0; pointer-events: none; z-index: 10; }
+        
+        .prizes { display: flex; gap: 15px; margin-top: 30px; }
+        .prize-card { flex: 1; padding: 20px 10px; cursor: pointer; transition: opacity 0.3s; }
+        .prize-card.dim { opacity: 0.3; }
+        .prize-icon { font-size: 40px; margin-bottom: 10px; }
+        #btn-reset { margin-top: auto; background: transparent; color: #777; box-shadow: none; text-decoration: underline; padding: 10px; font-size: 10px; }
 
-/* Кнопки ниже карты */
-.prizes { display: flex; gap: 15px; margin-top: 30px; }
-.prize-card { flex: 1; padding: 20px 10px; cursor: pointer; transition: opacity 0.3s; }
-.prize-card.dim { opacity: 0.3; }
-.prize-icon { font-size: 40px; margin-bottom: 10px; }
-#btn-reset {
-    margin-top: auto; background: transparent; color: #777;
-    box-shadow: none; text-decoration: underline; 
-    padding: 10px; font-size: 10px;
-}
+        /* --- RPG МОДАЛЬНОЕ ОКНО --- */
+        .rpg-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
+            display: none; justify-content: center; align-items: flex-end; z-index: 1000;
+        }
+        .rpg-modal {
+            width: 100%; height: 48%; background: #1a1a2e; border-top: 4px solid #C8A44A;
+            box-shadow: inset 4px 4px 0 #2a2a4e, inset -4px -4px 0 #0a0a1e, 0 -4px 0 #8B6914;
+            display: flex; flex-direction: column; padding: 18px 25px; position: relative; box-sizing: border-box;
+            animation: slide-up 0.3s ease-out;
+        }
+        @keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .rpg-modal-right { display: flex; flex-direction: column; width: 100%; align-items: center; text-align: center; justify-content: flex-start; }
+        .rpg-title { color: #C8A44A; font-size: 16px; margin: 0 0 10px 0; line-height: 1.3; text-shadow: 1px 1px 0 #000; }
+        .rpg-artifact { color: #fff; font-size: 12px; margin: 0 0 10px 0; line-height: 1.4; }
+        .rpg-hint { color: #ccc; font-size: 11px; line-height: 1.5; margin: 0 0 12px 0; max-width: 95%; }
+        .rpg-status { font-size: 12px; margin: 0 0 15px 0; line-height: 1.4; font-weight: bold; }
+        .rpg-buttons { display: flex; gap: 14px; width: 100%; max-width: 320px; margin: 0 auto; justify-content: center; margin-top: auto; }
+        .rpg-modal .btn, .rpg-btn { font-size: 10px !important; padding: 14px 10px !important; flex: 1 !important; text-align: center !important; background: #1b4d3e !important; color: #ffffff !important; border: 2px solid #C8A44A !important; box-shadow: inset 2px 2px 0 #2e8b57, inset -2px -2px 0 #0d231c !important; cursor: pointer; display: block !important; }
     </style>
 </head>
 <body>
-<!-- ПАНЕЛЬ РАЗРАБОТЧИКА (УДАЛИТЬ ИЛИ СКРЫТЬ ПЕРЕД РЕЛИЗОМ!) -->
     <div id="dev-panel" style="position: fixed; top: 0; left: 0; z-index: 9999; background: rgba(0,0,0,0.8); border: 1px solid #0f0; border-top: none; border-left: none; border-bottom-right-radius: 8px; padding: 5px; gap: 5px; flex-wrap: wrap; display: none !important;">
         <button onclick="resetGame()" style="font-size: 8px; padding: 5px; background: #ff4444; color: white; border: none; cursor: pointer;">СБРОС</button>
         <button onclick="navigateTo('screen-character')" style="font-size: 8px; padding: 5px; cursor: pointer;">ГЕРОЙ</button>
@@ -657,14 +222,12 @@
         <button onclick="devAddQR()" style="font-size: 8px; padding: 5px; background: #00843D; color: white; border: none; cursor: pointer;">+1 QR</button>
         <button onclick="devWin()" style="font-size: 8px; padding: 5px; background: #C8A44A; color: black; border: none; cursor: pointer;">🏆 ВСЕ 8</button>
     </div>
+
 <div id="app">
-    <!-- ЭКРАН 1: Выбор персонажа -->
+    <!-- ЭКРАН 1 -->
     <div id="screen-character" class="screen active-screen">
-        
-        <!-- НОВЫЙ ФОН: JÄGERMEISTER 8-BIT -->
         <div class="jager-bg-layer">
             <div class="moon"></div>
-            
             <!-- 15 Звёзд -->
             <div class="jager-star" style="top: 5%; left: 10%; animation: twinkle 1s infinite 0.1s;"></div>
             <div class="jager-star" style="top: 15%; left: 25%; animation: twinkle 1.5s infinite 0.5s;"></div>
@@ -682,21 +245,14 @@
             <div class="jager-star" style="top: 20%; left: 50%; animation: twinkle 2.5s infinite 0.2s;"></div>
             <div class="jager-star" style="top: 14%; left: 70%; animation: twinkle 1.4s infinite 1.0s;"></div>
 
-            <!-- Пиксельные деревья -->
             <div class="trees-wrapper">
-                <div class="tree"></div>
-                <div class="tree"></div>
-                <div class="tree"></div>
-                <div class="tree"></div>
-                <div class="tree"></div>
-                <div class="tree"></div>
+                <div class="tree"></div><div class="tree"></div><div class="tree"></div>
+                <div class="tree"></div><div class="tree"></div><div class="tree"></div>
             </div>
-            
             <div class="ground"></div>
             <div class="fog"></div>
         </div>
-        <!-- КОНЕЦ ФОНА -->
-
+        
         <img id="main-logo" class="logo" alt="Jägermeister" src="./assets/logo.png">
         <h1 class="title">ВЫБЕРИ ОХОТНИКА</h1>
         <div class="characters">
@@ -709,28 +265,22 @@
                 <span>HUNTIE</span>
             </div>
         </div>
-
         <img id="bottom-logo" src="./assets/logo-bottom.png" alt="Jägermeister">
-
         <button id="btn-start" class="btn" style="display: none;" onclick="navigateTo('screen-quest')">НАЧАТЬ КВЕСТ</button>
     </div>
 
-   
-    <!-- ЭКРАН 2: Описание квеста -->
+    <!-- ЭКРАН 2 -->
     <div id="screen-quest" class="screen" onclick="skipTyping()">
         <img id="quest-avatar" src="" alt="Avatar">
         <div id="quest-text-container">
             <span id="quest-text"></span><span class="cursor">_</span>
         </div>
         <button id="btn-to-map" class="btn" onclick="navigateTo('screen-map'); event.stopPropagation();">В ПУТЬ!</button>
-        
-        <!-- Добавленный логотип снизу -->
         <img src="./assets/logo-bottom.png" class="logo-bottom-quest" alt="Jägermeister">
     </div>
 
-    <!-- ЭКРАН 3: Карта (CANVAS REDESIGN) -->
+    <!-- ЭКРАН 3 -->
     <div id="screen-map" class="screen">
-        <!-- Ночное небо над картой -->
         <div id="map-sky">
             <div class="sky-stars">
                 <div class="sky-star" style="left:10%; top:20%; animation-delay: 0s;"></div>
@@ -742,29 +292,17 @@
             <img src="./assets/logo-round.png" alt="Logo" class="sky-logo">
             <span id="progress-text" class="sky-progress">СОБРАНО: 0 / 8</span>
         </div>
-        
-        <!-- Контейнер Canvas и Overlay -->
         <div id="map-canvas-wrapper">
-            <!-- Угловые декоры -->
-            <div class="map-corner corner-tl"></div>
-            <div class="map-corner corner-tr"></div>
-            <div class="map-corner corner-bl"></div>
-            <div class="map-corner corner-br"></div>
-            
-            <!-- Слой графики -->
+            <div class="map-corner corner-tl"></div><div class="map-corner corner-tr"></div>
+            <div class="map-corner corner-bl"></div><div class="map-corner corner-br"></div>
             <canvas id="map-canvas"></canvas>
-            
-            <!-- Слой интерактива -->
             <div id="map-overlay"></div>
-            
-            <!-- Персонаж -->
             <div id="map-hero" style="display: none;"></div>
         </div>
-        
         <button id="btn-elixir" class="btn" style="display: none; margin-top: 15px;" onclick="startElixirAnimation()">🧪 СОЗДАТЬ ЭЛИКСИР</button>
     </div>
 
-    <!-- ЭКРАН 4: Эликсир -->
+    <!-- ЭКРАН 4 -->
     <div id="screen-elixir" class="screen">
         <div id="flash-overlay" class="flash"></div>
         <div class="elixir-container" id="elixir-container">
@@ -772,11 +310,10 @@
         </div>
     </div>
 
-    <!-- ЭКРАН 5: Победа -->
+    <!-- ЭКРАН 5 -->
     <div id="screen-victory" class="screen">
         <h1 class="title">🎉 ПОЗДРАВЛЯЕМ,<br><span id="winner-name"></span></h1>
         <p style="font-size: 10px; margin-top: 10px;">Ты собрал все ингредиенты и создал легендарный эликсир Jägermeister!</p>
-        
         <div class="prizes" id="prize-container">
             <div class="prize-card pixel-border" onclick="selectPrize(this)">
                 <div class="prize-icon">🎽</div>
@@ -788,11 +325,10 @@
             </div>
         </div>
         <p id="prize-msg" style="display: none; color: var(--gold); margin-top: 20px; font-size: 10px;"></p>
-        
         <button id="btn-reset" class="btn" onclick="confirmReset()">СЫГРАТЬ СНОВА</button>
     </div>
-</div>
-<!-- МОДАЛЬНОЕ ОКНО RPG -->
+
+    <!-- МОДАЛЬНОЕ ОКНО RPG -->
     <div id="rpg-modal-overlay" class="rpg-modal-overlay" onclick="closeModal()">
         <div class="rpg-modal" onclick="event.stopPropagation()">
             <div class="rpg-modal-right">
@@ -809,19 +345,16 @@
                     ✕ ЗАКРЫТЬ
                 </button>
             </div>
-            <div style="position:absolute; bottom:8px; right:12px; 
-                        font:8px 'Press Start 2P'; color:#C8A44A;
-                        animation: blinkStatus 1s steps(1) infinite;">▼</div>
+            <div style="position:absolute; bottom:8px; right:12px; font:8px 'Press Start 2P'; color:#C8A44A; animation: blinkStatus 1s steps(1) infinite;">▼</div>
         </div>
     </div>
+</div>
+
 <script>
-    // Инициализация Telegram SDK
     const tg = window.Telegram.WebApp;
     tg.ready();
-    // ТВОЙ TELEGRAM ID (впиши сюда свой номер)
     const ADMIN_TG_ID = 620058644; 
 
-    // Если приложение открыл админ — показываем панель
     if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id === ADMIN_TG_ID) {
         document.getElementById('dev-panel').style.setProperty('display', 'flex', 'important');
     }
@@ -829,7 +362,6 @@
     tg.setHeaderColor('#1A1A1A');
     tg.setBackgroundColor('#1A1A1A');
 
-    // Конфигурация и Данные
     const HUNTER_IMG_URL = "./assets/hunter.png";
     const HUNTIE_IMG_URL = "./assets/hanti.png";
     const INGREDIENTS = [
@@ -843,14 +375,8 @@
         { id: 8, name: "Лакрица", icon: "🖤", qrCode: "JAGER_BAR_8", bar: "Bar Name 8", hint: "Сладкий корень солодки", x: 65, y: 92 }
     ];
 
-    const STATE = {
-        selectedCharacter: null,
-        collectedIds: [],
-        gameCompleted: false,
-        currentScreen: 'screen-character'
-    };
+    const STATE = { selectedCharacter: null, collectedIds: [], gameCompleted: false, currentScreen: 'screen-character' };
 
-    // Web Audio API
     let audioCtx = null;
     function playBeep(freq, ms) {
         try {
@@ -865,210 +391,108 @@
             const gain = audioCtx.createGain();
             osc.type = 'square';
             osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-            
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + (ms/1000));
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + (ms/1000));
-        } catch(e) { console.error('Audio play error:', e); }
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); osc.stop(audioCtx.currentTime + (ms/1000));
+        } catch(e) {}
     }
 
-    // Хранение состояния
     const STORAGE_KEY = 'jager_quest_state';
-
     function saveState() {
         const data = JSON.stringify(STATE);
         try {
-            if (tg.CloudStorage) {
-                tg.CloudStorage.setItem(STORAGE_KEY, data, (err) => {
-                    if (err) localStorage.setItem(STORAGE_KEY, data);
-                });
-            } else {
-                localStorage.setItem(STORAGE_KEY, data);
-            }
-        } catch (e) {
-            localStorage.setItem(STORAGE_KEY, data);
-        }
+            if (tg.CloudStorage) tg.CloudStorage.setItem(STORAGE_KEY, data, (err) => { if (err) localStorage.setItem(STORAGE_KEY, data); });
+            else localStorage.setItem(STORAGE_KEY, data);
+        } catch (e) { localStorage.setItem(STORAGE_KEY, data); }
     }
 
     function loadState(callback) {
-        const parseState = (dataStr) => {
-            if (dataStr) {
-                try {
-                    const parsed = JSON.parse(dataStr);
-                    Object.assign(STATE, parsed);
-                } catch(e) {}
-            }
-            callback();
-        };
-
+        const parseState = (dataStr) => { if (dataStr) { try { Object.assign(STATE, JSON.parse(dataStr)); } catch(e) {} } callback(); };
         try {
-            if (tg.CloudStorage) {
-                tg.CloudStorage.getItem(STORAGE_KEY, (err, val) => {
-                    if (err || !val) {
-                        parseState(localStorage.getItem(STORAGE_KEY));
-                    } else {
-                        parseState(val);
-                    }
-                });
-            } else {
-                parseState(localStorage.getItem(STORAGE_KEY));
-            }
-        } catch (e) {
-            parseState(localStorage.getItem(STORAGE_KEY));
-        }
+            if (tg.CloudStorage) { tg.CloudStorage.getItem(STORAGE_KEY, (err, val) => { parseState((err || !val) ? localStorage.getItem(STORAGE_KEY) : val); }); } 
+            else { parseState(localStorage.getItem(STORAGE_KEY)); }
+        } catch (e) { parseState(localStorage.getItem(STORAGE_KEY)); }
     }
 
-    // Навигация
     function navigateTo(screenId) {
         STATE.currentScreen = screenId;
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
         document.getElementById(screenId).classList.add('active-screen');
         saveState();
-
         if (screenId === 'screen-quest') initQuestScreen();
         if (screenId === 'screen-map') renderMap();
         if (screenId === 'screen-victory') initVictoryScreen();
         tg.MainButton.hide(); 
     }
 
-    // Экран 1
     function selectCharacter(charId) {
         playBeep(440, 100);
         STATE.selectedCharacter = charId;
-        
         document.querySelectorAll('.char-card').forEach(el => el.classList.remove('selected'));
-        const activeCard = document.querySelector(`.char-card[data-char="${charId}"]`);
-        activeCard.classList.add('selected');
-        
-        setTimeout(() => {
-            document.getElementById('btn-start').style.display = 'block';
-            saveState();
-        }, 600);
+        document.querySelector(`.char-card[data-char="${charId}"]`).classList.add('selected');
+        setTimeout(() => { document.getElementById('btn-start').style.display = 'block'; saveState(); }, 600);
     }
 
-    // Экран 2
-    let typeTimeout;
-    let isTyping = false;
+    let typeTimeout; let isTyping = false;
     const questTextStr = "Среди 56 секретных ингредиентов Jägermeister 8 главных затеряны по барам города. Твоя миссия — обойти бары, сканировать QR-коды и собрать все ингредиенты. Только тогда ты сможешь создать легендарный эликсир!";
     
     function initQuestScreen() {
-        const avatarUrl = STATE.selectedCharacter === 'hunter' ? HUNTER_IMG_URL : HUNTIE_IMG_URL;
-        document.getElementById('quest-avatar').src = avatarUrl;
-        
-        const starsContainer = document.getElementById('screen-quest');
-        for(let i=0; i<15; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animation = `pulse ${1 + Math.random()}s infinite alternate`;
-            starsContainer.appendChild(star);
-        }
-
-        const textEl = document.getElementById('quest-text');
-        textEl.innerText = "";
+        document.getElementById('quest-avatar').src = STATE.selectedCharacter === 'hunter' ? HUNTER_IMG_URL : HUNTIE_IMG_URL;
+        document.getElementById('quest-text').innerText = "";
         document.getElementById('btn-to-map').style.display = "none";
-        
-        let charIdx = 0;
-        isTyping = true;
-
+        let charIdx = 0; isTyping = true;
         function nextChar() {
             if (!isTyping) return;
-            if (charIdx < questTextStr.length) {
-                textEl.innerText += questTextStr.charAt(charIdx);
-                charIdx++;
-                typeTimeout = setTimeout(nextChar, 35);
-            } else {
-                finishTyping();
-            }
+            if (charIdx < questTextStr.length) { document.getElementById('quest-text').innerText += questTextStr.charAt(charIdx); charIdx++; typeTimeout = setTimeout(nextChar, 35); } 
+            else finishTyping();
         }
         nextChar();
     }
+    function skipTyping() { if(isTyping) finishTyping(); }
+    function finishTyping() { isTyping = false; clearTimeout(typeTimeout); document.getElementById('quest-text').innerText = questTextStr; setTimeout(() => { document.getElementById('btn-to-map').style.display = 'block'; }, 500); }
 
-    function skipTyping() {
-        if(isTyping) finishTyping();
-    }
+    const MAP_GRID = [
+        [ 2, 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [ 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [ 2, 2, 2, 1, 1, 6, 6, 6, 0, 0, 0, 5, 5, 0, 0, 0, 0],
+        [ 2, 2, 1, 1, 6, 6, 0, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0],
+        [ 2, 2, 1, 6, 6, 0, 0, 0, 7, 7, 0, 0, 0, 0, 1, 1, 0],
+        [ 2, 2, 6, 6, 0, 0, 0, 7, 7, 7, 0, 0, 0, 1, 1, 0, 0],
+        [ 2, 6, 6, 0, 0, 4, 4, 7, 4, 4, 0, 0, 1, 1, 0, 0, 0],
+        [ 2, 6, 0, 0, 0, 4, 4, 4, 4, 0, 0, 1, 1, 0, 0, 0, 0],
+        [ 6, 6, 0, 0, 0, 0, 4, 4, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+        [ 6, 0, 0, 5, 5, 0, 6, 6, 0, 1, 1, 0, 0, 0, 0, 1, 0],
+        [ 0, 0, 5, 5, 0, 0, 6, 6, 1, 1, 0, 0, 0, 0, 1, 1, 0],
+        [ 0, 0, 5, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0],
+        [ 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 1, 1, 0, 0, 0],
+        [ 0, 0, 2, 2, 0, 0, 0, 0, 0, 6, 6, 1, 1, 0, 0, 0, 0],
+        [ 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 0],
+        [ 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0],
+        [ 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0],
+    ];
 
-    function finishTyping() {
-        isTyping = false;
-        clearTimeout(typeTimeout);
-        document.getElementById('quest-text').innerText = questTextStr;
-        setTimeout(() => {
-            document.getElementById('btn-to-map').style.display = 'block';
-        }, 500);
+    function drawTile(ctx, col, row, type) {
+        const x = col * 20; const y = row * 20;
+        const tiles = {
+            'grass':  ['#1c4d1c','#174017','#225222','#1c4d1c'],
+            'grass2': ['#174017','#1c4d1c','#174017','#225222'],
+            'forest': ['#0a1f0a','#071507','#0d280d','#0a1f0a'],
+            'road':   ['#8B6914','#C8A44A','#8B6914','#7a5a10'],
+            'water':  ['#0a2030','#0d2a40','#082838','#0a2030'],
+            'stone':  ['#3a3a3a','#484848','#2e2e2e','#3a3a3a'],
+            'path':   ['#7a5a1a','#C8A44A','#8B6620','#7a5a1a'],
+            'city':   ['#2a2218','#2e261c','#26200f','#2a2218'],
+        };
+        const typeNames = ['grass','grass2','forest','road','water','stone','path','city'];
+        const colors = tiles[typeNames[type]] || tiles[type] || tiles['grass'];
+        ctx.fillStyle = colors[0]; ctx.fillRect(x, y, 10, 10); ctx.fillStyle = colors[1]; ctx.fillRect(x+10, y, 10, 10);
+        ctx.fillStyle = colors[2]; ctx.fillRect(x, y+10, 10, 10); ctx.fillStyle = colors[3]; ctx.fillRect(x+10, y+10, 10, 10);
+        
+        if (type === 2 || type === 'forest') { if ((col + row) % 3 === 0) { ctx.fillStyle = 'rgba(0,60,0,0.4)'; ctx.fillRect(x+4, y+4, 2, 2); } }
+        if (type === 7 || type === 'city') { ctx.fillStyle = 'rgba(0,0,0,0.3)'; if (col % 2 === 0) ctx.fillRect(x, y+10, 20, 1); else ctx.fillRect(x+10, y, 1, 20); }
+        if (type === 4 || type === 'water') { if ((col + row) % 4 === 0) { ctx.fillStyle = 'rgba(100,200,255,0.15)'; ctx.fillRect(x+6, y+8, 8, 2); } }
     }
-
-  
-// Карта 17×17: 0=трава A, 1=трава B, 2=лес тёмный, 3=дорога,
-// 4=вода, 5=камень, 6=тропа золотая, 7=земля городская
-const MAP_GRID = [
-//   0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
-    [ 2, 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 0
-    [ 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], // 1
-    [ 2, 2, 2, 1, 1, 6, 6, 6, 0, 0, 0, 5, 5, 0, 0, 0, 0], // 2
-    [ 2, 2, 1, 1, 6, 6, 0, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0], // 3
-    [ 2, 2, 1, 6, 6, 0, 0, 0, 7, 7, 0, 0, 0, 0, 1, 1, 0], // 4
-    [ 2, 2, 6, 6, 0, 0, 0, 7, 7, 7, 0, 0, 0, 1, 1, 0, 0], // 5
-    [ 2, 6, 6, 0, 0, 4, 4, 7, 4, 4, 0, 0, 1, 1, 0, 0, 0], // 6
-    [ 2, 6, 0, 0, 0, 4, 4, 4, 4, 0, 0, 1, 1, 0, 0, 0, 0], // 7
-    [ 6, 6, 0, 0, 0, 0, 4, 4, 0, 0, 1, 1, 0, 0, 0, 0, 0], // 8
-    [ 6, 0, 0, 5, 5, 0, 6, 6, 0, 1, 1, 0, 0, 0, 0, 1, 0], // 9
-    [ 0, 0, 5, 5, 0, 0, 6, 6, 1, 1, 0, 0, 0, 0, 1, 1, 0], // 10
-    [ 0, 0, 5, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0], // 11
-    [ 0, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 1, 1, 0, 0, 0], // 12
-    [ 0, 0, 2, 2, 0, 0, 0, 0, 0, 6, 6, 1, 1, 0, 0, 0, 0], // 13
-    [ 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 0], // 14
-    [ 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0], // 15
-    [ 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0], // 16
-];
-
-    
-function drawTile(ctx, col, row, type) {
-    const x = col * 20;
-    const y = row * 20;
-    const tiles = {
-        'grass':  ['#1c4d1c','#174017','#225222','#1c4d1c'],
-        'grass2': ['#174017','#1c4d1c','#174017','#225222'],
-        'forest': ['#0a1f0a','#071507','#0d280d','#0a1f0a'],
-        'road':   ['#8B6914','#C8A44A','#8B6914','#7a5a10'],
-        'water':  ['#0a2030','#0d2a40','#082838','#0a2030'],
-        'stone':  ['#3a3a3a','#484848','#2e2e2e','#3a3a3a'],
-        'path':   ['#7a5a1a','#C8A44A','#8B6620','#7a5a1a'],
-        'city':   ['#2a2218','#2e261c','#26200f','#2a2218'],
-    };
-    // 7 = city
-    const typeNames = ['grass','grass2','forest','road','water','stone','path','city'];
-    const colors = tiles[typeNames[type]] || tiles[type] || tiles['grass'];
-    
-    ctx.fillStyle = colors[0]; ctx.fillRect(x,    y,    10, 10);
-    ctx.fillStyle = colors[1]; ctx.fillRect(x+10, y,    10, 10);
-    ctx.fillStyle = colors[2]; ctx.fillRect(x,    y+10, 10, 10);
-    ctx.fillStyle = colors[3]; ctx.fillRect(x+10, y+10, 10, 10);
-    
-    // Детали текстуры
-    if (type === 2 || type === 'forest') { // forest — редкие светлые точки
-        if ((col + row) % 3 === 0) {
-            ctx.fillStyle = 'rgba(0,60,0,0.4)';
-            ctx.fillRect(x+4, y+4, 2, 2);
-        }
-    }
-    if (type === 7 || type === 'city') { // city — мощёный камень
-        ctx.fillStyle = 'rgba(0,0,0,0.3)';
-        if (col % 2 === 0) ctx.fillRect(x, y+10, 20, 1);
-        else               ctx.fillRect(x+10, y, 1, 20);
-    }
-    if (type === 4 || type === 'water') { // water — блик
-        if ((col + row) % 4 === 0) {
-            ctx.fillStyle = 'rgba(100,200,255,0.15)';
-            ctx.fillRect(x+6, y+8, 8, 2);
-        }
-    }
-}
 
     function drawTree(ctx, x, y, size=1) {
         const s = size * 4; 
@@ -1080,120 +504,57 @@ function drawTile(ctx, col, row, type) {
         ctx.fillStyle = '#3a8a3a'; ctx.fillRect(x+s, y, s, s);
     }
 
-    // БЛОК 1 — вставить внутри renderMap() вместо drawPathLine
-function drawPathLine(ctx) {
-    const bars = [
-        {x:105, y:35},   // бар 1
-        {x:248, y:60},   // бар 2
-        {x:80,  y:120},  // бар 3
-        {x:246, y:163},  // бар 4
-        {x:72,  y:215},  // бар 5
-        {x:223, y:235},  // бар 6
-        {x:83,  y:283},  // бар 7
-        {x:223, y:287},  // бар 8
-    ];
-
-    // Тень тропы
-    ctx.beginPath();
-    ctx.strokeStyle = '#5a3a00';
-    ctx.lineWidth = 6;
-    ctx.setLineDash([]);
-    ctx.lineJoin = 'round';
-    ctx.lineCap = 'round';
-    ctx.moveTo(bars[0].x, bars[0].y);
-    for(let i=1; i<bars.length; i++) {
-        const prev = bars[i-1];
-        const curr = bars[i];
-        // Контрольные точки для плавного зигзага
-        const cpx = (prev.x + curr.x) / 2;
-        const cpy = (prev.y + curr.y) / 2;
-        ctx.quadraticCurveTo(prev.x, cpy, curr.x, curr.y);
+    function drawPathLine(ctx) {
+        const bars = [{x:105, y:35},{x:248, y:60},{x:80, y:120},{x:246, y:163},{x:72, y:215},{x:223, y:235},{x:83, y:283},{x:223, y:287}];
+        ctx.beginPath(); ctx.strokeStyle = '#5a3a00'; ctx.lineWidth = 6; ctx.setLineDash([]); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+        ctx.moveTo(bars[0].x, bars[0].y);
+        for(let i=1; i<bars.length; i++) { const prev = bars[i-1]; const curr = bars[i]; ctx.quadraticCurveTo(prev.x, (prev.y + curr.y) / 2, curr.x, curr.y); }
+        ctx.stroke();
+        ctx.beginPath(); ctx.strokeStyle = '#C8A44A'; ctx.lineWidth = 4; ctx.setLineDash([7, 3]); ctx.moveTo(bars[0].x, bars[0].y);
+        for(let i=1; i<bars.length; i++) { const prev = bars[i-1]; const curr = bars[i]; ctx.quadraticCurveTo(prev.x, (prev.y + curr.y) / 2, curr.x, curr.y); }
+        ctx.stroke(); ctx.setLineDash([]);
     }
-    ctx.stroke();
 
-    // Основная золотая тропа
-    ctx.beginPath();
-    ctx.strokeStyle = '#C8A44A';
-    ctx.lineWidth = 4;
-    ctx.setLineDash([7, 3]);
-    ctx.moveTo(bars[0].x, bars[0].y);
-    for(let i=1; i<bars.length; i++) {
-        const prev = bars[i-1];
-        const curr = bars[i];
-        const cpx = (prev.x + curr.x) / 2;
-        const cpy = (prev.y + curr.y) / 2;
-        ctx.quadraticCurveTo(prev.x, cpy, curr.x, curr.y);
-    }
-    ctx.stroke();
-    ctx.setLineDash([]);
-}
     function drawTavernA(ctx, x, y) {
-        const p = 3;
-        const roof = [[0,0,0,1,1,1,1,1,0,0,0],[0,0,1,1,1,1,1,1,1,0,0],[0,1,1,1,1,2,1,1,1,1,0],[1,1,1,1,1,1,1,1,1,1,1]];
+        const p = 3; const roof = [[0,0,0,1,1,1,1,1,0,0,0],[0,0,1,1,1,1,1,1,1,0,0],[0,1,1,1,1,2,1,1,1,1,0],[1,1,1,1,1,1,1,1,1,1,1]];
         const wall = [[3,3,3,3,3,3,3,3,3],[3,4,4,3,3,3,4,4,3],[3,4,4,3,3,3,4,4,3],[3,3,3,3,5,5,3,3,3],[3,3,3,3,5,5,3,3,3]];
-        const roofColors = {1:'#8B0000',2:'#C8A44A',0:null};
-        const wallColors = {3:'#6a4a2a',4:'#FFD700',5:'#2a1000',0:null};
-        
+        const roofColors = {1:'#8B0000',2:'#C8A44A',0:null}; const wallColors = {3:'#6a4a2a',4:'#FFD700',5:'#2a1000',0:null};
         roof.forEach((row,ri) => row.forEach((c,ci) => { if(roofColors[c]) { ctx.fillStyle = roofColors[c]; ctx.fillRect(x + ci*p, y + ri*p, p, p); }}));
         wall.forEach((row,ri) => row.forEach((c,ci) => { if(wallColors[c]) { ctx.fillStyle = wallColors[c]; ctx.fillRect(x + ci*p + p, y + (ri+4)*p, p, p); }}));
     }
 
     function drawStoneBarB(ctx, x, y) {
-        const p = 3;
-        const roof = [[0,0,1,1,1,1,1,0,0],[0,1,1,1,2,1,1,1,0],[1,1,1,1,1,1,1,1,1]];
+        const p = 3; const roof = [[0,0,1,1,1,1,1,0,0],[0,1,1,1,2,1,1,1,0],[1,1,1,1,1,1,1,1,1]];
         const wall = [[3,3,3,3,3,3,3,3,3],[3,4,4,3,3,3,4,4,3],[3,3,3,3,3,3,3,3,3],[3,3,3,3,5,5,3,3,3],[3,3,3,3,5,5,3,3,3]];
-        const roofColors = {1:'#1a1a6a',2:'#C8A44A',0:null};
-        const wallColors = {3:'#5a5a5a',4:'#FFD700',5:'#1a0a00',0:null};
-        
+        const roofColors = {1:'#1a1a6a',2:'#C8A44A',0:null}; const wallColors = {3:'#5a5a5a',4:'#FFD700',5:'#1a0a00',0:null};
         roof.forEach((row,ri) => row.forEach((c,ci) => { if(roofColors[c]) { ctx.fillStyle = roofColors[c]; ctx.fillRect(x + ci*p, y + ri*p, p, p); }}));
         ctx.fillStyle = '#3a3a3a'; for(let i=0; i<3; i++) ctx.fillRect(x, y+(i*2+4)*p, 9*p, 1);
         wall.forEach((row,ri) => row.forEach((c,ci) => { if(wallColors[c]) { ctx.fillStyle = wallColors[c]; ctx.fillRect(x + ci*p, y + (ri+3)*p, p, p); }}));
     }
 
     function drawTowerC(ctx, x, y) {
-        const p = 3;
-        const spire = [[0,0,1,0,0],[0,1,2,1,0],[1,1,1,1,1],[1,1,1,1,1]];
+        const p = 3; const spire = [[0,0,1,0,0],[0,1,2,1,0],[1,1,1,1,1],[1,1,1,1,1]];
         const wall = [[3,3,3,3,3],[3,4,3,4,3],[3,3,3,3,3],[3,4,3,4,3],[3,3,3,3,3],[3,3,5,3,3],[3,3,5,3,3]];
-        const spireColors = {1:'#4a4a4a',2:'#C8A44A',0:null};
-        const wallColors = {3:'#3a3a5a',4:'#FFD700',5:'#1a0a00',0:null};
-        
+        const spireColors = {1:'#4a4a4a',2:'#C8A44A',0:null}; const wallColors = {3:'#3a3a5a',4:'#FFD700',5:'#1a0a00',0:null};
         spire.forEach((row,ri) => row.forEach((c,ci) => { if(spireColors[c]) { ctx.fillStyle = spireColors[c]; ctx.fillRect(x + ci*p, y + ri*p, p, p); }}));
         wall.forEach((row,ri) => row.forEach((c,ci) => { if(wallColors[c]) { ctx.fillStyle = wallColors[c]; ctx.fillRect(x + ci*p, y + (ri+4)*p, p, p); }}));
     }
 
     function drawInnD(ctx, x, y) {
-        const p = 3;
-        const roof = [[0,1,1,1,1,1,1,1,1,1,0],[1,1,1,1,2,1,2,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1]];
+        const p = 3; const roof = [[0,1,1,1,1,1,1,1,1,1,0],[1,1,1,1,2,1,2,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1]];
         const wall = [[3,3,3,3,3,3,3,3,3,3,3],[3,4,4,3,3,3,3,4,4,3,3],[3,4,4,3,3,3,3,4,4,3,3],[3,3,3,3,5,5,5,3,3,3,3],[3,3,3,3,5,5,5,3,3,3,3]];
-        const roofColors = {1:'#1a5a1a',2:'#C8A44A',0:null};
-        const wallColors = {3:'#7a5a2a',4:'#FFD700',5:'#2a1000',0:null};
-
+        const roofColors = {1:'#1a5a1a',2:'#C8A44A',0:null}; const wallColors = {3:'#7a5a2a',4:'#FFD700',5:'#2a1000',0:null};
         roof.forEach((row,ri) => row.forEach((c,ci) => { if(roofColors[c]) { ctx.fillStyle = roofColors[c]; ctx.fillRect(x + ci*p, y + ri*p, p, p); }}));
         wall.forEach((row,ri) => row.forEach((c,ci) => { if(wallColors[c]) { ctx.fillStyle = wallColors[c]; ctx.fillRect(x + ci*p, y + (ri+3)*p, p, p); }}));
     }
 
-    function drawBuildingShadow(ctx, x, y, w) { ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(x+2, y + 26, w, 4); }
-
     function renderMap() {
-        document.getElementById('progress-text').innerText = 
-            `СОБРАНО: ${STATE.collectedIds.length} / 8`;
-        
-        const canvas = document.getElementById('map-canvas');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        canvas.width = 340; canvas.height = 340;
-        ctx.clearRect(0, 0, 340, 340);
+        document.getElementById('progress-text').innerText = `СОБРАНО: ${STATE.collectedIds.length} / 8`;
+        const canvas = document.getElementById('map-canvas'); if (!canvas) return;
+        const ctx = canvas.getContext('2d'); canvas.width = 340; canvas.height = 340; ctx.clearRect(0, 0, 340, 340);
 
-        // A) ТАЙЛЫ — добавить 'city' в typeMap
-        const typeMap = ['grass','grass2','forest','road','water','stone','path','city'];
-        for(let row=0; row<17; row++) {
-            for(let col=0; col<17; col++) {
-                drawTile(ctx, col, row, MAP_GRID[row][col]);
-            }
-        }
+        for(let row=0; row<17; row++) { for(let col=0; col<17; col++) { drawTile(ctx, col, row, MAP_GRID[row][col]); } }
 
-        // B) ЗДАНИЯ — увеличить масштаб x1.5, пересчитать координаты
-        // чтобы не перекрывались тропой
         const BARS_ON_MAP = [
             { id:1, x:85,  y:20,  drawFn: drawTavernA,   scale:1.5 },
             { id:2, x:230, y:45,  drawFn: drawStoneBarB, scale:1.5 },
@@ -1205,124 +566,43 @@ function drawPathLine(ctx) {
             { id:8, x:205, y:272, drawFn: drawInnD,      scale:1.5 },
         ];
 
-        // Тропа — перерисовать ПОСЛЕ тайлов, ДО зданий
         drawPathLine(ctx);
 
-        // Деревья в лесной зоне (левая треть)
-        const treePositions = [
-            {col:0,row:0},{col:1,row:1},{col:0,row:2},{col:2,row:0},
-            {col:1,row:3},{col:0,row:5},{col:2,row:4},{col:0,row:7},
-            {col:1,row:6},{col:0,row:9},{col:2,row:8},{col:1,row:10},
-            {col:0,row:12},{col:2,row:11},{col:0,row:14},{col:1,row:13},
-            {col:0,row:16},{col:2,row:15},{col:3,row:16},
-        ];
+        const treePositions = [ {col:0,row:0},{col:1,row:1},{col:0,row:2},{col:2,row:0}, {col:1,row:3},{col:0,row:5},{col:2,row:4},{col:0,row:7}, {col:1,row:6},{col:0,row:9},{col:2,row:8},{col:1,row:10}, {col:0,row:12},{col:2,row:11},{col:0,row:14},{col:1,row:13}, {col:0,row:16},{col:2,row:15},{col:3,row:16}, ];
         treePositions.forEach(p => drawTree(ctx, p.col*20 + 2, p.row*20 + 2, 0.8));
 
-        // C) ЗДАНИЯ — рисовать с масштабом, ПОВЕРХ тропы
         BARS_ON_MAP.forEach(bar => {
             const isCollected = STATE.collectedIds.includes(bar.id);
-            
-            // Тень под зданием
-            ctx.fillStyle = 'rgba(0,0,0,0.4)';
-            ctx.fillRect(bar.x, bar.y + 42, 36, 5);
-            
-            if (isCollected) {
-                // БЛОК 4 — вставить внутри renderMap() в отрисовку зданий
-        ctx.save();
-        ctx.translate(bar.x, bar.y);
-        ctx.scale(1.5, 1.5);
+            ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.fillRect(bar.x, bar.y + 42, 36, 5);
+            ctx.save(); ctx.translate(bar.x, bar.y); ctx.scale(1.5, 1.5);
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.55)'; ctx.fillRect(-3, -3, 42, 50);
+            ctx.strokeStyle = isCollected ? '#C8A44A' : '#555555'; ctx.lineWidth = 1.5; ctx.strokeRect(-3, -3, 42, 50);
+            if (isCollected) { ctx.shadowColor = '#C8A44A'; ctx.shadowBlur = 8; } else { ctx.globalAlpha = 0.9; }
+            bar.drawFn(ctx, 0, 0); ctx.restore();
+            if (isCollected) { ctx.save(); ctx.shadowColor = '#FFD700'; ctx.shadowBlur = 16; ctx.strokeStyle = '#C8A44A'; ctx.lineWidth = 2; ctx.strokeRect(bar.x - 4, bar.y - 4, 64, 76); ctx.restore(); }
+        });
 
-        // Подложка под здание — тёмный прямоугольник
-        // чтобы здание не сливалось с травой
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
-        ctx.fillRect(-3, -3, 42, 50);
-
-        // Золотая рамка вокруг подложки
-        ctx.strokeStyle = isCollected ? '#C8A44A' : '#555555';
-        ctx.lineWidth = 1.5;
-        ctx.strokeRect(-3, -3, 42, 50);
-
-        // Само здание
-        if (isCollected) {
-            ctx.shadowColor = '#C8A44A';
-            ctx.shadowBlur = 8;
-        } else {
-            ctx.globalAlpha = 0.9;
-        }
-        bar.drawFn(ctx, 0, 0);
-
-        ctx.restore();
-
-        // Отдельное свечение для собранных (поверх scale)
-        if (isCollected) {
-            ctx.save();
-            ctx.shadowColor = '#FFD700';
-            ctx.shadowBlur = 16;
-            ctx.strokeStyle = '#C8A44A';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(bar.x - 4, bar.y - 4, 64, 76);
-            ctx.restore();
-        }
-      
-
-        // Маркеры (HTML overlay)
-        const overlay = document.getElementById('map-overlay');
-        overlay.innerHTML = '';
-        
-        let lastCollectedX = BARS_ON_MAP[0].x;
-        let lastCollectedY = BARS_ON_MAP[0].y;
+        const overlay = document.getElementById('map-overlay'); overlay.innerHTML = '';
+        let lastCollectedX = BARS_ON_MAP[0].x; let lastCollectedY = BARS_ON_MAP[0].y;
 
         BARS_ON_MAP.forEach((bar, index) => {
-            const item = INGREDIENTS.find(ing => ing.id === bar.id);
-            const isCollected = STATE.collectedIds.includes(bar.id);
-            
-            if (isCollected) {
-                lastCollectedX = bar.x;
-                lastCollectedY = bar.y;
-            }
-
-            const marker = document.createElement('div');
-            // БЛОК 2 — вставить внутри renderMap() вместо создания маркера
-            marker.className = `bar-marker ${isCollected ? 'collected' : 'uncollected'}`;
-            // Кликабельная зона покрывает всё здание (увеличенное x1.5)
-            // Здание ~33px шириной и ~45px высотой при scale 1.5
-            marker.style.left   = `${bar.x}px`;
-            marker.style.top    = `${bar.y}px`;
-            marker.style.width  = '50px';
-            marker.style.height = '55px';
-            marker.style.transform = 'none';
-            marker.style.cursor = 'pointer';
-            
+            const item = INGREDIENTS.find(ing => ing.id === bar.id); const isCollected = STATE.collectedIds.includes(bar.id);
+            if (isCollected) { lastCollectedX = bar.x; lastCollectedY = bar.y; }
+            const marker = document.createElement('div'); marker.className = `bar-marker ${isCollected ? 'collected' : 'uncollected'}`;
+            marker.style.left = `${bar.x}px`; marker.style.top = `${bar.y}px`; marker.style.width = '50px'; marker.style.height = '55px'; marker.style.transform = 'none'; marker.style.cursor = 'pointer';
             marker.onclick = () => openModal(item, isCollected, index + 1);
-
-            marker.innerHTML = `
-                <div class="bar-marker-status">${isCollected ? '✓' : '?'}</div>
-                <div class="bar-marker-num">${index + 1}</div>
-                <div class="bar-marker-name">${item.bar}</div>
-            `;
+            marker.innerHTML = `<div class="bar-marker-status">${isCollected ? '✓' : '?'}</div><div class="bar-marker-num">${index + 1}</div><div class="bar-marker-name">${item.bar}</div>`;
             overlay.appendChild(marker);
         });
 
-        // Персонаж
         const hero = document.getElementById('map-hero');
-        const avatarUrl = STATE.selectedCharacter === 'huntie' 
-            ? './assets/hanti.png' 
-            : './assets/hunter.png';
-        hero.style.backgroundImage = `url('${avatarUrl}')`;
-        hero.style.display = 'block';
-        hero.style.left = `${lastCollectedX - 14}px`; 
-        hero.style.top  = `${lastCollectedY - 18}px`;
-
-        if (STATE.collectedIds.length === 8) {
-            document.getElementById('btn-elixir').style.display = 'block';
-        } else {
-            document.getElementById('btn-elixir').style.display = 'none';
-        }
+        hero.style.backgroundImage = `url('${STATE.selectedCharacter === 'huntie' ? './assets/hanti.png' : './assets/hunter.png'}')`;
+        hero.style.display = 'block'; hero.style.left = `${lastCollectedX - 14}px`; hero.style.top = `${lastCollectedY - 18}px`;
+        document.getElementById('btn-elixir').style.display = STATE.collectedIds.length === 8 ? 'block' : 'none';
     }
 
     function openModal(item, isCollected, stepNum) {
         document.getElementById('rpg-title').innerText = item.bar;
-        
         if (isCollected) {
             document.getElementById('rpg-artifact').innerText = `Артефакт: ${item.name} ${item.icon}`;
             document.getElementById('rpg-hint').innerText = item.hint;
@@ -1336,197 +616,72 @@ function drawPathLine(ctx) {
             document.getElementById('rpg-status').style.color = "#ff4444";
             document.getElementById('btn-scan').style.display = 'block';
         }
-        
         document.getElementById('rpg-modal-overlay').style.display = 'flex';
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-        }
+        if (window.Telegram && window.Telegram.WebApp) window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
     }
 
-    function closeModal() {
-        document.getElementById('rpg-modal-overlay').style.display = 'none';
-    }
+    function closeModal() { document.getElementById('rpg-modal-overlay').style.display = 'none'; }
 
-    function openScanner() {
-        tg.showScanQrPopup({ text: "Наведи камеру на QR-код в баре" }, (scannedText) => {
-            handleQrScan(scannedText);
-            return true; 
-        });
-    }
+    function openScanner() { tg.showScanQrPopup({ text: "Наведи камеру на QR-код в баре" }, (text) => { handleQrScan(text); return true; }); }
 
     function handleQrScan(text) {
         const ing = INGREDIENTS.find(i => i.qrCode === text);
-        if (!ing) {
-            tg.showAlert("❌ Неверный QR-код. Попробуй в другом баре!");
-            return;
-        }
-        if (STATE.collectedIds.includes(ing.id)) {
-            tg.showAlert("✅ Этот ингредиент уже собран!");
-            return;
-        }
-
-        // Новый ингредиент
-        STATE.collectedIds.push(ing.id);
-        saveState();
-        tg.HapticFeedback.notificationOccurred('success');
-        
-        // Мелодия победы
-        setTimeout(() => playBeep(523, 200), 0);
-        setTimeout(() => playBeep(659, 200), 250);
-
-        closeModal();
-        renderMap(); // Перерисовка с обновленным прогрессом
-        const slot = document.getElementById(`slot-${ing.id}`);
-        if(slot) slot.classList.add('revealed');
+        if (!ing) { tg.showAlert("❌ Неверный QR-код. Попробуй в другом баре!"); return; }
+        if (STATE.collectedIds.includes(ing.id)) { tg.showAlert("✅ Этот ингредиент уже собран!"); return; }
+        STATE.collectedIds.push(ing.id); saveState(); tg.HapticFeedback.notificationOccurred('success');
+        setTimeout(() => playBeep(523, 200), 0); setTimeout(() => playBeep(659, 200), 250);
+        closeModal(); renderMap(); 
     }
 
-    // Экран 4
     function startElixirAnimation() {
-        STATE.gameCompleted = true;
-        saveState();
-        navigateTo('screen-elixir');
-        
-        const container = document.getElementById('elixir-container');
-        const radius = 120;
-        
-        // Создаем иконки по кругу
+        STATE.gameCompleted = true; saveState(); navigateTo('screen-elixir');
+        const container = document.getElementById('elixir-container'); const radius = 120;
         INGREDIENTS.forEach((ing, i) => {
-            const angle = (i / 8) * (2 * Math.PI);
-            const el = document.createElement('div');
-            el.className = 'flying-icon';
-            el.innerText = ing.icon;
-            
-            const x = Math.cos(angle) * radius;
-            const y = Math.sin(angle) * radius;
-            el.style.transform = `translate(${x}px, ${y}px)`;
-            
-            container.appendChild(el);
-            
-            // Запуск стягивания к центру
-            setTimeout(() => {
-                el.style.transform = 'translate(0, 0)';
-            }, 100);
+            const angle = (i / 8) * (2 * Math.PI); const el = document.createElement('div'); el.className = 'flying-icon'; el.innerText = ing.icon;
+            el.style.transform = `translate(${Math.cos(angle) * radius}px, ${Math.sin(angle) * radius}px)`; container.appendChild(el);
+            setTimeout(() => { el.style.transform = 'translate(0, 0)'; }, 100);
         });
-
-        // Нарастающая мелодия
-        const notes = [261, 329, 392, 523];
-        notes.forEach((freq, idx) => {
-            setTimeout(() => playBeep(freq, 150), 100 + (idx * 200));
-        });
-
+        [261, 329, 392, 523].forEach((freq, idx) => { setTimeout(() => playBeep(freq, 150), 100 + (idx * 200)); });
         setTimeout(() => {
             document.querySelectorAll('.flying-icon').forEach(el => el.style.opacity = '0');
-            const flash = document.getElementById('flash-overlay');
-            flash.style.opacity = '1';
-            
-            setTimeout(() => {
-                flash.style.transition = 'opacity 0.5s';
-                flash.style.opacity = '0';
-                const bottle = document.getElementById('big-bottle');
-                bottle.style.transform = 'translate(-50%, -50%) scale(1)';
-                bottle.style.opacity = '1';
-            }, 200);
-
-            setTimeout(() => {
-                navigateTo('screen-victory');
-            }, 2500);
-
+            const flash = document.getElementById('flash-overlay'); flash.style.opacity = '1';
+            setTimeout(() => { flash.style.transition = 'opacity 0.5s'; flash.style.opacity = '0'; const bottle = document.getElementById('big-bottle'); bottle.style.transform = 'translate(-50%, -50%) scale(1)'; bottle.style.opacity = '1'; }, 200);
+            setTimeout(() => { navigateTo('screen-victory'); }, 2500);
         }, 800);
     }
 
-    // Экран 5
     function initVictoryScreen() {
         document.getElementById('winner-name').innerText = STATE.selectedCharacter.toUpperCase();
-        
         const container = document.getElementById('screen-victory');
         for(let i=0; i<20; i++) {
-            const conf = document.createElement('div');
-            conf.className = 'confetti';
-            conf.style.left = Math.random() * 100 + '%';
-            conf.style.backgroundColor = Math.random() > 0.5 ? 'var(--green)' : 'var(--gold)';
-            conf.style.animationDuration = (Math.random() * 2 + 2) + 's';
-            conf.style.animationDelay = (Math.random() * 2) + 's';
+            const conf = document.createElement('div'); conf.className = 'confetti'; conf.style.left = Math.random() * 100 + '%';
+            conf.style.backgroundColor = Math.random() > 0.5 ? 'var(--green)' : 'var(--gold)'; conf.style.animationDuration = (Math.random() * 2 + 2) + 's'; conf.style.animationDelay = (Math.random() * 2) + 's';
             container.appendChild(conf);
         }
     }
 
     function selectPrize(element) {
-        document.querySelectorAll('.prize-card').forEach(el => el.classList.add('dim'));
-        element.classList.remove('dim');
-        
+        document.querySelectorAll('.prize-card').forEach(el => el.classList.add('dim')); element.classList.remove('dim');
         tg.HapticFeedback.notificationOccurred('success');
-        
-        const msg = document.getElementById('prize-msg');
-        msg.style.display = 'block';
-        msg.innerText = "ОТЛИЧНЫЙ ВЫБОР! 🎯 Покажи этот экран бармену для получения приза.";
-        
-        tg.MainButton.setText('✅ ПОКАЗАТЬ БАРМЕНУ').show();
-        tg.MainButton.onClick(() => {
-            tg.showAlert("Приз выдан! Наслаждайся Jägermeister!");
-            tg.MainButton.hide();
-        });
+        const msg = document.getElementById('prize-msg'); msg.style.display = 'block'; msg.innerText = "ОТЛИЧНЫЙ ВЫБОР! 🎯 Покажи этот экран бармену для получения приза.";
+        tg.MainButton.setText('✅ ПОКАЗАТЬ БАРМЕНУ').show(); tg.MainButton.onClick(() => { tg.showAlert("Приз выдан! Наслаждайся Jägermeister!"); tg.MainButton.hide(); });
     }
 
-    function confirmReset() {
-        tg.showConfirm("Сбросить прогресс и начать заново?", (ok) => {
-            if(ok) resetGame();
-        });
-    }
+    function confirmReset() { tg.showConfirm("Сбросить прогресс и начать заново?", (ok) => { if(ok) resetGame(); }); }
 
     function resetGame() {
-        STATE.selectedCharacter = null;
-        STATE.collectedIds = [];
-        STATE.gameCompleted = false;
-        STATE.currentScreen = 'screen-character';
-        
-        if(tg.CloudStorage) tg.CloudStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem(STORAGE_KEY);
-        
-        document.querySelectorAll('.char-card').forEach(el => el.classList.remove('selected'));
-        document.getElementById('btn-start').style.display = 'none';
-        document.getElementById('prize-msg').style.display = 'none';
-        document.querySelectorAll('.prize-card').forEach(el => el.classList.remove('dim'));
-        document.getElementById('elixir-container').innerHTML = '<div id="big-bottle" class="big-bottle">🍾</div>';
-        
-        document.querySelectorAll('.confetti').forEach(e => e.remove());
-        
+        STATE.selectedCharacter = null; STATE.collectedIds = []; STATE.gameCompleted = false; STATE.currentScreen = 'screen-character';
+        if(tg.CloudStorage) tg.CloudStorage.removeItem(STORAGE_KEY); localStorage.removeItem(STORAGE_KEY);
+        document.querySelectorAll('.char-card').forEach(el => el.classList.remove('selected')); document.getElementById('btn-start').style.display = 'none';
+        document.getElementById('prize-msg').style.display = 'none'; document.querySelectorAll('.prize-card').forEach(el => el.classList.remove('dim'));
+        document.getElementById('elixir-container').innerHTML = '<div id="big-bottle" class="big-bottle">🍾</div>'; document.querySelectorAll('.confetti').forEach(e => e.remove());
         navigateTo('screen-character');
     }
 
-    // Загрузка при старте
-    loadState(() => {
-        if (STATE.currentScreen && document.getElementById(STATE.currentScreen)) {
-            navigateTo(STATE.currentScreen);
-        } else {
-            navigateTo('screen-character');
-        }
-    });
-    // ==========================================
-    // --- ФУНКЦИИ ДЛЯ ТЕСТИРОВАНИЯ (DEV) ---
-    // ==========================================
-    
-    // Эмулирует сканирование одного (следующего) QR-кода
-    function devAddQR() {
-        const missing = INGREDIENTS.find(i => !STATE.collectedIds.includes(i.id));
-        if (missing) {
-            handleQrScan(missing.qrCode);
-        } else {
-            tg.showAlert("Все 8 ингредиентов уже собраны!");
-        }
-    }
+    loadState(() => { navigateTo(STATE.currentScreen && document.getElementById(STATE.currentScreen) ? STATE.currentScreen : 'screen-character'); });
 
-    // Мгновенно собирает все 8 ингредиентов
-    function devWin() {
-        STATE.collectedIds = [1, 2, 3, 4, 5, 6, 7, 8];
-        saveState();
-        if (STATE.currentScreen === 'screen-map') {
-            renderMap();
-        } else {
-            navigateTo('screen-map');
-        }
-        tg.showAlert("Чит активирован: Собраны все ингредиенты!");
-    }
-
+    function devAddQR() { const missing = INGREDIENTS.find(i => !STATE.collectedIds.includes(i.id)); if (missing) handleQrScan(missing.qrCode); else tg.showAlert("Все 8 ингредиентов уже собраны!"); }
+    function devWin() { STATE.collectedIds = [1, 2, 3, 4, 5, 6, 7, 8]; saveState(); STATE.currentScreen === 'screen-map' ? renderMap() : navigateTo('screen-map'); tg.showAlert("Чит активирован: Собраны все ингредиенты!"); }
 </script>
 </body>
 </html>
