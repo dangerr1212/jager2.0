@@ -853,15 +853,18 @@
         bottle.style.transform = 'scale(0)';
         bottle.style.opacity   = '0';
         doneText.style.display = 'none';
-        cauldron.style.display = 'none';
+        const cauldronImg = document.getElementById('cauldron-img');
+if (cauldronImg) cauldronImg.style.display = 'none';
         title.style.display    = 'none';
 
         // Шаг 1: показать заголовок
         setTimeout(() => { title.style.display = 'block'; }, 200);
 
         // Шаг 2: показать котёл
-        setTimeout(() => { cauldron.style.display = 'block'; }, 500);
-
+       setTimeout(() => { 
+    const cauldronImg = document.getElementById('cauldron-img');
+    if (cauldronImg) cauldronImg.style.display = 'block'; 
+}, 500);
         // Шаг 3: расставить ингредиенты по полю и запустить полёт в котёл
         const positions = [
             {x: 10,  y: 10},  {x: 120, y: 5},   {x: 230, y: 10},
