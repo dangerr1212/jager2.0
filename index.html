@@ -1121,7 +1121,7 @@
             overlay.appendChild(marker);
         });
 
-        // 6. Позиция Персонажа
+        // 6. Позиция Персонажа (Исправленные отступы)
         const hero = document.getElementById('map-hero');
         const avatarUrl = STATE.selectedCharacter === 'huntie' ? './assets/hanti.png' : './assets/hunter.png';
         hero.style.backgroundImage = `url('${avatarUrl}')`;
@@ -1135,7 +1135,6 @@
             document.getElementById('btn-elixir').style.display = 'none';
         }
     }
-
     function openModal(item, isCollected, stepNum) {
         document.getElementById('rpg-title').innerText = item.bar;
         
