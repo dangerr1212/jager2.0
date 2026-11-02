@@ -507,131 +507,55 @@
 
         #btn-to-map { display: none; }
 
-        /* Экран 3 - Карта */
-        .map-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .map-header img { width: 40px; }
+       /* --- ЭКРАН 3: КАРТА (CANVAS PIXEL ART) --- */
+        #screen-map { align-items: center; padding: 20px 0; background-color: var(--black); }
         
-        .progress-bar {
-            width: 100%;
-            height: 12px;
-            background: #333;
-            margin-bottom: 20px;
-            box-shadow: 0 0 0 2px var(--white);
+        #map-sky {
+            width: 340px; height: 40px; background: #050f05;
+            position: relative; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 10px; margin-bottom: 15px; overflow: hidden;
+            border: 2px solid #1a3a1a;
         }
-
-        .progress-fill {
-            height: 100%;
-            background: var(--green);
-            width: 0%;
-            transition: width 0.3s;
+        .sky-stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+        .sky-star { position: absolute; width: 2px; height: 2px; background: #fff; animation: twinkle 1.5s infinite alternate; }
+        .sky-logo { width: 24px; height: 24px; image-rendering: pixelated; position: relative; z-index: 2; }
+        .sky-progress { font: 8px 'Press Start 2P'; color: #C8A44A; position: relative; z-index: 2; }
+        
+        #map-canvas-wrapper {
+            width: 340px; height: 340px; position: relative; margin: 0 auto;
+            border: 3px solid #C8A44A;
+            box-shadow: 0 0 0 1px #8B6914, 0 0 0 5px #050f05, inset 0 0 40px rgba(0,0,0,0.6);
         }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 30px;
+        
+        .map-corner { position: absolute; width: 8px; height: 8px; background: #C8A44A; box-shadow: 4px 0 0 #C8A44A, 0 4px 0 #C8A44A; z-index: 30; }
+        .corner-tl { top: -2px; left: -2px; }
+        .corner-tr { top: -2px; right: -2px; transform: scaleX(-1); }
+        .corner-bl { bottom: -2px; left: -2px; transform: scaleY(-1); }
+        .corner-br { bottom: -2px; right: -2px; transform: scale(-1); }
+        
+        #map-canvas { position: absolute; top: 0; left: 0; width: 340px; height: 340px; image-rendering: pixelated; }
+        #map-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+        
+        .bar-marker { position: absolute; display: flex; flex-direction: column; align-items: center; pointer-events: auto; cursor: pointer; transform: translate(-50%, -100%); }
+        .bar-marker-status { font: 8px 'Press Start 2P'; margin-bottom: 25px; text-shadow: 1px 1px 0 #000; }
+        .bar-marker.uncollected .bar-marker-status { color: #ff4444; animation: blinkStatus 0.8s steps(1) infinite; }
+        .bar-marker.collected .bar-marker-status { color: #C8A44A; animation: glowStatus 1.5s ease-in-out infinite; }
+        
+        .bar-marker-num { position: absolute; bottom: 10px; right: -15px; font: 7px 'Press Start 2P'; background: #00843D; border: 1px solid #C8A44A; padding: 2px 4px; color: #fff; }
+        .bar-marker-name { position: absolute; bottom: -8px; font: 5px 'Press Start 2P'; color: #C8A44A; text-shadow: 1px 1px 0 #000; background: rgba(0,0,0,0.75); padding: 1px 3px; white-space: nowrap; }
+        
+        #map-hero {
+            position: absolute; width: 28px; height: 36px; image-rendering: pixelated; z-index: 20;
+            background-size: contain; background-repeat: no-repeat; background-position: center; mix-blend-mode: screen;
+            animation: heroWalk 0.5s steps(2) infinite; transition: left 1s ease, top 1s ease;
         }
-
-        .slot {
-            aspect-ratio: 1;
-            background: #222;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 8px;
-            text-align: center;
-            box-shadow: inset 0 0 0 2px #444;
+        #map-hero::after {
+            content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+            width: 18px; height: 5px; background: rgba(0,0,0,0.4); border-radius: 50%; z-index: -1;
         }
-
-        .slot.revealed {
-            animation: pixelReveal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            background: var(--black);
-        }
-
-        .slot-icon { font-size: 24px; margin-bottom: 5px; }
-
-        @keyframes pixelReveal {
-            from { opacity: 0; transform: scale(0.5); }
-            to { opacity: 1; transform: scale(1); box-shadow: 0 0 0 2px var(--gold); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        #btn-elixir {
-            display: none;
-            background-color: var(--gold);
-            color: var(--black);
-            animation: pulse 1.5s infinite;
-        }
-
-        /* Экран 4 - Эликсир */
-        #screen-elixir {
-            justify-content: center;
-            align-items: center;
-        }
-
-        .elixir-container {
-            position: relative;
-            width: 300px;
-            height: 300px;
-        }
-
-        .flying-icon {
-            position: absolute;
-            font-size: 30px;
-            transition: transform 0.6s ease-in, opacity 0.3s;
-            top: 135px;
-            left: 135px;
-        }
-
-        .big-bottle {
-            position: absolute;
-            font-size: 80px;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            opacity: 0;
-            transition: all 0.3s;
-        }
-
-        .flash {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: white;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        /* Экран 5 - Победа */
-        #screen-victory {
-            text-align: center;
-            position: relative;
-        }
-
-        .confetti {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            top: -10px;
-            animation: fall linear forwards;
-        }
-
-        @keyframes fall {
-            to { transform: translateY(100vh) rotate(360deg); }
-        }
+        @keyframes heroWalk { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+        @keyframes blinkStatus { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes glowStatus { 0%,100% { text-shadow: 0 0 4px #C8A44A; } 50% { text-shadow: 0 0 12px #C8A44A; } }
 
         .prizes {
             display: flex;
@@ -741,47 +665,40 @@
         <img src="./assets/logo-bottom.png" class="logo-bottom-quest" alt="Jägermeister">
     </div>
 
-    <!-- ЭКРАН 3: Карта -->
+    <!-- ЭКРАН 3: Карта (CANVAS REDESIGN) -->
     <div id="screen-map" class="screen">
-        <div class="map-header">
-            <img src="./assets/logo-round.png" alt="Logo">
-            <span id="progress-text">СОБРАНО: 0 / 8</span>
+        <!-- Ночное небо над картой -->
+        <div id="map-sky">
+            <div class="sky-stars">
+                <div class="sky-star" style="left:10%; top:20%; animation-delay: 0s;"></div>
+                <div class="sky-star" style="left:30%; top:50%; animation-delay: 0.5s;"></div>
+                <div class="sky-star" style="left:50%; top:15%; animation-delay: 1.2s;"></div>
+                <div class="sky-star" style="left:70%; top:60%; animation-delay: 0.8s;"></div>
+                <div class="sky-star" style="left:90%; top:30%; animation-delay: 0.2s;"></div>
+            </div>
+            <img src="./assets/logo-round.png" alt="Logo" class="sky-logo">
+            <span id="progress-text" class="sky-progress">СОБРАНО: 0 / 8</span>
         </div>
         
-        <div class="progress-bar">
-            <div id="progress-fill" class="progress-fill"></div>
-        </div>
-        
-        <!-- НОВАЯ RPG-КАРТА БАРОВ -->
-        <div id="city-map" class="city-map">
-            <!-- Векторные дороги -->
-            <svg class="map-roads" preserveAspectRatio="none" viewBox="0 0 100 100">
-                <path id="svg-path-bg" fill="none" stroke="#3d2b00" stroke-width="2" stroke-dasharray="2 1"></path>
-                <path id="svg-path-fg" fill="none" stroke="#5a3f00" stroke-width="1"></path>
-            </svg>
-            <!-- Контейнер для зданий -->
-            <div id="map-markers"></div>
-            <!-- Пиксельный персонаж -->
-            <div id="player-sprite" class="player-sprite" style="display: none;"></div>
+        <!-- Контейнер Canvas и Overlay -->
+        <div id="map-canvas-wrapper">
+            <!-- Угловые декоры -->
+            <div class="map-corner corner-tl"></div>
+            <div class="map-corner corner-tr"></div>
+            <div class="map-corner corner-bl"></div>
+            <div class="map-corner corner-br"></div>
+            
+            <!-- Слой графики -->
+            <canvas id="map-canvas"></canvas>
+            
+            <!-- Слой интерактива -->
+            <div id="map-overlay"></div>
+            
+            <!-- Персонаж -->
+            <div id="map-hero" style="display: none;"></div>
         </div>
         
         <button id="btn-elixir" class="btn" style="display: none; margin-top: 15px;" onclick="startElixirAnimation()">🧪 СОЗДАТЬ ЭЛИКСИР</button>
-    </div>
-
-    <!-- НОВОЕ RPG МОДАЛЬНОЕ ОКНО БАРА -->
-    <div id="rpg-modal-overlay" class="rpg-modal-overlay" onclick="closeModal()">
-        <div class="rpg-modal" onclick="event.stopPropagation()">
-            <div class="rpg-modal-right">
-                <div class="rpg-title" id="rpg-title">BAR NAME</div>
-                <div class="rpg-artifact" id="rpg-artifact">Артефакт: Неизвестно</div>
-                <div class="rpg-hint" id="rpg-hint">Сходи в этот бар, чтобы узнать тайну.</div>
-                <div class="rpg-status" id="rpg-status">❌ НЕ СОБРАН</div>
-                <div class="rpg-buttons">
-                    <button class="btn rpg-btn" id="btn-scan" onclick="openScanner()">СКАНИРОВАТЬ QR</button>
-                    <button class="btn rpg-btn" onclick="closeModal()">ЗАКРЫТЬ</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- ЭКРАН 4: Эликсир -->
@@ -1003,65 +920,215 @@
     }
 
     // Экран 3
+    function renderMap()// --- CANVAS ВЕКТОРНАЯ И PIXEL ART КАРТА ---
+    const MAP_GRID = [
+        [ 2, 2, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [ 2, 2, 2, 1, 1, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [ 2, 2, 1, 1, 0, 0, 6, 6, 0, 0, 5, 5, 0, 0, 0, 0, 0],
+        [ 2, 2, 1, 0, 0, 6, 6, 0, 0, 5, 5, 5, 0, 0, 0, 0, 0],
+        [ 2, 1, 1, 0, 6, 6, 0, 0, 0, 5, 0, 0, 0, 0, 1, 1, 0],
+        [ 2, 2, 1, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0],
+        [ 2, 2, 6, 6, 0, 0, 4, 4, 4, 0, 0, 0, 1, 1, 0, 0, 0],
+        [ 2, 6, 6, 0, 0, 0, 4, 4, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+        [ 2, 6, 0, 0, 0, 0, 4, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+        [ 6, 6, 0, 0, 5, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+        [ 6, 0, 0, 5, 5, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0],
+        [ 0, 0, 0, 5, 0, 0, 0, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0],
+        [ 0, 0, 0, 0, 0, 0, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+        [ 0, 0, 2, 2, 0, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+        [ 0, 2, 2, 2, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+        [ 2, 2, 2, 6, 6, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0],
+        [ 2, 2, 6, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
+
+    function drawTile(ctx, col, row, type) {
+        const x = col * 20; const y = row * 20;
+        const tiles = {
+            'grass':  ['#1a4a1a','#163d16','#1f5a1f','#1a4a1a'],
+            'grass2': ['#163d16','#1a4a1a','#163d16','#1f5a1f'],
+            'forest': ['#0d2a0d','#0a200a','#0f300f','#0d2a0d'],
+            'road':   ['#8B6914','#C8A44A','#8B6914','#7a5a10'],
+            'water':  ['#0a2030','#0d2a40','#0a2030','#082028'],
+            'stone':  ['#3a3a3a','#444444','#333333','#3a3a3a'],
+            'path':   ['#6b4f1a','#C8A44A','#7a5a1a','#6b4f1a'],
+        };
+        const colors = tiles[type] || tiles['grass'];
+        ctx.fillStyle = colors[0]; ctx.fillRect(x,    y,    10, 10);
+        ctx.fillStyle = colors[1]; ctx.fillRect(x+10, y,    10, 10);
+        ctx.fillStyle = colors[2]; ctx.fillRect(x,    y+10, 10, 10);
+        ctx.fillStyle = colors[3]; ctx.fillRect(x+10, y+10, 10, 10);
+    }
+
+    function drawTree(ctx, x, y, size=1) {
+        const s = size * 4; 
+        ctx.fillStyle = '#3d1f00'; ctx.fillRect(x + s, y + s*4, s, s*2);
+        ctx.fillStyle = '#1a4a1a'; ctx.fillRect(x, y+s*2, s*3, s);
+        ctx.fillStyle = '#2a6a2a'; ctx.fillRect(x+s, y+s*2, s, s);
+        ctx.fillStyle = '#1a4a1a'; ctx.fillRect(x+s/2, y+s, s*2, s);
+        ctx.fillStyle = '#2a6a2a'; ctx.fillRect(x+s, y+s, s, s);
+        ctx.fillStyle = '#3a8a3a'; ctx.fillRect(x+s, y, s, s);
+    }
+
+    function drawPathLine(ctx) {
+        ctx.strokeStyle = '#C8A44A'; ctx.lineWidth = 3; ctx.setLineDash([6, 3]); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+        ctx.strokeStyle = '#5a3a00'; ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(140, 40);  
+        ctx.bezierCurveTo(160,80,  240,60,  260,100); 
+        ctx.bezierCurveTo(280,140, 160,140, 120,180); 
+        ctx.bezierCurveTo(80,220,  240,220, 260,260); 
+        ctx.bezierCurveTo(280,300, 160,280, 100,300); 
+        ctx.bezierCurveTo(60,320,  220,310, 240,300); 
+        ctx.bezierCurveTo(260,290, 120,310, 100,310);  
+        ctx.bezierCurveTo(80,315,  200,315, 220,315); 
+        ctx.stroke();
+        
+        ctx.strokeStyle = '#C8A44A'; ctx.lineWidth = 3; ctx.setLineDash([6,3]); ctx.stroke();
+        ctx.setLineDash([]); 
+    }
+
+    function drawTavernA(ctx, x, y) {
+        const p = 3;
+        const roof = [[0,0,0,1,1,1,1,1,0,0,0],[0,0,1,1,1,1,1,1,1,0,0],[0,1,1,1,1,2,1,1,1,1,0],[1,1,1,1,1,1,1,1,1,1,1]];
+        const wall = [[3,3,3,3,3,3,3,3,3],[3,4,4,3,3,3,4,4,3],[3,4,4,3,3,3,4,4,3],[3,3,3,3,5,5,3,3,3],[3,3,3,3,5,5,3,3,3]];
+        const roofColors = {1:'#8B0000',2:'#C8A44A',0:null};
+        const wallColors = {3:'#6a4a2a',4:'#FFD700',5:'#2a1000',0:null};
+        
+        roof.forEach((row,ri) => row.forEach((c,ci) => { if(roofColors[c]) { ctx.fillStyle = roofColors[c]; ctx.fillRect(x + ci*p, y + ri*p, p, p); }}));
+        wall.forEach((row,ri) => row.forEach((c,ci) => { if(wallColors[c]) { ctx.fillStyle = wallColors[c]; ctx.fillRect(x + ci*p + p, y + (ri+4)*p, p, p); }}));
+    }
+
+    function drawStoneBarB(ctx, x, y) {
+        const p = 3;
+        const roof = [[0,0,1,1,1,1,1,0,0],[0,1,1,1,2,1,1,1,0],[1,1,1,1,1,1,1,1,1]];
+        const wall = [[3,3,3,3,3,3,3,3,3],[3,4,4,3,3,3,4,4,3],[3,3,3,3,3,3,3,3,3],[3,3,3,3,5,5,3,3,3],[3,3,3,3,5,5,3,3,3]];
+        const roofColors = {1:'#1a1a6a',2:'#C8A44A',0:null};
+        const wallColors = {3:'#5a5a5a',4:'#FFD700',5:'#1a0a00',0:null};
+        
+        roof.forEach((row,ri) => row.forEach((c,ci) => { if(roofColors[c]) { ctx.fillStyle = roofColors[c]; ctx.fillRect(x + ci*p, y + ri*p, p, p); }}));
+        ctx.fillStyle = '#3a3a3a'; for(let i=0; i<3; i++) ctx.fillRect(x, y+(i*2+4)*p, 9*p, 1);
+        wall.forEach((row,ri) => row.forEach((c,ci) => { if(wallColors[c]) { ctx.fillStyle = wallColors[c]; ctx.fillRect(x + ci*p, y + (ri+3)*p, p, p); }}));
+    }
+
+    function drawTowerC(ctx, x, y) {
+        const p = 3;
+        const spire = [[0,0,1,0,0],[0,1,2,1,0],[1,1,1,1,1],[1,1,1,1,1]];
+        const wall = [[3,3,3,3,3],[3,4,3,4,3],[3,3,3,3,3],[3,4,3,4,3],[3,3,3,3,3],[3,3,5,3,3],[3,3,5,3,3]];
+        const spireColors = {1:'#4a4a4a',2:'#C8A44A',0:null};
+        const wallColors = {3:'#3a3a5a',4:'#FFD700',5:'#1a0a00',0:null};
+        
+        spire.forEach((row,ri) => row.forEach((c,ci) => { if(spireColors[c]) { ctx.fillStyle = spireColors[c]; ctx.fillRect(x + ci*p, y + ri*p, p, p); }}));
+        wall.forEach((row,ri) => row.forEach((c,ci) => { if(wallColors[c]) { ctx.fillStyle = wallColors[c]; ctx.fillRect(x + ci*p, y + (ri+4)*p, p, p); }}));
+    }
+
+    function drawInnD(ctx, x, y) {
+        const p = 3;
+        const roof = [[0,1,1,1,1,1,1,1,1,1,0],[1,1,1,1,2,1,2,1,1,1,1],[1,1,1,1,1,1,1,1,1,1,1]];
+        const wall = [[3,3,3,3,3,3,3,3,3,3,3],[3,4,4,3,3,3,3,4,4,3,3],[3,4,4,3,3,3,3,4,4,3,3],[3,3,3,3,5,5,5,3,3,3,3],[3,3,3,3,5,5,5,3,3,3,3]];
+        const roofColors = {1:'#1a5a1a',2:'#C8A44A',0:null};
+        const wallColors = {3:'#7a5a2a',4:'#FFD700',5:'#2a1000',0:null};
+
+        roof.forEach((row,ri) => row.forEach((c,ci) => { if(roofColors[c]) { ctx.fillStyle = roofColors[c]; ctx.fillRect(x + ci*p, y + ri*p, p, p); }}));
+        wall.forEach((row,ri) => row.forEach((c,ci) => { if(wallColors[c]) { ctx.fillStyle = wallColors[c]; ctx.fillRect(x + ci*p, y + (ri+3)*p, p, p); }}));
+    }
+
+    function drawBuildingShadow(ctx, x, y, w) { ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(x+2, y + 26, w, 4); }
+
     function renderMap() {
         document.getElementById('progress-text').innerText = `СОБРАНО: ${STATE.collectedIds.length} / 8`;
-        document.getElementById('progress-fill').style.width = `${(STATE.collectedIds.length / 8) * 100}%`;
+        
+        const canvas = document.getElementById('map-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        canvas.width = 340; canvas.height = 340;
+        ctx.clearRect(0, 0, 340, 340);
 
-        const markersContainer = document.getElementById('map-markers');
-        markersContainer.innerHTML = '';
+        // 1. Отрисовка тайлов ландшафта
+        const typeMap = ['grass','grass2','forest','road','water','stone','path'];
+        for(let row=0; row<17; row++) {
+            for(let col=0; col<17; col++) {
+                drawTile(ctx, col, row, typeMap[MAP_GRID[row][col]]);
+            }
+        }
 
-        let pathString = '';
-        let lastCollectedX = null;
-        let lastCollectedY = null;
+        // 2. Отрисовка тропы
+        drawPathLine(ctx);
 
-        INGREDIENTS.forEach((item, index) => {
-            const isCollected = STATE.collectedIds.includes(item.id);
+        // 3. Отрисовка леса (деревья)
+        const treePositions = [
+            {col:0,row:0},{col:1,row:1},{col:0,row:2},{col:2,row:0},
+            {col:1,row:3},{col:0,row:5},{col:2,row:4},{col:0,row:7},
+            {col:1,row:6},{col:0,row:9},{col:2,row:8},{col:1,row:10},
+            {col:0,row:12},{col:2,row:11},{col:0,row:14},{col:1,row:13},
+            {col:0,row:16},{col:2,row:15},{col:3,row:16},
+        ];
+        treePositions.forEach(p => drawTree(ctx, p.col*20 + 2, p.row*20 + 2, 0.8));
 
-            // Строим ломаную линию дороги по координатам
-            if (index === 0) pathString += `M ${item.x} ${item.y} `;
-            else pathString += `L ${item.x} ${item.y} `;
+        // 4. Отрисовка зданий Баров
+        const BARS_ON_MAP = [
+            { id:1, x:120, y:20,  type:'A', drawFn: drawTavernA },
+            { id:2, x:240, y:60,  type:'B', drawFn: drawStoneBarB },
+            { id:3, x:100, y:130, type:'C', drawFn: drawTowerC },
+            { id:4, x:240, y:180, type:'D', drawFn: drawInnD },
+            { id:5, x:80,  y:240, type:'A', drawFn: drawTavernA },
+            { id:6, x:220, y:250, type:'B', drawFn: drawStoneBarB },
+            { id:7, x:90,  y:290, type:'C', drawFn: drawTowerC },
+            { id:8, x:210, y:295, type:'D', drawFn: drawInnD },
+        ];
 
+        BARS_ON_MAP.forEach(bar => {
+            const isCollected = STATE.collectedIds.includes(bar.id);
+            drawBuildingShadow(ctx, bar.x, bar.y, 28);
+            
             if (isCollected) {
-                lastCollectedX = item.x;
-                lastCollectedY = item.y;
+                ctx.save();
+                ctx.shadowColor = '#C8A44A';
+                ctx.shadowBlur = 10;
+                bar.drawFn(ctx, bar.x, bar.y);
+                ctx.restore();
+            } else {
+                bar.drawFn(ctx, bar.x, bar.y);
+            }
+        });
+
+        // 5. Отрисовка маркеров поверх Canvas (HTML Overlay)
+        const overlay = document.getElementById('map-overlay');
+        overlay.innerHTML = '';
+        
+        let lastCollectedX = BARS_ON_MAP[0].x;
+        let lastCollectedY = BARS_ON_MAP[0].y;
+
+        BARS_ON_MAP.forEach((bar, index) => {
+            const item = INGREDIENTS.find(ing => ing.id === bar.id);
+            const isCollected = STATE.collectedIds.includes(bar.id);
+            
+            if (isCollected) {
+                lastCollectedX = bar.x;
+                lastCollectedY = bar.y;
             }
 
             const marker = document.createElement('div');
-            marker.className = `bar-location ${isCollected ? 'collected' : 'uncollected'}`;
-            marker.style.left = `${item.x}%`;
-            marker.style.top = `${item.y}%`;
+            marker.className = `bar-marker ${isCollected ? 'collected' : 'uncollected'}`;
+            marker.style.left = `${bar.x + 14}px`;
+            marker.style.top = `${bar.y + 14}px`;
+            
             marker.onclick = () => openModal(item, isCollected, index + 1);
 
             marker.innerHTML = `
-                <div class="bar-sign">${item.bar}</div>
-                <div class="bar-status-icon">${isCollected ? item.icon : '?'}</div>
-                <div class="bar-building"></div>
-                <div class="bar-number">${index + 1}</div>
+                <div class="bar-marker-status">${isCollected ? '✓' : '?'}</div>
+                <div class="bar-marker-num">${index + 1}</div>
+                <div class="bar-marker-name">${item.bar}</div>
             `;
-            markersContainer.appendChild(marker);
+            overlay.appendChild(marker);
         });
 
-        // Рисуем дороги в SVG
-        document.getElementById('svg-path-bg').setAttribute('d', pathString);
-        document.getElementById('svg-path-fg').setAttribute('d', pathString);
-
-        // Ставим персонажа
-        const player = document.getElementById('player-sprite');
-        
-        // Подтягиваем картинку выбранного персонажа
-        const avatarUrl = STATE.character === 'huntie' ? './assets/hanti.png' : './assets/hunter.png';
-        player.style.backgroundImage = `url('${avatarUrl}')`;
-
-        // Сдвинули координаты (отступы +18px и 0px), чтобы он стоял рядом со зданием и не перекрывал цифру
-        if (lastCollectedX !== null) {
-            player.style.display = 'block';
-            player.style.left = `calc(${lastCollectedX}% + 18px)`;
-            player.style.top = `calc(${lastCollectedY}% + 0px)`;
-        } else if (INGREDIENTS.length > 0) {
-            player.style.display = 'block';
-            player.style.left = `calc(${INGREDIENTS[0].x}% + 18px)`;
-            player.style.top = `calc(${INGREDIENTS[0].y}% + 0px)`;
-        }
+        // 6. Позиция Персонажа
+        const hero = document.getElementById('map-hero');
+        const avatarUrl = STATE.selectedCharacter === 'huntie' ? './assets/hanti.png' : './assets/hunter.png';
+        hero.style.backgroundImage = `url('${avatarUrl}')`;
+        hero.style.display = 'block';
+        hero.style.left = `${lastCollectedX - 14}px`; 
+        hero.style.top = `${lastCollectedY - 18}px`;
 
         if (STATE.collectedIds.length === 8) {
             document.getElementById('btn-elixir').style.display = 'block';
