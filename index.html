@@ -353,7 +353,7 @@
 <script>
     const tg = window.Telegram.WebApp;
     tg.ready();
-    const ADMIN_TG_ID = 620058644; 
+   const ADMIN_IDS = [620058644, 698649875];
 
     if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id === ADMIN_TG_ID) {
         document.getElementById('dev-panel').style.setProperty('display', 'flex', 'important');
