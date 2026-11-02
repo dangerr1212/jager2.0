@@ -550,7 +550,7 @@
 </head>
 <body>
 <!-- ПАНЕЛЬ РАЗРАБОТЧИКА (УДАЛИТЬ ИЛИ СКРЫТЬ ПЕРЕД РЕЛИЗОМ!) -->
-    <div style="position: fixed; top: 0; left: 0; z-index: 9999; background: rgba(0,0,0,0.8); border: 1px solid #0f0; border-top: none; border-left: none; border-bottom-right-radius: 8px; padding: 5px; display: flex; gap: 5px; flex-wrap: wrap;">
+    <div id="dev-panel" style="position: fixed; top: 0; left: 0; z-index: 9999; background: rgba(0,0,0,0.8); border: 1px solid #0f0; border-top: none; border-left: none; border-bottom-right-radius: 8px; padding: 5px; gap: 5px; flex-wrap: wrap; display: none !important;">
         <button onclick="resetGame()" style="font-size: 8px; padding: 5px; background: #ff4444; color: white; border: none; cursor: pointer;">СБРОС</button>
         <button onclick="navigateTo('screen-character')" style="font-size: 8px; padding: 5px; cursor: pointer;">ГЕРОЙ</button>
         <button onclick="navigateTo('screen-map')" style="font-size: 8px; padding: 5px; cursor: pointer;">КАРТА</button>
@@ -673,6 +673,13 @@
     // Инициализация Telegram SDK
     const tg = window.Telegram.WebApp;
     tg.ready();
+    // ТВОЙ TELEGRAM ID (впиши сюда свой номер)
+    const ADMIN_TG_ID = 620058644; 
+
+    // Если приложение открыл админ — показываем панель
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id === ADMIN_TG_ID) {
+        document.getElementById('dev-panel').style.setProperty('display', 'flex', 'important');
+    }
     tg.expand();
     tg.setHeaderColor('#1A1A1A');
     tg.setBackgroundColor('#1A1A1A');
