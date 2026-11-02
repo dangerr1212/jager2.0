@@ -782,7 +782,28 @@
         <button id="btn-reset" class="btn" onclick="confirmReset()">СЫГРАТЬ СНОВА</button>
     </div>
 </div>
-
+<!-- МОДАЛЬНОЕ ОКНО RPG -->
+    <div id="rpg-modal-overlay" class="rpg-modal-overlay" onclick="closeModal()">
+        <div class="rpg-modal" onclick="event.stopPropagation()">
+            <div class="rpg-modal-right">
+                <p class="rpg-title" id="rpg-title">BAR NAME</p>
+                <p class="rpg-artifact" id="rpg-artifact"></p>
+                <p class="rpg-hint" id="rpg-hint"></p>
+                <p class="rpg-status" id="rpg-status"></p>
+            </div>
+            <div class="rpg-buttons">
+                <button id="btn-scan" class="rpg-btn" onclick="openScanner()">
+                    📷 СКАНИРОВАТЬ QR
+                </button>
+                <button class="rpg-btn" onclick="closeModal()">
+                    ✕ ЗАКРЫТЬ
+                </button>
+            </div>
+            <div style="position:absolute; bottom:8px; right:12px; 
+                        font:8px 'Press Start 2P'; color:#C8A44A;
+                        animation: blinkStatus 1s steps(1) infinite;">▼</div>
+        </div>
+    </div>
 <script>
     // Инициализация Telegram SDK
     const tg = window.Telegram.WebApp;
@@ -1115,7 +1136,8 @@ function drawTile(ctx, col, row, type) {
     function drawBuildingShadow(ctx, x, y, w) { ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fillRect(x+2, y + 26, w, 4); }
 
     function renderMap() {
-        document.getElementById('progress-text').innerText = `СОБРАНО: ${STATE.collectedIds.length} / 8`;
+        document.getElementById('progress-text').innerText = 
+            `СОБРАНО: ${STATE.collectedIds.length} / 8`;
         
         const canvas = document.getElementById('map-canvas');
         if (!canvas) return;
@@ -1123,18 +1145,31 @@ function drawTile(ctx, col, row, type) {
         canvas.width = 340; canvas.height = 340;
         ctx.clearRect(0, 0, 340, 340);
 
-        // 1. Отрисовка тайлов ландшафта
-        const typeMap = ['grass','grass2','forest','road','water','stone','path'];
+        // A) ТАЙЛЫ — добавить 'city' в typeMap
+        const typeMap = ['grass','grass2','forest','road','water','stone','path','city'];
         for(let row=0; row<17; row++) {
             for(let col=0; col<17; col++) {
-                drawTile(ctx, col, row, typeMap[MAP_GRID[row][col]]);
+                drawTile(ctx, col, row, MAP_GRID[row][col]);
             }
         }
 
-        // 2. Отрисовка тропы
+        // B) ЗДАНИЯ — увеличить масштаб x1.5, пересчитать координаты
+        // чтобы не перекрывались тропой
+        const BARS_ON_MAP = [
+            { id:1, x:85,  y:20,  drawFn: drawTavernA,   scale:1.5 },
+            { id:2, x:230, y:45,  drawFn: drawStoneBarB, scale:1.5 },
+            { id:3, x:60,  y:105, drawFn: drawTowerC,    scale:1.5 },
+            { id:4, x:228, y:148, drawFn: drawInnD,      scale:1.5 },
+            { id:5, x:52,  y:200, drawFn: drawTavernA,   scale:1.5 },
+            { id:6, x:205, y:220, drawFn: drawStoneBarB, scale:1.5 },
+            { id:7, x:65,  y:268, drawFn: drawTowerC,    scale:1.5 },
+            { id:8, x:205, y:272, drawFn: drawInnD,      scale:1.5 },
+        ];
+
+        // Тропа — перерисовать ПОСЛЕ тайлов, ДО зданий
         drawPathLine(ctx);
 
-        // 3. Отрисовка леса (деревья)
+        // Деревья в лесной зоне (левая треть)
         const treePositions = [
             {col:0,row:0},{col:1,row:1},{col:0,row:2},{col:2,row:0},
             {col:1,row:3},{col:0,row:5},{col:2,row:4},{col:0,row:7},
@@ -1144,36 +1179,36 @@ function drawTile(ctx, col, row, type) {
         ];
         treePositions.forEach(p => drawTree(ctx, p.col*20 + 2, p.row*20 + 2, 0.8));
 
-       
-// Координаты подобраны под новую карту:
-// левый лес → правый город → снова лево
-const BARS_ON_MAP = [
-    { id:1, x:90,  y:30,  drawFn: drawTavernA   }, // лесная таверна
-    { id:2, x:230, y:55,  drawFn: drawStoneBarB }, // каменный паб
-    { id:3, x:70,  y:120, drawFn: drawTowerC    }, // башня
-    { id:4, x:235, y:160, drawFn: drawInnD      }, // большой трактир
-    { id:5, x:60,  y:215, drawFn: drawTavernA   }, // таверна у воды
-    { id:6, x:210, y:235, drawFn: drawStoneBarB }, // паб в квартале
-    { id:7, x:80,  y:285, drawFn: drawTowerC    }, // башня на юге
-    { id:8, x:215, y:290, drawFn: drawInnD      }, // финальный трактир
-];
-
+        // C) ЗДАНИЯ — рисовать с масштабом, ПОВЕРХ тропы
         BARS_ON_MAP.forEach(bar => {
             const isCollected = STATE.collectedIds.includes(bar.id);
-            drawBuildingShadow(ctx, bar.x, bar.y, 28);
+            
+            // Тень под зданием
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.fillRect(bar.x, bar.y + 42, 36, 5);
             
             if (isCollected) {
                 ctx.save();
                 ctx.shadowColor = '#C8A44A';
-                ctx.shadowBlur = 10;
-                bar.drawFn(ctx, bar.x, bar.y);
+                ctx.shadowBlur = 12;
+                // Рисуем с масштабом 1.5
+                ctx.save();
+                ctx.translate(bar.x, bar.y);
+                ctx.scale(1.5, 1.5);
+                bar.drawFn(ctx, 0, 0);
+                ctx.restore();
                 ctx.restore();
             } else {
-                bar.drawFn(ctx, bar.x, bar.y);
+                ctx.save();
+                ctx.globalAlpha = 0.7;
+                ctx.translate(bar.x, bar.y);
+                ctx.scale(1.5, 1.5);
+                bar.drawFn(ctx, 0, 0);
+                ctx.restore();
             }
         });
 
-        // 5. Отрисовка маркеров поверх Canvas (HTML Overlay)
+        // Маркеры (HTML overlay)
         const overlay = document.getElementById('map-overlay');
         overlay.innerHTML = '';
         
@@ -1191,8 +1226,9 @@ const BARS_ON_MAP = [
 
             const marker = document.createElement('div');
             marker.className = `bar-marker ${isCollected ? 'collected' : 'uncollected'}`;
-            marker.style.left = `${bar.x + 14}px`;
-            marker.style.top = `${bar.y + 14}px`;
+            // D) Сдвинуть маркеры ближе к верху здания (не в центр)
+            marker.style.left = `${bar.x + 20}px`;
+            marker.style.top  = `${bar.y + 10}px`;
             
             marker.onclick = () => openModal(item, isCollected, index + 1);
 
@@ -1204,13 +1240,15 @@ const BARS_ON_MAP = [
             overlay.appendChild(marker);
         });
 
-        // 6. Позиция Персонажа
+        // Персонаж
         const hero = document.getElementById('map-hero');
-        const avatarUrl = STATE.selectedCharacter === 'huntie' ? './assets/hanti.png' : './assets/hunter.png';
+        const avatarUrl = STATE.selectedCharacter === 'huntie' 
+            ? './assets/hanti.png' 
+            : './assets/hunter.png';
         hero.style.backgroundImage = `url('${avatarUrl}')`;
         hero.style.display = 'block';
         hero.style.left = `${lastCollectedX - 14}px`; 
-        hero.style.top = `${lastCollectedY - 18}px`;
+        hero.style.top  = `${lastCollectedY - 18}px`;
 
         if (STATE.collectedIds.length === 8) {
             document.getElementById('btn-elixir').style.display = 'block';
