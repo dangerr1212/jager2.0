@@ -166,15 +166,17 @@
             color: #C8A44A; text-shadow: 1px 1px 0 #000; background: rgba(0,0,0,0.85); padding: 2px 4px; white-space: nowrap; 
         }
 
-        /* Персонаж на карте */
+        /* Персонаж на карте (увеличенный и без прозрачности) */
         #map-hero {
-            position: absolute; width: 28px; height: 36px; image-rendering: pixelated; z-index: 20;
-            background-size: contain; background-repeat: no-repeat; background-position: center; mix-blend-mode: screen;
+            position: absolute; width: 44px; height: 56px; image-rendering: pixelated; z-index: 40;
+            background-size: contain; background-repeat: no-repeat; background-position: center;
+            /* mix-blend-mode удален, чтобы персонаж не был прозрачным */
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)); /* Легкая тень, чтобы он выделялся */
             animation: heroWalk 0.5s steps(2) infinite; transition: left 1s ease, top 1s ease;
         }
         #map-hero::after {
             content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
-            width: 18px; height: 5px; background: rgba(0,0,0,0.4); border-radius: 50%; z-index: -1;
+            width: 24px; height: 6px; background: rgba(0,0,0,0.6); border-radius: 50%; z-index: -1;
         }
 
         @keyframes heroWalk { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
@@ -781,7 +783,10 @@
 
         const hero = document.getElementById('map-hero');
         hero.style.backgroundImage = `url('${STATE.selectedCharacter === 'huntie' ? './assets/hanti.png' : './assets/hunter.png'}')`;
-        hero.style.display = 'block'; hero.style.left = `${lastCollectedX - 14}px`; hero.style.top = `${lastCollectedY - 18}px`;
+        hero.style.display = 'block'; 
+        // Смещаем координаты из-за нового увеличенного размера персонажа (44x56)
+        hero.style.left = `${lastCollectedX - 22}px`; 
+        hero.style.top = `${lastCollectedY - 28}px`;
         if (STATE.collectedIds.length === 8) {
             document.getElementById('btn-elixir').style.display = 'block';
         } else {
@@ -793,7 +798,7 @@
         document.getElementById('rpg-title').innerText = item.bar;
         if (isCollected) {
             // Задаем увеличенный размер (75px) для шафрана (6), можжевельника (7) и лакрицы (8)
-            const imgSize = (item.id === 6 || item.id === 7 || item.id === 8) ? '90px' : '63px';
+            const imgSize = (item.id === 6 || item.id === 7 || item.id === 8) ? '80px' : '53px';
             
             document.getElementById('rpg-artifact').innerHTML = `Артефакт: ${item.name}<br><img src="${item.img}" style="width: ${imgSize}; height: ${imgSize}; margin-top: 10px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 6px #C8A44A);">`;
             
