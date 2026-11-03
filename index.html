@@ -392,7 +392,33 @@
         .rpg-status { font-size: 12px; margin: 0 0 15px 0; line-height: 1.4; font-weight: bold; }
         .rpg-buttons { display: flex; gap: 14px; width: 100%; max-width: 320px; margin: 0 auto; justify-content: center; margin-top: auto; }
         .rpg-modal .btn, .rpg-btn { font-size: 10px !important; padding: 14px 10px !important; flex: 1 !important; text-align: center !important; background: #1b4d3e !important; color: #ffffff !important; border: 2px solid #C8A44A !important; box-shadow: inset 2px 2px 0 #2e8b57, inset -2px -2px 0 #0d231c !important; cursor: pointer; display: block !important; }
-    </style>
+            /* --- БЛОК «ГДЕ ЗАБРАТЬ ПРИЗ» --- */
+        #prize-location {
+            display: none;
+            position: relative;
+            z-index: 10;
+            width: 88%;
+            max-width: 320px;
+            margin: 14px auto 0;
+            padding: 12px 10px;
+            background: rgba(5, 15, 5, 0.92);
+            border: 3px solid #C8A44A;
+            box-shadow: inset 2px 2px 0 #2e8b57, inset -2px -2px 0 #0d231c, 4px 4px 0 #000;
+            text-align: center;
+            animation: prizeLocIn 0.5s ease-out;
+        }
+        @keyframes prizeLocIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        #prize-location .pl-head { color: #C8A44A; font-size: 10px; margin-bottom: 8px; text-shadow: 1px 1px 0 #000; }
+        #prize-location .pl-logo { max-height: 64px; max-width: 120px; image-rendering: pixelated; margin: 0 auto 8px; display: block; }
+        #prize-location .pl-logo-fallback { font-size: 36px; margin-bottom: 8px; }
+        #prize-location .pl-name { color: #fff; font-size: 13px; line-height: 1.3; margin-bottom: 6px; }
+        #prize-location .pl-addr { color: #ddd; font-size: 10px; line-height: 1.5; cursor: pointer; text-decoration: underline; }
+        #prize-location .pl-hours { color: #aaa; font-size: 9px; margin-top: 4px; }
+        #prize-location .pl-note { color: #C8A44A; font-size: 9px; line-height: 1.5; margin-top: 8px; }
+        </style>
 </head>
 <body>
     <div id="dev-panel" style="position: fixed; top: 0; left: 0; z-index: 9999; background: rgba(0,0,0,0.8); border: 1px solid #0f0; border-top: none; border-left: none; border-bottom-right-radius: 8px; padding: 5px; gap: 5px; flex-wrap: wrap; display: none !important;">
@@ -601,6 +627,15 @@
         
         <p id="prize-msg" class="prize-msg" style="display: none;"></p>
         <img src="./assets/logo-bottom.png" class="victory-logo" alt="Logo">
+                <div id="prize-location">
+            <div class="pl-head">📍 ГДЕ ЗАБРАТЬ ПРИЗ</div>
+            <img id="pl-logo" class="pl-logo" alt="Bar" onerror="this.style.display='none'; document.getElementById('pl-logo-fb').style.display='block';">
+            <div id="pl-logo-fb" class="pl-logo-fallback" style="display:none;">🍻</div>
+            <div id="pl-name" class="pl-name"></div>
+            <div id="pl-addr" class="pl-addr" onclick="openPrizeBarMap()"></div>
+            <div id="pl-hours" class="pl-hours"></div>
+            <div id="pl-note" class="pl-note"></div>
+        </div>
         <button id="btn-reset" class="btn" style="display: none; position: relative; z-index: 10; margin-top: 30px;" onclick="confirmReset()">СЫГРАТЬ СНОВА</button>
     </div>
 
@@ -676,7 +711,18 @@
     ];
 
    const STATE = { selectedCharacter: null, collectedIds: [], gameCompleted: false, currentScreen: 'screen-character', prizeChosen: null, lastScanTime: 0 };
-// --- ЛОГИКА ФАКТОВ НА КАРТЕ ---
+   const PRIZE_BAR = {
+        name: "НАЗВАНИЕ БАРА",
+        address: "г. Алматы, ул. ​Улица Розыбакиева, 238",
+        logo: "./assets/bar-logo.png",
+        hours: "Ежедневно 18:00–01:00"   // например "Ежедневно 18:00–02:00", если не нужно — оставь пустым
+   };
+
+   function openPrizeBarMap() {
+        const url = "https://yandex.ru/maps/?text=" + encodeURIComponent(PRIZE_BAR.address);
+        if (tg.openLink) tg.openLink(url); else window.open(url, '_blank');
+   }
+   // --- ЛОГИКА ФАКТОВ НА КАРТЕ ---
     const JAGER_FACTS = [
         "1. Рецепт под замком\nВ ликере 56 компонентов: травы, корни, цветы и фрукты со всего мира. Полный рецепт знают лишь несколько технологов компании. Известно, что среди ингредиентов есть лакрица, имбирь, корица, анис, шафран, можжевельник и цитрусовая цедра.",
         "2. Год в дубовых бочках\nСмесь настаивают на спирту, а потом 365 дней выдерживают в больших дубовых бочках в подвалах Вольфенбюттеля. За это время вкус становится ровным и цельным.",
@@ -1140,9 +1186,10 @@
         }, 800 + (INGREDIENTS.length * 500) + 6500); // Переход через 5 секунд после вспышки (было 4000)
     }
 
-   function applyPrizeState() {
+       function applyPrizeState() {
         const title = document.getElementById('prize-title');
         const msg = document.getElementById('prize-msg');
+        const loc = document.getElementById('prize-location');
         const chests = document.querySelectorAll('.chest-card');
         
         chests.forEach(el => el.classList.remove('opened', 'locked', 'done'));
@@ -1150,6 +1197,7 @@
         if (!STATE.prizeChosen) {
             if (title) title.innerText = 'ВЫБЕРИ НАГРАДУ';
             if (msg) msg.style.display = 'none';
+            if (loc) loc.style.display = 'none';
         } else {
             if (title) title.innerText = 'ТВОЯ НАГРАДА!';
             chests.forEach(el => {
@@ -1162,6 +1210,22 @@
             if (msg) {
                 msg.style.display = 'block';
                 msg.innerText = 'ПОКАЖИ ЭТОТ ЭКРАН БАРМЕНУ И ЗАБЕРИ ПРИЗ';
+            }
+            if (loc) {
+                const wasHidden = loc.style.display !== 'block';
+                const logo = document.getElementById('pl-logo');
+                const logoFb = document.getElementById('pl-logo-fb');
+                if (logo) { logo.style.display = 'block'; if (logoFb) logoFb.style.display = 'none'; logo.src = PRIZE_BAR.logo; }
+                document.getElementById('pl-name').innerText = PRIZE_BAR.name;
+                document.getElementById('pl-addr').innerText = '📍 ' + PRIZE_BAR.address;
+                const hours = document.getElementById('pl-hours');
+                hours.innerText = PRIZE_BAR.hours ? ('🕒 ' + PRIZE_BAR.hours) : '';
+                hours.style.display = PRIZE_BAR.hours ? 'block' : 'none';
+                document.getElementById('pl-note').innerText = STATE.prizeChosen === 'merch'
+                    ? 'Покажи этот экран бармену и получи мерч'
+                    : 'Покажи этот экран бармену и получи бутылку';
+                loc.style.display = 'block';
+                if (wasHidden) { loc.style.animation = 'none'; void loc.offsetWidth; loc.style.animation = ''; }
             }
         }
     }
@@ -1239,7 +1303,9 @@
         
         const prizeMsg = document.getElementById('prize-msg');
         if (prizeMsg) prizeMsg.style.display = 'none'; 
-        
+        const prizeLoc = document.getElementById('prize-location');
+        if (prizeLoc) prizeLoc.style.display = 'none';
+
         document.querySelectorAll('.chest-card').forEach(el => el.classList.remove('opened', 'locked', 'done'));
         
         const field = document.getElementById('ingredients-field');
