@@ -297,6 +297,71 @@
             0%,100% { text-shadow: 0 0 10px #C8A44A; }
             50%      { text-shadow: 0 0 25px #C8A44A, 0 0 50px #FFD700; }
         }
+        /* --- ЭКРАН 5: ПОБЕДА И СУНДУКИ --- */
+        #screen-victory {
+            align-items: center;
+            overflow: hidden;
+            background: radial-gradient(ellipse at 50% 30%, #0a1f0a 0%, #050805 100%);
+        }
+        .prizes {
+            display: flex; gap: 15px; width: 100%; justify-content: center; margin-top: 10px; position: relative; z-index: 10;
+        }
+        .chest-card {
+            flex: 1; padding: 15px 5px; text-align: center; cursor: pointer; transition: all 0.3s;
+        }
+        .chest {
+            position: relative; width: 84px; height: 80px; margin: 0 auto 15px;
+        }
+        .chest-body {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 45px; background: #6a4a2a; 
+            box-shadow: inset -4px -4px 0 rgba(0,0,0,0.4), inset 4px 4px 0 rgba(255,255,255,0.1); border: 2px solid #3d1f00; z-index: 3;
+        }
+        .chest-lid {
+            position: absolute; top: 12px; left: 0; width: 100%; height: 26px; background: #8B5A2B; 
+            transform-origin: left bottom; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            border: 2px solid #3d1f00; z-index: 4; box-shadow: inset 0 4px 0 rgba(255,255,255,0.1);
+        }
+        .chest-lock {
+            position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 12px; height: 16px; 
+            background: var(--gold); border: 2px solid #3d1f00; box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+        }
+        .chest-reward {
+            position: absolute; top: 10px; left: 50%; transform: translateX(-50%) scale(0.2); opacity: 0; 
+            transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2; text-align: center; font-size: 50px;
+        }
+        .chest-reward img {
+            height: 90px; width: auto; image-rendering: pixelated;
+        }
+        .chest-label {
+            font-size: 10px; color: var(--white); text-shadow: 1px 1px 0 #000; line-height: 1.4;
+        }
+        /* Состояния сундуков */
+        .chest-card.opened .chest-lid {
+            transform: rotate(-35deg); box-shadow: 0 0 20px var(--gold);
+        }
+        .chest-card.opened .chest-reward {
+            transform: translateX(-50%) translateY(-60px) scale(1.3); opacity: 1; filter: drop-shadow(0 0 10px var(--gold));
+        }
+        .chest-card.locked {
+            opacity: 0.25; filter: grayscale(100%); pointer-events: none;
+        }
+        .chest-card.done { pointer-events: none; }
+        
+        .prize-msg {
+            background: var(--gold); color: var(--black); padding: 12px; text-align: center; margin-top: 25px; 
+            border: 2px solid var(--white); box-shadow: 4px 4px 0 var(--white); font-size: 10px; line-height: 1.5; 
+            z-index: 10; position: relative; text-shadow: none;
+        }
+        .victory-logo {
+            display: block; width: 140px; margin: 30px auto 0; image-rendering: pixelated; z-index: 10; position: relative;
+        }
+        .confetti {
+            position: absolute; width: 6px; height: 6px; animation: confettiFall linear forwards; pointer-events: none; z-index: 1;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
         /* --- RPG МОДАЛЬНОЕ ОКНО --- */
         .rpg-modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7);
@@ -475,7 +540,7 @@
         ">ЭЛИКСИР СОЗДАН!<br>✨ JÄGERMEISTER ✨</div>
 
         <!-- Логотип в самом низу (ОГРОМНЫЙ) -->
-        <img id="elixir-final-logo" src="./assets/logo-bottom.png" alt="Logo" style="
+        <img id="elixir-final-logo" src="./assets/logo-final.png" alt="Logo" style="
             display: none;
             width: 340px; /* Сделали логотип гигантским */
             max-width: 95%; /* Чтобы не вылезал за края на узких экранах */
@@ -484,22 +549,35 @@
         ">
     </div>
 
-    <!-- ЭКРАН 5 -->
+   <!-- ЭКРАН 5 -->
     <div id="screen-victory" class="screen">
         <h1 class="title">🎉 ПОЗДРАВЛЯЕМ,<br><span id="winner-name"></span></h1>
-        <p style="font-size: 10px; margin-top: 10px;">Ты собрал все ингредиенты и создал легендарный эликсир Jägermeister!</p>
-        <div class="prizes" id="prize-container">
-            <div class="prize-card pixel-border" onclick="selectPrize(this)">
-                <div class="prize-icon">🎽</div>
-                <span>МЕРЧ</span>
+        <p style="font-size: 10px; margin-top: 10px; text-align: center; line-height: 1.4; position: relative; z-index: 10;">Ты собрал все ингредиенты и создал легендарный эликсир Jägermeister!</p>
+        
+        <p id="prize-title" style="color: var(--gold); margin-top: 25px; font-size: 12px; text-align: center; text-shadow: 1px 1px 0 #000; position: relative; z-index: 10;">ВЫБЕРИ НАГРАДУ</p>
+        
+        <div class="prizes">
+            <div class="chest-card pixel-border" data-prize="merch" onclick="selectPrize('merch')">
+                <div class="chest">
+                    <div class="chest-reward">🎽</div>
+                    <div class="chest-lid"></div>
+                    <div class="chest-body"><div class="chest-lock"></div></div>
+                </div>
+                <div class="chest-label">МЕРЧ</div>
             </div>
-            <div class="prize-card pixel-border gold" onclick="selectPrize(this)">
-                <div class="prize-icon">🍾</div>
-                <span>БУТЫЛКА JÄGER</span>
+            <div class="chest-card pixel-border gold" data-prize="bottle" onclick="selectPrize('bottle')">
+                <div class="chest">
+                    <div class="chest-reward"><img src="./assets/bottle.png" alt="Jägermeister"></div>
+                    <div class="chest-lid"></div>
+                    <div class="chest-body"><div class="chest-lock"></div></div>
+                </div>
+                <div class="chest-label">БУТЫЛКА JÄGER</div>
             </div>
         </div>
-        <p id="prize-msg" style="display: none; color: var(--gold); margin-top: 20px; font-size: 10px;"></p>
-        <button id="btn-reset" class="btn" onclick="confirmReset()">СЫГРАТЬ СНОВА</button>
+        
+        <p id="prize-msg" class="prize-msg" style="display: none;"></p>
+        <img src="./assets/logo-bottom.png" class="victory-logo" alt="Logo">
+        <button id="btn-reset" class="btn" style="display: none; position: relative; z-index: 10; margin-top: 30px;" onclick="confirmReset()">СЫГРАТЬ СНОВА</button>
     </div>
 
     <!-- МОДАЛЬНОЕ ОКНО RPG -->
