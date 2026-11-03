@@ -793,7 +793,8 @@
         document.getElementById('rpg-title').innerText = item.bar;
         if (isCollected) {
             // Вставляем картинку (item.img) вместо эмодзи (item.icon)
-            document.getElementById('rpg-artifact').innerHTML = `Артефакт: ${item.name} <img src="${item.img}" style="width: 24px; height: 24px; vertical-align: middle; margin-left: 4px; image-rendering: pixelated; filter: drop-shadow(0 0 4px #C8A44A);">`;
+            // Картинка под текстом и больше размером
+            document.getElementById('rpg-artifact').innerHTML = `Артефакт: ${item.name}<br><img src="${item.img}" style="width: 48px; height: 48px; margin-top: 10px; image-rendering: pixelated; filter: drop-shadow(0 0 6px #C8A44A);">`;
             
             document.getElementById('rpg-hint').innerText = item.hint;
             document.getElementById('rpg-status').innerHTML = '✅ СОБРАН';
