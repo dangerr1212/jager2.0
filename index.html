@@ -435,16 +435,16 @@
             margin: 0 auto;
         "></div>
 
-  <!-- Увеличенный котёл с картинкой (без зеленых овалов) -->
+  <!-- Гигантский котёл с картинкой -->
         <div id="cauldron-wrap" style="
             position: relative; 
-            width: 200px; 
-            margin: 40px auto 0 auto; 
+            width: 320px; /* Сделали контейнер огромным */
+            margin: 10px auto 0 auto; /* Подняли чуть выше */
             text-align: center;
         ">
             <!-- Сама картинка котла -->
             <img id="cauldron-img" src="./assets/cauldron.png" alt="Cauldron" style="
-                width: 190px; 
+                width: 300px; /* Сделали картинку огромной */
                 height: auto; 
                 image-rendering: pixelated;
             ">
@@ -869,22 +869,23 @@
                 el.appendChild(fallback);
                 field.appendChild(el);
 
-               // Через 600ms — медленнее полететь в центр увеличенного котла
+               // Замедленный полёт в центр огромного котла
                 setTimeout(() => {
-                    // Координаты подгоняем под новый размер котла
-                    el.style.left      = '100px'; 
-                    el.style.top       = '145px'; 
+                    // Новые координаты центра для 300-пиксельного котла
+                    el.style.left      = '130px'; // Сдвинули правее в центр
+                    el.style.top       = '200px'; // Сдвинули сильно ниже в горловину огромного котла
                     el.style.opacity   = '0';
+                    
+                    // Чтобы летело медленнее и красивее, увеличиваем время transition перед полётом
+                    el.style.transition = 'all 1.2s cubic-bezier(0.4, 0, 0.2, 1)';
+                    
                     el.style.width     = '16px';
                     el.style.height    = '16px';
 
                     playBeep(300 + i * 40, 80);
-                    // Код вспышки жидкости удален, так как овала больше нет
-                }, 600);
+                }, 800); // Было 600, стало 800 (ингредиент ждет дольше, прежде чем нырнуть)
 
-            }, 600 + i * 420);
-        });
-
+            }, 800 + i * 500); // Увеличили паузу между вылетами ингредиентов (было 420)
         // Шаг 4: финальная вспышка и бутылка
         setTimeout(() => {
             [261, 329, 392, 523, 659].forEach((freq, idx) => {
