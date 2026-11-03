@@ -347,13 +347,15 @@
         }
         .chest-card.done { pointer-events: none; }
         
-        .prize-msg {
+       .prize-msg {
             background: var(--gold); color: var(--black); padding: 12px; text-align: center; margin-top: 25px; 
             border: 2px solid var(--white); box-shadow: 4px 4px 0 var(--white); font-size: 10px; line-height: 1.5; 
             z-index: 10; position: relative; text-shadow: none;
+            pointer-events: none; /* Чтобы плашка не блокировала клики, если окажется поверх сундука */
         }
         .victory-logo {
             display: block; width: 140px; margin: 30px auto 0; image-rendering: pixelated; z-index: 10; position: relative;
+            pointer-events: none;
         }
         .confetti {
             position: absolute; width: 6px; height: 6px; animation: confettiFall linear forwards; pointer-events: none; z-index: 1;
