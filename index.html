@@ -128,7 +128,14 @@
         }
         .sky-stars { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
         .sky-star { position: absolute; width: 2px; height: 2px; background: #fff; animation: twinkle 1.5s infinite alternate; }
-        .sky-logo { width: 28px; height: 28px; image-rendering: pixelated; position: relative; z-index: 2; }
+        .sky-logo { 
+            width: 40px; height: 40px; 
+            border-radius: 50%; /* Идеальный круг */
+            object-fit: cover; 
+            image-rendering: pixelated; 
+            position: relative; z-index: 2; 
+            border: 2px solid var(--gold); /* Легкая золотая рамка */
+        }
         .sky-progress { font: 8px 'Press Start 2P'; color: #C8A44A; position: relative; z-index: 2; }
 
         #map-canvas-wrapper {
@@ -485,6 +492,19 @@
                 image-rendering: pixelated;
             "
         />
+        
+        <!-- КОНТЕЙНЕР ДЛЯ ИНТЕРЕСНЫХ ФАКТОВ -->
+        <div id="map-facts-container" style="
+            margin-top: 20px; 
+            padding: 0 20px; 
+            min-height: 60px; 
+            line-height: 1.6; 
+            font-size: 10px; 
+            color: var(--white);
+            text-align: left;
+        ">
+            <span id="map-fact-text"></span><span class="cursor" style="animation: blinkStatus 1s steps(1) infinite;">_</span>
+        </div>
     </div>
 
      <!-- ЭКРАН 4 -->
@@ -656,7 +676,57 @@
     ];
 
    const STATE = { selectedCharacter: null, collectedIds: [], gameCompleted: false, currentScreen: 'screen-character', prizeChosen: null, lastScanTime: 0 };
+// --- ЛОГИКА ФАКТОВ НА КАРТЕ ---
+    const JAGER_FACTS = [
+        "1. Рецепт под замком\nВ ликере 56 компонентов: травы, корни, цветы и фрукты со всего мира. Полный рецепт знают лишь несколько технологов компании. Известно, что среди ингредиентов есть лакрица, имбирь, корица, анис, шафран, можжевельник и цитрусовая цедра.",
+        "2. Год в дубовых бочках\nСмесь настаивают на спирту, а потом 365 дней выдерживают в больших дубовых бочках в подвалах Вольфенбюттеля. За это время вкус становится ровным и цельным.",
+        "3. Кровь оленя: миф\nСлух, что в ликёр добавляют оленью кровь, компания давно опровергла. Цвет получается из карамелизованного сахара и длительного настаивания трав.",
+        "4. Рождён на охоте\n«Jägermeister» значит «старший егерь» или «мастер охоты». Создатель напитка Курт Маст был заядлым охотником и задумывал его как согревающий напиток до, во время и после охоты.",
+        "5. Олень со светящимся крестом\nОбраз на этикетке отсылает к легенде о святом Губерте, покровителе охотников. Жестокий охотник встретил в лесу оленя с крестом между рогов, это перевернуло его жизнь, и он ушёл в монастырь.",
+        "6. Бутылка, которая не бьётся\nМаст хотел бутылку, надёжную в любых условиях, и сбрасывал прототипы на дубовый пол. Устояла квадратная бутылка из толстого зелёного стекла, знакомая нам сегодня.",
+        "7. Лучший шот: −18 °C\nПроизводитель советует пить Jägermeister как Ice Shot. Бутылку и рюмки охлаждают до −18 °C. Ликёр становится густым и тягучим, а травы раскрываются сильнее, чем спирт.",
+        "8. Первый логотип на футболке\nВ 1973 году «Айнтрахт Брауншвейг» стал первым клубом с логотипом спонсора на форме, и это был Jägermeister. Чтобы обойти запрет футбольной ассоциации, клуб сменил свою эмблему на оленя бренда.",
+        "9. Стихи на каждой бутылке\nЭтикетку обрамляют строки лесничего и поэта Оскара фон Ризенталя. По смыслу они говорят, что долг охотника — беречь дичь, охотиться по-человечески и чтить Творца в его творениях.",
+        "10. Любимец рок-сцены\nБренд годами поддерживал туры Metallica, Slayer, Mötley Crüe и Slipknot. Так лекарственный по замыслу дижестив стал культовым напитком вечеринок."
+    ];
+    let currentFactIndex = 0;
+    let isFactTyping = false;
 
+    function startMapFacts() {
+        if (isFactTyping) return; 
+        isFactTyping = true;
+        typeNextFact();
+    }
+
+    function typeNextFact() {
+        const textElement = document.getElementById('map-fact-text');
+        if (!textElement) return;
+        
+        textElement.innerText = "";
+        let factStr = JAGER_FACTS[currentFactIndex];
+        let charIdx = 0;
+        
+        function typeChar() {
+            // Если игрок ушел с карты, останавливаем печать
+            if (STATE.currentScreen !== 'screen-map') {
+                isFactTyping = false;
+                return; 
+            }
+            
+            if (charIdx < factStr.length) {
+                textElement.innerText += factStr.charAt(charIdx);
+                charIdx++;
+                // Скорость печати: 60 мс (комфортно для чтения)
+                setTimeout(typeChar, 60); 
+            } else {
+                // Факт напечатан. Ждем 4 секунды, стираем и печатаем следующий
+                currentFactIndex = (currentFactIndex + 1) % JAGER_FACTS.length;
+                setTimeout(typeNextFact, 4000);
+            }
+        }
+        typeChar();
+    }
+    // --------------------------------
     let audioCtx = null;
     function playBeep(freq, ms) {
         try {
@@ -881,11 +951,14 @@
         // Смещаем координаты из-за нового увеличенного размера персонажа (44x56)
         hero.style.left = `${lastCollectedX - 22}px`; 
         hero.style.top = `${lastCollectedY - 28}px`;
-        if (STATE.collectedIds.length === 8) {
+       if (STATE.collectedIds.length === 8) {
             document.getElementById('btn-elixir').style.display = 'block';
         } else {
             document.getElementById('btn-elixir').style.display = 'none';
         }
+        
+        // Запускаем печать фактов
+        startMapFacts();
     }
 
     function openModal(item, isCollected, stepNum) {
