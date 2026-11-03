@@ -435,34 +435,20 @@
             margin: 0 auto;
         "></div>
 
-  <!-- Котёл с картинкой -->
+  <!-- Увеличенный котёл с картинкой (без зеленых овалов) -->
         <div id="cauldron-wrap" style="
             position: relative; 
-            width: 140px; 
+            width: 200px; 
             margin: 40px auto 0 auto; 
             text-align: center;
         ">
             <!-- Сама картинка котла -->
             <img id="cauldron-img" src="./assets/cauldron.png" alt="Cauldron" style="
-                width: 130px; 
+                width: 190px; 
                 height: auto; 
                 image-rendering: pixelated;
-                filter: drop-shadow(0 0 10px rgba(0, 132, 61, 0.6));
             ">
-            
-            <!-- Жидкость внутри котла -->
-            <div id="cauldron-liquid" style="
-                position: absolute; bottom: 15px; left: 50%;
-                transform: translateX(-50%);
-                width: 70px; height: 18px;
-                background: #00843D;
-                border-radius: 50%;
-                opacity: 0.8;
-                z-index: 2;
-                transition: background 0.3s;
-            "></div>
         </div>
-
         <!-- Финальная бутылка -->
         <div id="big-bottle" class="big-bottle">🍾</div>
         
@@ -517,14 +503,36 @@
 </div>
 
 <script>
-    const tg = window.Telegram.WebApp;
+    const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : {
+        ready() {},
+        expand() {},
+        setHeaderColor() {},
+        setBackgroundColor() {},
+        MainButton: {
+            hide() {},
+            setText() { return this; },
+            show() { return this; },
+            onClick() { return this; }
+        },
+        HapticFeedback: {
+            impactOccurred() {},
+            notificationOccurred() {}
+        },
+        CloudStorage: null,
+        initDataUnsafe: null,
+        showAlert(msg) { alert(msg); },
+        showConfirm(msg, callback) { if (callback) callback(window.confirm(msg)); },
+        showScanQrPopup() { alert('QR-сканирование недоступно вне Telegram'); }
+    };
+
     tg.ready();
     // Добавляем ID всех админов в массив через запятую
     const ADMIN_IDS = [620058644, 698649875]; 
 
     // Проверяем, есть ли текущий пользователь в списке админов
     if (tg.initDataUnsafe && tg.initDataUnsafe.user && ADMIN_IDS.includes(tg.initDataUnsafe.user.id)) {
-        document.getElementById('dev-panel').style.setProperty('display', 'flex', 'important');
+        const devPanel = document.getElementById('dev-panel');
+        if (devPanel) devPanel.style.setProperty('display', 'flex', 'important');
     }
     tg.expand();
     tg.setHeaderColor('#1A1A1A');
@@ -861,8 +869,9 @@
                 el.appendChild(fallback);
                 field.appendChild(el);
 
-                // Через 600ms — медленнее полететь в центр увеличенного котла
+               // Через 600ms — медленнее полететь в центр увеличенного котла
                 setTimeout(() => {
+                    // Координаты подгоняем под новый размер котла
                     el.style.left      = '100px'; 
                     el.style.top       = '145px'; 
                     el.style.opacity   = '0';
@@ -870,15 +879,7 @@
                     el.style.height    = '16px';
 
                     playBeep(300 + i * 40, 80);
-
-                    const liquid = document.getElementById('cauldron-liquid');
-                    if (liquid) {
-                        liquid.style.background = '#C8A44A';
-                        setTimeout(() => {
-                            liquid.style.background = '#00843D';
-                            liquid.style.transition = 'background 0.3s';
-                        }, 150);
-                    }
+                    // Код вспышки жидкости удален, так как овала больше нет
                 }, 600);
 
             }, 600 + i * 420);
@@ -890,12 +891,7 @@
                 setTimeout(() => playBeep(freq, 180), idx * 180);
             });
 
-            const liquid = document.getElementById('cauldron-liquid');
-            if (liquid) {
-                liquid.style.background = '#FFD700';
-                liquid.style.boxShadow  = '0 0 30px #FFD700';
-            }
-
+            // Вспышка жидкости удалена, переходим сразу к белой вспышке экрана
             const flash = document.getElementById('flash-overlay');
             flash.style.opacity = '1';
             flash.style.transition = 'none';
