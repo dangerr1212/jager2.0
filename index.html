@@ -934,12 +934,12 @@
 
             }, 300);
 
-        }, 600 + INGREDIENTS.length * 250 + 800);
+        }, 800 + (INGREDIENTS.length * 500) + 1600); // Ждем, пока упадет последний ингредиент (~6.4 секунды)
 
         // Шаг 5: переход на победный экран
         setTimeout(() => {
             navigateTo('screen-victory');
-        }, 600 + INGREDIENTS.length * 250 + 800 + 2800);
+        }, 800 + (INGREDIENTS.length * 500) + 4000); // Переход через 2.5 сек после вспышки
     }
 
     function initVictoryScreen() {
