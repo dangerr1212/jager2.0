@@ -653,7 +653,7 @@
         { id: 8, name: "Лакрица",            icon: "🖤", img: "./assets/ingredients/licorice.png",   qrCode: "JAGER_BAR_8", bar: "Bar Name 8", hint: "Сладкий корень солодки" },
     ];
 
-    const STATE = { selectedCharacter: null, collectedIds: [], gameCompleted: false, currentScreen: 'screen-character' };
+   const STATE = { selectedCharacter: null, collectedIds: [], gameCompleted: false, currentScreen: 'screen-character', prizeChosen: null };
 
     let audioCtx = null;
     function playBeep(freq, ms) {
@@ -1037,9 +1037,41 @@
         }, 800 + (INGREDIENTS.length * 500) + 6500); // Переход через 5 секунд после вспышки (было 4000)
     }
 
+   function applyPrizeState() {
+        const title = document.getElementById('prize-title');
+        const msg = document.getElementById('prize-msg');
+        const chests = document.querySelectorAll('.chest-card');
+        
+        chests.forEach(el => el.classList.remove('opened', 'locked', 'done'));
+
+        if (!STATE.prizeChosen) {
+            if (title) title.innerText = 'ВЫБЕРИ НАГРАДУ';
+            if (msg) msg.style.display = 'none';
+        } else {
+            if (title) title.innerText = 'ТВОЯ НАГРАДА!';
+            chests.forEach(el => {
+                if (el.dataset.prize === STATE.prizeChosen) {
+                    el.classList.add('opened', 'done');
+                } else {
+                    el.classList.add('locked');
+                }
+            });
+            if (msg) {
+                msg.style.display = 'block';
+                msg.innerText = 'ПОКАЖИ ЭТОТ ЭКРАН БАРМЕНУ И ЗАБЕРИ ПРИЗ';
+            }
+        }
+    }
+
     function initVictoryScreen() {
-        document.getElementById('winner-name').innerText = STATE.selectedCharacter.toUpperCase();
+        const winnerName = document.getElementById('winner-name');
+        if (winnerName) winnerName.innerText = STATE.selectedCharacter ? STATE.selectedCharacter.toUpperCase() : '';
+        
         const container = document.getElementById('screen-victory');
+        if (!container) return;
+        
+        container.querySelectorAll('.confetti').forEach(e => e.remove());
+        
         for(let i=0; i<20; i++) {
             const conf = document.createElement('div'); 
             conf.className = 'confetti'; 
@@ -1049,25 +1081,37 @@
             conf.style.animationDelay = (Math.random() * 2) + 's';
             container.appendChild(conf);
         }
+        applyPrizeState();
     }
 
-    function selectPrize(element) {
-        document.querySelectorAll('.prize-card').forEach(el => el.classList.add('dim')); 
-        element.classList.remove('dim');
-        tg.HapticFeedback.notificationOccurred('success');
-        const msg = document.getElementById('prize-msg'); 
-        msg.style.display = 'block'; 
-        msg.innerText = "ОТЛИЧНЫЙ ВЫБОР! 🎯 Покажи этот экран бармену для получения приза.";
-        tg.MainButton.setText('✅ ПОКАЗАТЬ БАРМЕНУ').show(); 
-        tg.MainButton.onClick(() => { 
-            tg.showAlert("Приз выдан! Наслаждайся Jägermeister!"); 
-            tg.MainButton.hide(); 
+    function selectPrize(type) {
+        if (STATE.prizeChosen) return;
+        
+        const prizeName = type === 'merch' ? 'МЕРЧ' : 'БУТЫЛКУ JÄGER';
+        
+        tg.showConfirm(`Выбрать ${prizeName}? Изменить выбор будет нельзя.`, (ok) => {
+            if (ok) {
+                STATE.prizeChosen = type;
+                saveState();
+                
+                try {
+                    if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                } catch (e) {
+                    console.error('HapticFeedback error:', e.message);
+                }
+                
+                playBeep(523, 150);
+                setTimeout(() => playBeep(659, 150), 150);
+                setTimeout(() => playBeep(784, 150), 300);
+                
+                applyPrizeState();
+            }
         });
     }
 
     function confirmReset() { 
         tg.showConfirm("Сбросить прогресс и начать заново?", (ok) => { 
-            if(ok) resetGame(); 
+            if (ok) resetGame(); 
         }); 
     }
 
@@ -1076,12 +1120,23 @@
         STATE.collectedIds = []; 
         STATE.gameCompleted = false; 
         STATE.currentScreen = 'screen-character';
-        if(tg.CloudStorage) tg.CloudStorage.removeItem(STORAGE_KEY); 
-        localStorage.removeItem(STORAGE_KEY);
+        STATE.prizeChosen = null;
+
+        try {
+            if (tg.CloudStorage) tg.CloudStorage.removeItem(STORAGE_KEY); 
+            localStorage.removeItem(STORAGE_KEY);
+        } catch (e) {
+            console.error('Storage clear error:', e.message);
+        }
+
         document.querySelectorAll('.char-card').forEach(el => el.classList.remove('selected')); 
-        document.getElementById('btn-start').style.display = 'none';
-        document.getElementById('prize-msg').style.display = 'none'; 
-        document.querySelectorAll('.prize-card').forEach(el => el.classList.remove('dim'));
+        const btnStart = document.getElementById('btn-start');
+        if (btnStart) btnStart.style.display = 'none';
+        
+        const prizeMsg = document.getElementById('prize-msg');
+        if (prizeMsg) prizeMsg.style.display = 'none'; 
+        
+        document.querySelectorAll('.chest-card').forEach(el => el.classList.remove('opened', 'locked', 'done'));
         
         const field = document.getElementById('ingredients-field');
         if (field) field.innerHTML = '';
