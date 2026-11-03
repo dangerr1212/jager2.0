@@ -435,17 +435,25 @@
             margin: 0 auto;
         "></div>
 
-  <!-- Гигантский котёл с картинкой -->
+  <!-- Гигантский котёл с картинкой и логотипом под ним -->
         <div id="cauldron-wrap" style="
             position: relative; 
-            width: 320px; /* Сделали контейнер огромным */
-            margin: 10px auto 0 auto; /* Подняли чуть выше */
+            width: 320px; 
+            margin: 10px auto 0 auto; 
             text-align: center;
         ">
             <!-- Сама картинка котла -->
             <img id="cauldron-img" src="./assets/cauldron.png" alt="Cauldron" style="
-                width: 300px; /* Сделали картинку огромной */
+                width: 300px; 
                 height: auto; 
+                image-rendering: pixelated;
+            ">
+            
+            <!-- Логотип Jägermeister под котлом -->
+            <img src="./assets/logo-bottom.png" alt="Jägermeister" style="
+                display: block;
+                width: 200px; /* Размер логотипа (можно менять) */
+                margin: 20px auto 0 auto; /* Отступ сверху от котла */
                 image-rendering: pixelated;
             ">
         </div>
@@ -784,7 +792,9 @@
     function openModal(item, isCollected, stepNum) {
         document.getElementById('rpg-title').innerText = item.bar;
         if (isCollected) {
-            document.getElementById('rpg-artifact').innerText = `Артефакт: ${item.name} ${item.icon}`;
+            // Вставляем картинку (item.img) вместо эмодзи (item.icon)
+            document.getElementById('rpg-artifact').innerHTML = `Артефакт: ${item.name} <img src="${item.img}" style="width: 24px; height: 24px; vertical-align: middle; margin-left: 4px; image-rendering: pixelated; filter: drop-shadow(0 0 4px #C8A44A);">`;
+            
             document.getElementById('rpg-hint').innerText = item.hint;
             document.getElementById('rpg-status').innerHTML = '✅ СОБРАН';
             document.getElementById('rpg-status').style.color = "#4CAF50";
