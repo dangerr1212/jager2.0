@@ -459,25 +459,27 @@
                 image-rendering: pixelated;
             ">
         </div>
-        <!-- Финальная бутылка (картинка вместо эмодзи) -->
+        <!-- Финальная бутылка (ОГРОМНАЯ) -->
         <div id="big-bottle" class="big-bottle">
-            <img src="./assets/bottle.png" alt="Bottle" style="width: 140px; height: auto; filter: drop-shadow(0 0 15px #C8A44A); image-rendering: pixelated;">
+            <!-- Ширина увеличена до 260px, свечение усилено -->
+            <img src="./assets/bottle.png" alt="Bottle" style="width: 260px; height: auto; filter: drop-shadow(0 0 25px #C8A44A); image-rendering: pixelated;">
         </div>
         
         <!-- Финальный текст -->
         <div id="elixir-done-text" style="
             display:none; text-align:center; 
-            color:#C8A44A; font:10px 'Press Start 2P';
+            color:#C8A44A; font:12px 'Press Start 2P'; /* Шрифт чуть крупнее */
             margin-top:20px; line-height:1.8;
             text-shadow: 0 0 10px #C8A44A;
             animation: glowText 1.5s ease-in-out infinite;
         ">ЭЛИКСИР СОЗДАН!<br>✨ JÄGERMEISTER ✨</div>
 
-        <!-- Логотип в самом низу (появляется вместе с бутылкой) -->
-        <img id="elixir-final-logo" src="./assets/logo-final.png" alt="Logo" style="
+        <!-- Логотип в самом низу (ОГРОМНЫЙ) -->
+        <img id="elixir-final-logo" src="./assets/logo-bottom.png" alt="Logo" style="
             display: none;
-            width: 180px;
-            margin: 40px auto 0 auto;
+            width: 340px; /* Сделали логотип гигантским */
+            max-width: 95%; /* Чтобы не вылезал за края на узких экранах */
+            margin: 30px auto 0 auto;
             image-rendering: pixelated;
         ">
     </div>
