@@ -655,7 +655,7 @@
         { id: 8, name: "Лакрица",            icon: "🖤", img: "./assets/ingredients/licorice.png",   qrCode: "JAGER_BAR_8", bar: "Bar Name 8", hint: "Сладкий корень солодки" },
     ];
 
-   const STATE = { selectedCharacter: null, collectedIds: [], gameCompleted: false, currentScreen: 'screen-character', prizeChosen: null };
+   const STATE = { selectedCharacter: null, collectedIds: [], gameCompleted: false, currentScreen: 'screen-character', prizeChosen: null, lastScanTime: 0 };
 
     let audioCtx = null;
     function playBeep(freq, ms) {
@@ -913,13 +913,41 @@
 
     function closeModal() { document.getElementById('rpg-modal-overlay').style.display = 'none'; }
 
-    function openScanner() { tg.showScanQrPopup({ text: "Наведи камеру на QR-код в баре" }, (text) => { handleQrScan(text); return true; }); }
+    let scanCooldown = false; // Флаг кулдауна
+
+    function openScanner() { 
+        // Проверяем, админ ли это
+        const isAdmin = tg.initDataUnsafe && tg.initDataUnsafe.user && ADMIN_IDS.includes(tg.initDataUnsafe.user.id);
+        
+        if (!isAdmin) {
+            const now = Date.now();
+            const timePassed = now - (STATE.lastScanTime || 0);
+            const cooldownMs = 30 * 60 * 1000; // 30 минут в миллисекундах
+            
+            if (timePassed < cooldownMs) {
+                // Считаем, сколько минут осталось
+                const minutesLeft = Math.ceil((cooldownMs - timePassed) / 1000 / 60);
+                tg.showAlert(`⏳ Следующий QR-код можно отсканировать через ${minutesLeft} мин.`);
+                return; // Прерываем сканирование
+            }
+        }
+
+        tg.showScanQrPopup({ text: "Наведи камеру на QR-код в баре" }, (text) => { 
+            handleQrScan(text); 
+            return true; 
+        }); 
+    }
 
     function handleQrScan(text) {
         const ing = INGREDIENTS.find(i => i.qrCode === text);
         if (!ing) { tg.showAlert("❌ Неверный QR-код. Попробуй в другом баре!"); return; }
         if (STATE.collectedIds.includes(ing.id)) { tg.showAlert("✅ Этот ингредиент уже собран!"); return; }
-        STATE.collectedIds.push(ing.id); saveState(); tg.HapticFeedback.notificationOccurred('success');
+        
+        STATE.collectedIds.push(ing.id); 
+        STATE.lastScanTime = Date.now(); // <--- Записываем время успешного сканирования
+        saveState(); 
+        
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         setTimeout(() => playBeep(523, 200), 0); setTimeout(() => playBeep(659, 200), 250);
         closeModal(); renderMap(); 
     }
@@ -1123,6 +1151,7 @@
         STATE.gameCompleted = false; 
         STATE.currentScreen = 'screen-character';
         STATE.prizeChosen = null;
+        STATE.lastScanTime = 0; // Сбрасываем кулдаун
 
         try {
             if (tg.CloudStorage) tg.CloudStorage.removeItem(STORAGE_KEY); 
