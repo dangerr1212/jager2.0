@@ -792,9 +792,10 @@
     function openModal(item, isCollected, stepNum) {
         document.getElementById('rpg-title').innerText = item.bar;
         if (isCollected) {
-            // Вставляем картинку (item.img) вместо эмодзи (item.icon)
-            // Картинка под текстом и больше размером
-            document.getElementById('rpg-artifact').innerHTML = `Артефакт: ${item.name}<br><img src="${item.img}" style="width: 48px; height: 48px; margin-top: 10px; image-rendering: pixelated; filter: drop-shadow(0 0 6px #C8A44A);">`;
+            // Задаем увеличенный размер (75px) для шафрана (6), можжевельника (7) и лакрицы (8)
+            const imgSize = (item.id === 6 || item.id === 7 || item.id === 8) ? '75px' : '48px';
+            
+            document.getElementById('rpg-artifact').innerHTML = `Артефакт: ${item.name}<br><img src="${item.img}" style="width: ${imgSize}; height: ${imgSize}; margin-top: 10px; object-fit: contain; image-rendering: pixelated; filter: drop-shadow(0 0 6px #C8A44A);">`;
             
             document.getElementById('rpg-hint').innerText = item.hint;
             document.getElementById('rpg-status').innerHTML = '✅ СОБРАН';
