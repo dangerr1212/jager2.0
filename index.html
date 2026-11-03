@@ -459,8 +459,10 @@
                 image-rendering: pixelated;
             ">
         </div>
-        <!-- Финальная бутылка -->
-        <div id="big-bottle" class="big-bottle">🍾</div>
+        <!-- Финальная бутылка (картинка вместо эмодзи) -->
+        <div id="big-bottle" class="big-bottle">
+            <img src="./assets/bottle.png" alt="Bottle" style="width: 140px; height: auto; filter: drop-shadow(0 0 15px #C8A44A); image-rendering: pixelated;">
+        </div>
         
         <!-- Финальный текст -->
         <div id="elixir-done-text" style="
@@ -470,6 +472,14 @@
             text-shadow: 0 0 10px #C8A44A;
             animation: glowText 1.5s ease-in-out infinite;
         ">ЭЛИКСИР СОЗДАН!<br>✨ JÄGERMEISTER ✨</div>
+
+        <!-- Логотип в самом низу (появляется вместе с бутылкой) -->
+        <img id="elixir-final-logo" src="./assets/logo-final.png" alt="Logo" style="
+            display: none;
+            width: 180px;
+            margin: 40px auto 0 auto;
+            image-rendering: pixelated;
+        ">
     </div>
 
     <!-- ЭКРАН 5 -->
@@ -840,9 +850,11 @@
         const title    = document.getElementById('elixir-title');
         const bottle   = document.getElementById('big-bottle');
         const doneText = document.getElementById('elixir-done-text');
+        const finalLogo = document.getElementById('elixir-final-logo'); // Находим новый логотип
 
         // Сброс (скрываем котёл в самом начале)
         field.innerHTML = '';
+        if (finalLogo) finalLogo.style.display = 'none'; // Прячем логотип
         bottle.style.transform = 'scale(0)';
         bottle.style.opacity   = '0';
         doneText.style.display = 'none';
@@ -924,8 +936,9 @@
                 bottle.style.transform = 'scale(1)';
                 bottle.style.opacity   = '1';
 
-                setTimeout(() => {
+               setTimeout(() => {
                     doneText.style.display = 'block';
+                    if (finalLogo) finalLogo.style.display = 'block'; // Показываем логотип под текстом
                 }, 400);
 
                 if (tg.HapticFeedback) {
@@ -934,12 +947,12 @@
 
             }, 300);
 
-        }, 800 + (INGREDIENTS.length * 500) + 1600); // Ждем, пока упадет последний ингредиент (~6.4 секунды)
+        }, 800 + (INGREDIENTS.length * 500) + 1600);
 
-        // Шаг 5: переход на победный экран
+        // Шаг 5: переход на победный экран (УВЕЛИЧИЛИ ЗАДЕРЖКУ)
         setTimeout(() => {
             navigateTo('screen-victory');
-        }, 800 + (INGREDIENTS.length * 500) + 4000); // Переход через 2.5 сек после вспышки
+        }, 800 + (INGREDIENTS.length * 500) + 6500); // Переход через 5 секунд после вспышки (было 4000)
     }
 
     function initVictoryScreen() {
