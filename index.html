@@ -805,13 +805,13 @@
         closeModal(); renderMap(); 
     }
 
-    function  startElixirAnimation() {
+   function startElixirAnimation() {
         STATE.gameCompleted = true;
         saveState();
         navigateTo('screen-elixir');
 
         const field    = document.getElementById('ingredients-field');
-        const cauldronWrap = document.getElementById('cauldron-wrap'); // обращаемся к обёртке
+        const cauldronWrap = document.getElementById('cauldron-wrap');
         const title    = document.getElementById('elixir-title');
         const bottle   = document.getElementById('big-bottle');
         const doneText = document.getElementById('elixir-done-text');
@@ -821,7 +821,7 @@
         bottle.style.transform = 'scale(0)';
         bottle.style.opacity   = '0';
         doneText.style.display = 'none';
-        if (cauldronWrap) cauldronWrap.style.display = 'none'; // скрываем обёртку
+        if (cauldronWrap) cauldronWrap.style.display = 'none';
         title.style.display    = 'none';
 
         // Шаг 1: показать заголовок
@@ -829,10 +829,9 @@
 
         // Шаг 2: показать котёл (через 500мс)
         setTimeout(() => { 
-            if (cauldronWrap) cauldronWrap.style.display = 'block'; // показываем обёртку с картинкой
+            if (cauldronWrap) cauldronWrap.style.display = 'block';
         }, 500);
 
-        // ... дальше идет код с расстановкой ингредиентов ...
         // Шаг 3: расставить ингредиенты по полю и запустить полёт в котёл
         const positions = [
             {x: 10,  y: 10},  {x: 120, y: 5},   {x: 230, y: 10},
@@ -840,14 +839,13 @@
             {x: 50,  y: 130}, {x: 150, y: 120},  {x: 240, y: 130},
         ];
 
-         INGREDIENTS.forEach((ing, i) => {
+        INGREDIENTS.forEach((ing, i) => {
             setTimeout(() => {
                 const el = document.createElement('div');
                 el.className = 'flying-icon';
                 el.style.left = positions[i].x + 'px';
                 el.style.top  = positions[i].y + 'px';
 
-                // PNG картинка с fallback на эмодзи
                 const imgEl = document.createElement('img');
                 imgEl.src = ing.img;
                 imgEl.alt = ing.name;
@@ -865,17 +863,14 @@
 
                 // Через 600ms — медленнее полететь в центр увеличенного котла
                 setTimeout(() => {
-                    // Новые координаты центра увеличенного котла
                     el.style.left      = '100px'; 
                     el.style.top       = '145px'; 
                     el.style.opacity   = '0';
                     el.style.width     = '16px';
                     el.style.height    = '16px';
 
-                    // Звук попадания
                     playBeep(300 + i * 40, 80);
 
-                    // Вспышка цвета в котле при попадании
                     const liquid = document.getElementById('cauldron-liquid');
                     if (liquid) {
                         liquid.style.background = '#C8A44A';
@@ -884,23 +879,23 @@
                             liquid.style.transition = 'background 0.3s';
                         }, 150);
                     }
-                }, 600); // Увеличено до 600ms для более плавного полёта
+                }, 600);
+
+            }, 600 + i * 420);
+        });
 
         // Шаг 4: финальная вспышка и бутылка
         setTimeout(() => {
-            // Нарастающая победная мелодия
             [261, 329, 392, 523, 659].forEach((freq, idx) => {
                 setTimeout(() => playBeep(freq, 180), idx * 180);
             });
 
-            // Котёл вспыхивает
             const liquid = document.getElementById('cauldron-liquid');
             if (liquid) {
                 liquid.style.background = '#FFD700';
                 liquid.style.boxShadow  = '0 0 30px #FFD700';
             }
 
-            // Белая вспышка
             const flash = document.getElementById('flash-overlay');
             flash.style.opacity = '1';
             flash.style.transition = 'none';
@@ -909,21 +904,17 @@
                 flash.style.transition = 'opacity 0.6s';
                 flash.style.opacity    = '0';
 
-               // Скрыть котёл и поле
                 if (cauldronWrap) cauldronWrap.style.display = 'none';
                 field.style.display    = 'none';
                 title.innerText = '✨ ГОТОВО! ✨';
 
-                // Показать бутылку
                 bottle.style.transform = 'scale(1)';
                 bottle.style.opacity   = '1';
 
-                // Показать текст
                 setTimeout(() => {
                     doneText.style.display = 'block';
                 }, 400);
 
-                // Вибрация
                 if (tg.HapticFeedback) {
                     tg.HapticFeedback.notificationOccurred('success');
                 }
@@ -942,34 +933,73 @@
         document.getElementById('winner-name').innerText = STATE.selectedCharacter.toUpperCase();
         const container = document.getElementById('screen-victory');
         for(let i=0; i<20; i++) {
-            const conf = document.createElement('div'); conf.className = 'confetti'; conf.style.left = Math.random() * 100 + '%';
-            conf.style.backgroundColor = Math.random() > 0.5 ? 'var(--green)' : 'var(--gold)'; conf.style.animationDuration = (Math.random() * 2 + 2) + 's'; conf.style.animationDelay = (Math.random() * 2) + 's';
+            const conf = document.createElement('div'); 
+            conf.className = 'confetti'; 
+            conf.style.left = Math.random() * 100 + '%';
+            conf.style.backgroundColor = Math.random() > 0.5 ? 'var(--green)' : 'var(--gold)'; 
+            conf.style.animationDuration = (Math.random() * 2 + 2) + 's'; 
+            conf.style.animationDelay = (Math.random() * 2) + 's';
             container.appendChild(conf);
         }
     }
 
     function selectPrize(element) {
-        document.querySelectorAll('.prize-card').forEach(el => el.classList.add('dim')); element.classList.remove('dim');
+        document.querySelectorAll('.prize-card').forEach(el => el.classList.add('dim')); 
+        element.classList.remove('dim');
         tg.HapticFeedback.notificationOccurred('success');
-        const msg = document.getElementById('prize-msg'); msg.style.display = 'block'; msg.innerText = "ОТЛИЧНЫЙ ВЫБОР! 🎯 Покажи этот экран бармену для получения приза.";
-        tg.MainButton.setText('✅ ПОКАЗАТЬ БАРМЕНУ').show(); tg.MainButton.onClick(() => { tg.showAlert("Приз выдан! Наслаждайся Jägermeister!"); tg.MainButton.hide(); });
+        const msg = document.getElementById('prize-msg'); 
+        msg.style.display = 'block'; 
+        msg.innerText = "ОТЛИЧНЫЙ ВЫБОР! 🎯 Покажи этот экран бармену для получения приза.";
+        tg.MainButton.setText('✅ ПОКАЗАТЬ БАРМЕНУ').show(); 
+        tg.MainButton.onClick(() => { 
+            tg.showAlert("Приз выдан! Наслаждайся Jägermeister!"); 
+            tg.MainButton.hide(); 
+        });
     }
 
-    function confirmReset() { tg.showConfirm("Сбросить прогресс и начать заново?", (ok) => { if(ok) resetGame(); }); }
+    function confirmReset() { 
+        tg.showConfirm("Сбросить прогресс и начать заново?", (ok) => { 
+            if(ok) resetGame(); 
+        }); 
+    }
 
     function resetGame() {
-        STATE.selectedCharacter = null; STATE.collectedIds = []; STATE.gameCompleted = false; STATE.currentScreen = 'screen-character';
-        if(tg.CloudStorage) tg.CloudStorage.removeItem(STORAGE_KEY); localStorage.removeItem(STORAGE_KEY);
-        document.querySelectorAll('.char-card').forEach(el => el.classList.remove('selected')); document.getElementById('btn-start').style.display = 'none';
-        document.getElementById('prize-msg').style.display = 'none'; document.querySelectorAll('.prize-card').forEach(el => el.classList.remove('dim'));
-        document.getElementById('elixir-container').innerHTML = '<div id="big-bottle" class="big-bottle">🍾</div>'; document.querySelectorAll('.confetti').forEach(e => e.remove());
+        STATE.selectedCharacter = null; 
+        STATE.collectedIds = []; 
+        STATE.gameCompleted = false; 
+        STATE.currentScreen = 'screen-character';
+        if(tg.CloudStorage) tg.CloudStorage.removeItem(STORAGE_KEY); 
+        localStorage.removeItem(STORAGE_KEY);
+        document.querySelectorAll('.char-card').forEach(el => el.classList.remove('selected')); 
+        document.getElementById('btn-start').style.display = 'none';
+        document.getElementById('prize-msg').style.display = 'none'; 
+        document.querySelectorAll('.prize-card').forEach(el => el.classList.remove('dim'));
+        
+        const field = document.getElementById('ingredients-field');
+        if (field) field.innerHTML = '';
+        const cauldronWrap = document.getElementById('cauldron-wrap');
+        if (cauldronWrap) cauldronWrap.style.display = 'none';
+        
+        document.querySelectorAll('.confetti').forEach(e => e.remove());
         navigateTo('screen-character');
     }
 
-    loadState(() => { navigateTo(STATE.currentScreen && document.getElementById(STATE.currentScreen) ? STATE.currentScreen : 'screen-character'); });
+    loadState(() => { 
+        navigateTo(STATE.currentScreen && document.getElementById(STATE.currentScreen) ? STATE.currentScreen : 'screen-character'); 
+    });
 
-    function devAddQR() { const missing = INGREDIENTS.find(i => !STATE.collectedIds.includes(i.id)); if (missing) handleQrScan(missing.qrCode); else tg.showAlert("Все 8 ингредиентов уже собраны!"); }
-    function devWin() { STATE.collectedIds = [1, 2, 3, 4, 5, 6, 7, 8]; saveState(); STATE.currentScreen === 'screen-map' ? renderMap() : navigateTo('screen-map'); tg.showAlert("Чит активирован: Собраны все ингредиенты!"); }
+    function devAddQR() { 
+        const missing = INGREDIENTS.find(i => !STATE.collectedIds.includes(i.id)); 
+        if (missing) handleQrScan(missing.qrCode); 
+        else tg.showAlert("Все 8 ингредиентов уже собраны!"); 
+    }
+    
+    function devWin() { 
+        STATE.collectedIds = [1, 2, 3, 4, 5, 6, 7, 8]; 
+        saveState(); 
+        STATE.currentScreen === 'screen-map' ? renderMap() : navigateTo('screen-map'); 
+        tg.showAlert("Чит активирован: Собраны все ингредиенты!"); 
+    }
 </script>
 </body>
 </html>
