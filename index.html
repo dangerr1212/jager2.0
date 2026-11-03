@@ -1254,7 +1254,7 @@
     function selectPrize(type) {
         if (STATE.prizeChosen) return;
         
-        const prizeName = type === 'merch' ? 'МЕРЧ' : 'БУТЫЛКУ JÄGER';
+        const prizeName = type === 'merch' ? 'МЕРЧ' : 'БУТЫЛКУ JÄGERMEISTER ';
         
         tg.showConfirm(`Выбрать ${prizeName}? Изменить выбор будет нельзя.`, (ok) => {
             if (ok) {
