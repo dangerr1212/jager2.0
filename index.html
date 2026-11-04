@@ -900,9 +900,9 @@
         ctx.fillStyle = '#3a8a3a'; ctx.fillRect(x+s, y, s, s);
     }
 
-    function drawPathLine(ctx) {
-        const bars = [{x:105, y:35},{x:248, y:60},{x:80, y:120},{x:246, y:163},{x:72, y:215},{x:223, y:235},{x:83, y:283},{x:223, y:287}];
-        ctx.beginPath(); ctx.strokeStyle = '#5a3a00'; ctx.lineWidth = 6; ctx.setLineDash([]); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+        function drawPathLine(ctx) {
+        const bars = [{x:143, y:62},{x:248, y:66},{x:78, y:131},{x:289, y:138},{x:136, y:208},{x:224, y:206},{x:65, y:286},{x:282, y:284}];
+        ctx.beginPath();  ctx.strokeStyle = '#5a3a00'; ctx.lineWidth = 6; ctx.setLineDash([]); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
         ctx.moveTo(bars[0].x, bars[0].y);
         for(let i=1; i<bars.length; i++) { const prev = bars[i-1]; const curr = bars[i]; ctx.quadraticCurveTo(prev.x, (prev.y + curr.y) / 2, curr.x, curr.y); }
         ctx.stroke();
@@ -952,19 +952,19 @@
         for(let row=0; row<17; row++) { for(let col=0; col<17; col++) { drawTile(ctx, col, row, MAP_GRID[row][col]); } }
 
         const BARS_ON_MAP = [
-            { id:1, x:85,  y:20,  drawFn: drawTavernA,   scale:1.5 },
-            { id:2, x:230, y:45,  drawFn: drawStoneBarB, scale:1.5 },
-            { id:3, x:60,  y:105, drawFn: drawTowerC,    scale:1.5 },
-            { id:4, x:228, y:148, drawFn: drawInnD,      scale:1.5 },
-            { id:5, x:52,  y:200, drawFn: drawTavernA,   scale:1.5 },
-            { id:6, x:205, y:220, drawFn: drawStoneBarB, scale:1.5 },
-            { id:7, x:65,  y:268, drawFn: drawTowerC,    scale:1.5 },
-            { id:8, x:205, y:272, drawFn: drawInnD,      scale:1.5 },
+            { id:1, x:116, y:14,  drawFn: drawTavernA,   scale:1.5 },
+            { id:2, x:221, y:18,  drawFn: drawStoneBarB, scale:1.5 },
+            { id:3, x:51,  y:83,  drawFn: drawTowerC,    scale:1.5 },
+            { id:4, x:262, y:90,  drawFn: drawInnD,      scale:1.5 },
+            { id:5, x:109, y:160, drawFn: drawTavernA,   scale:1.5 },
+            { id:6, x:197, y:158, drawFn: drawStoneBarB, scale:1.5 },
+            { id:7, x:38,  y:238, drawFn: drawTowerC,    scale:1.5 },
+            { id:8, x:255, y:236, drawFn: drawInnD,      scale:1.5 },
         ];
 
         drawPathLine(ctx);
 
-        const treePositions = [ {col:0,row:0},{col:1,row:1},{col:0,row:2},{col:2,row:0}, {col:1,row:3},{col:0,row:5},{col:2,row:4},{col:0,row:7}, {col:1,row:6},{col:0,row:9},{col:2,row:8},{col:1,row:10}, {col:0,row:12},{col:2,row:11},{col:0,row:14},{col:1,row:13}, {col:0,row:16},{col:2,row:15},{col:3,row:16}, ];
+              const treePositions = [ {col:0,row:0},{col:1,row:0},{col:2,row:0},{col:3,row:0},{col:4,row:0},{col:15,row:0},{col:16,row:0},{col:0,row:1},{col:16,row:1},{col:0,row:2},{col:2,row:2},{col:4,row:2},{col:16,row:2},{col:0,row:3},{col:15,row:3},{col:16,row:3},{col:0,row:4},{col:0,row:5},{col:0,row:6},{col:0,row:7},{col:0,row:8},{col:0,row:9},{col:2,row:9},{col:15,row:9},{col:16,row:9},{col:0,row:10},{col:14,row:10},{col:16,row:10},{col:0,row:11},{col:0,row:12},{col:0,row:13},{col:6,row:13},{col:0,row:14},{col:0,row:15},{col:10,row:15},{col:0,row:16},{col:6,row:16},{col:7,row:16},{col:8,row:16},{col:9,row:16},{col:10,row:16},{col:11,row:16} ];
         treePositions.forEach(p => drawTree(ctx, p.col*20 + 2, p.row*20 + 2, 0.8));
 
         BARS_ON_MAP.forEach(bar => {
